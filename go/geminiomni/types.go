@@ -54,16 +54,20 @@ type CreateAudioResponse struct {
 }
 
 type CreateCharacterParams struct {
-	Descriptions  string   `json:"descriptions" help:"required; character appearance, identity, style, clothing, or personality description"`
-	ImageURLs     []string `json:"image_urls" help:"required; one public character reference image URL, max 20MB"`
-	AudioIDs      []string `json:"audio_ids,omitempty" help:"optional; audio IDs from create-audio to guide voice traits"`
-	CharacterName string   `json:"character_name,omitempty" help:"optional; character name, max 210 chars"`
+	Descriptions      string   `json:"descriptions" help:"required; character appearance, identity, style, clothing, or personality description"`
+	ReferenceImageURL string   `json:"reference_image_url" help:"required; character reference image URL, max 20MB"`
+	AudioIDs          []string `json:"audio_ids,omitempty" help:"optional; audio IDs from create-audio to guide voice traits"`
+	CharacterName     string   `json:"character_name,omitempty" help:"optional; character name, max 210 chars"`
+}
+
+type Image struct {
+	URL string `json:"url"`
 }
 
 type Character struct {
-	ID       string `json:"id"`
-	Name     string `json:"name,omitempty"`
-	ImageURL string `json:"image_url,omitempty"`
+	ID     string  `json:"id"`
+	Name   string  `json:"name,omitempty"`
+	Images []Image `json:"images,omitempty"`
 }
 
 type CreateCharacterResponse struct {
@@ -79,16 +83,16 @@ type VideoClip struct {
 }
 
 type TextToVideoParams struct {
-	Prompt       string      `json:"prompt" help:"required; video prompt, max 20000 chars"`
-	Duration     string      `json:"duration" help:"required; duration"`
-	CallbackURL  string      `json:"callback_url,omitempty" help:"optional; HTTPS callback URL"`
-	ImageURLs    []string    `json:"image_urls,omitempty" help:"optional; public image reference URLs, max 7"`
-	AudioIDs     []string    `json:"audio_ids,omitempty" help:"optional; audio IDs from create-audio, max 3"`
-	VideoList    []VideoClip `json:"video_list,omitempty" help:"optional; source video clips, max 1; each clip uses 2 reference units"`
-	CharacterIDs []string    `json:"character_ids,omitempty" help:"optional; character IDs from create-character, max 3"`
-	AspectRatio  string      `json:"aspect_ratio,omitempty" help:"optional; output aspect ratio"`
-	Resolution   string      `json:"resolution,omitempty" help:"optional; output resolution; default 720p"`
-	Seed         *int        `json:"seed,omitempty" help:"optional; integer in [0, 2147483647]"`
+	Prompt             string      `json:"prompt" help:"required; video prompt, max 20000 chars"`
+	DurationSeconds    int         `json:"duration_seconds" help:"required; duration in seconds"`
+	CallbackURL        string      `json:"callback_url,omitempty" help:"optional; HTTPS callback URL"`
+	ReferenceImageURLs []string    `json:"reference_image_urls,omitempty" help:"optional; reference image URLs, max 7"`
+	AudioIDs           []string    `json:"audio_ids,omitempty" help:"optional; audio IDs from create-audio, max 3"`
+	VideoList          []VideoClip `json:"video_list,omitempty" help:"optional; source video clips, max 1; each clip uses 2 reference units"`
+	CharacterIDs       []string    `json:"character_ids,omitempty" help:"optional; character IDs from create-character, max 3"`
+	AspectRatio        string      `json:"aspect_ratio,omitempty" help:"optional; output aspect ratio"`
+	OutputResolution   string      `json:"output_resolution,omitempty" help:"optional; output resolution; default 720p"`
+	Seed               *int        `json:"seed,omitempty" help:"optional; integer in [0, 2147483647]"`
 }
 
 type TaskResponse struct {

@@ -4,9 +4,9 @@ Dir.chdir(__dir__) do
 
   Gem::Specification.new do |spec|
     spec.name = "runapi-gemini-omni"
-    spec.version = "0.2.5"
-    spec.authors = [ "RunAPI" ]
-    spec.email = [ "contact@runapi.ai" ]
+    spec.version = "0.2.6"
+    spec.authors = ["RunAPI"]
+    spec.email = ["contact@runapi.ai"]
 
     spec.summary = "Gemini Omni API Ruby SDK for RunAPI"
     spec.description = "The gemini omni api Ruby SDK is the language-specific package for Gemini Omni on RunAPI. Use this package for voice resources, character resources, and multimodal video workflows that need JSON request bodies, task status lookup, and consistent RunAPI errors in Ruby."
@@ -22,8 +22,8 @@ Dir.chdir(__dir__) do
 
     spec.files = Dir.glob("lib/**/*") + %w[LICENSE README.md]
     spec.extra_rdoc_files = ["README.md"]
-        spec.require_paths = [ "lib" ]
+        spec.require_paths = ["lib"]
 
-    spec.add_dependency "runapi-core", "~> 0.2.4"
+    spec.add_dependency "runapi-core", "~> 0.2.5"
   end
 end

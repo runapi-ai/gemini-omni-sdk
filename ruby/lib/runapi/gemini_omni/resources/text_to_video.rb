@@ -10,7 +10,7 @@ module RunApi
         RESPONSE_CLASS = Types::TextToVideoResponse
         COMPLETED_RESPONSE_CLASS = Types::CompletedTextToVideoResponse
         PROMPT_MAX_LENGTH = 20_000
-        IMAGE_URLS_MAX = 7
+        REFERENCE_IMAGE_URLS_MAX = 7
         AUDIO_IDS_MAX = 3
         VIDEO_LIST_MAX = 1
         CHARACTER_IDS_MAX = 3
@@ -41,12 +41,12 @@ module RunApi
 
         def validate_params!(params)
           validate_required!(params, :prompt)
-          validate_required!(params, :duration)
+          validate_required!(params, :duration_seconds)
           validate_length!(params, :prompt, PROMPT_MAX_LENGTH)
-          validate_optional!(params, :duration, Types::DURATIONS)
+          validate_optional!(params, :duration_seconds, Types::DURATIONS)
           validate_optional!(params, :aspect_ratio, Types::ASPECT_RATIOS)
-          validate_optional!(params, :resolution, Types::RESOLUTIONS)
-          validate_array!(params, :image_urls, IMAGE_URLS_MAX) if param(params, :image_urls)
+          validate_optional!(params, :output_resolution, Types::OUTPUT_RESOLUTIONS)
+          validate_array!(params, :reference_image_urls, REFERENCE_IMAGE_URLS_MAX) if param(params, :reference_image_urls)
           validate_array!(params, :audio_ids, AUDIO_IDS_MAX) if param(params, :audio_ids)
           validate_array!(params, :video_list, VIDEO_LIST_MAX) if param(params, :video_list)
           validate_array!(params, :character_ids, CHARACTER_IDS_MAX) if param(params, :character_ids)
@@ -99,12 +99,12 @@ module RunApi
         end
 
         def validate_reference_units!(params)
-          units = Array(param(params, :image_urls)).count +
+          units = Array(param(params, :reference_image_urls)).count +
             (Array(param(params, :video_list)).count * VIDEO_REFERENCE_UNITS) +
             Array(param(params, :character_ids)).count
           return if units <= REFERENCE_UNITS_MAX
 
-          raise Core::ValidationError, "image_urls + video_list*2 + character_ids must use #{REFERENCE_UNITS_MAX} reference units or fewer"
+          raise Core::ValidationError, "reference_image_urls + video_list*2 + character_ids must use #{REFERENCE_UNITS_MAX} reference units or fewer"
         end
 
         def validate_seed!(params)

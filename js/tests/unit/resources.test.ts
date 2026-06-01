@@ -41,13 +41,17 @@ describe('Gemini Omni resources', () => {
   it('creates characters with direct service params', async () => {
     vi.mocked(mockHttp.request).mockResolvedValueOnce({
       id: 'character-kie-123',
-      character: { id: 'character-kie-123', name: 'Jenny', image_url: 'https://file.runapi.ai/gemini/jenny.png' },
+      character: {
+        id: 'character-kie-123',
+        name: 'Jenny',
+        images: [{ url: 'https://file.runapi.ai/gemini/jenny.png' }],
+      },
     });
     const createCharacter = new CreateCharacter(mockHttp);
 
     const result = await createCharacter.run({
       descriptions: 'A silver-haired cyberpunk guide',
-      image_urls: ['https://file.runapi.ai/demo/character.png'],
+      reference_image_url: 'https://file.runapi.ai/demo/character.png',
       audio_ids: ['audio-kie-123'],
       character_name: 'Jenny',
     });
@@ -55,12 +59,13 @@ describe('Gemini Omni resources', () => {
     expect(mockHttp.request).toHaveBeenCalledWith('POST', '/api/v1/gemini_omni/create_character', {
       body: {
         descriptions: 'A silver-haired cyberpunk guide',
-        image_urls: ['https://file.runapi.ai/demo/character.png'],
+        reference_image_url: 'https://file.runapi.ai/demo/character.png',
         audio_ids: ['audio-kie-123'],
         character_name: 'Jenny',
       },
     });
     expect(result.id).toBe('character-kie-123');
+    expect(result.character?.images?.[0]?.url).toBe('https://file.runapi.ai/gemini/jenny.png');
   });
 
   it('creates text-to-video tasks with direct service params', async () => {
@@ -72,10 +77,10 @@ describe('Gemini Omni resources', () => {
 
     const result = await textToVideo.create({
       prompt: 'Create a neon city tracking shot',
-      duration: '8',
+      duration_seconds: 8,
       aspect_ratio: '16:9',
-      resolution: '1080p',
-      image_urls: ['https://file.runapi.ai/demo/scene.png'],
+      output_resolution: '1080p',
+      reference_image_urls: ['https://file.runapi.ai/demo/scene.png'],
       audio_ids: ['audio-kie-123'],
       character_ids: ['character-kie-123'],
     });
@@ -83,10 +88,10 @@ describe('Gemini Omni resources', () => {
     expect(mockHttp.request).toHaveBeenCalledWith('POST', '/api/v1/gemini_omni/text_to_video', {
       body: {
         prompt: 'Create a neon city tracking shot',
-        duration: '8',
+        duration_seconds: 8,
         aspect_ratio: '16:9',
-        resolution: '1080p',
-        image_urls: ['https://file.runapi.ai/demo/scene.png'],
+        output_resolution: '1080p',
+        reference_image_urls: ['https://file.runapi.ai/demo/scene.png'],
         audio_ids: ['audio-kie-123'],
         character_ids: ['character-kie-123'],
       },

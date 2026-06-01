@@ -48,17 +48,17 @@ const voice = await client.createAudio.run({
 
 const character = await client.createCharacter.run({
   descriptions: 'A silver-haired cyberpunk guide',
-  image_urls: ['https://file.runapi.ai/demo/character.png'],
+  reference_image_url: 'https://file.runapi.ai/demo/character.png',
   audio_ids: [voice.id],
   character_name: 'Jenny',
 });
 
 const video = await client.textToVideo.run({
   prompt: 'Create a neon city tracking shot with the character walking forward.',
-  duration: '8',
+  duration_seconds: 8,
   aspect_ratio: '16:9',
-  resolution: '1080p',
-  image_urls: ['https://file.runapi.ai/demo/scene.png'],
+  output_resolution: '1080p',
+  reference_image_urls: ['https://file.runapi.ai/demo/scene.png'],
   audio_ids: [voice.id],
   character_ids: [character.id],
 });

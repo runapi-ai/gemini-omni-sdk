@@ -10,7 +10,6 @@ module RunApi
         RESPONSE_CLASS = Types::CreateCharacterResponse
         DESCRIPTIONS_MAX_LENGTH = 20_000
         CHARACTER_NAME_MAX_LENGTH = 210
-        IMAGE_URLS_MAX = 1
 
         def initialize(http)
           @http = http
@@ -26,10 +25,8 @@ module RunApi
 
         def validate_params!(params)
           validate_required!(params, :descriptions)
-          validate_required!(params, :image_urls)
-          validate_array!(params, :image_urls)
+          validate_required!(params, :reference_image_url)
           validate_array!(params, :audio_ids) if param(params, :audio_ids)
-          validate_image_count!(params)
           validate_length!(params, :descriptions, DESCRIPTIONS_MAX_LENGTH)
           validate_length!(params, :character_name, CHARACTER_NAME_MAX_LENGTH)
         end
@@ -50,12 +47,6 @@ module RunApi
           return if param(params, key).is_a?(Array)
 
           raise Core::ValidationError, "#{key} must be an array"
-        end
-
-        def validate_image_count!(params)
-          return if param(params, :image_urls).length <= IMAGE_URLS_MAX
-
-          raise Core::ValidationError, "image_urls accepts at most #{IMAGE_URLS_MAX} image"
         end
 
         def validate_length!(params, key, max_length)

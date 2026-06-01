@@ -54,15 +54,20 @@ export interface CreateAudioResponse {
 
 export interface CreateCharacterParams {
   descriptions: string;
-  image_urls: string[];
+  reference_image_url: string;
   audio_ids?: string[];
   character_name?: string;
+}
+
+export interface ImageMetadata {
+  url: string;
+  [key: string]: unknown;
 }
 
 export interface GeminiOmniCharacter {
   id: string;
   name?: string;
-  image_url?: string;
+  images?: ImageMetadata[];
   [key: string]: unknown;
 }
 
@@ -73,7 +78,7 @@ export interface CreateCharacterResponse {
   [key: string]: unknown;
 }
 
-export type GeminiOmniTextToVideoDuration = '4' | '6' | '8' | '10';
+export type GeminiOmniTextToVideoDuration = 4 | 6 | 8 | 10;
 export type GeminiOmniTextToVideoAspectRatio = '16:9' | '9:16';
 export type GeminiOmniTextToVideoResolution = '720p' | '1080p' | '4k';
 
@@ -85,14 +90,14 @@ export interface GeminiOmniTextToVideoClip {
 
 export interface TextToVideoParams {
   prompt: string;
-  duration: GeminiOmniTextToVideoDuration;
+  duration_seconds: GeminiOmniTextToVideoDuration;
   callback_url?: string;
-  image_urls?: string[];
+  reference_image_urls?: string[];
   audio_ids?: string[];
   video_list?: GeminiOmniTextToVideoClip[];
   character_ids?: string[];
   aspect_ratio?: GeminiOmniTextToVideoAspectRatio;
-  resolution?: GeminiOmniTextToVideoResolution;
+  output_resolution?: GeminiOmniTextToVideoResolution;
   seed?: number;
 }
 

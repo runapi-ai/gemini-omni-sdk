@@ -21,7 +21,7 @@ func (s *stubHTTPClient) Request(_ context.Context, method, path string, opts *c
 		s.body = opts.Body
 	}
 	if path == "/api/v1/gemini_omni/create_character" {
-		return json.RawMessage(`{"id":"character-kie-123","character":{"id":"character-kie-123","name":"Jenny","image_url":"https://file.runapi.ai/gemini/jenny.png"}}`), nil
+		return json.RawMessage(`{"id":"character-kie-123","character":{"id":"character-kie-123","name":"Jenny","images":[{"url":"https://file.runapi.ai/gemini/jenny.png"}]}}`), nil
 	}
 	if path == "/api/v1/gemini_omni/text_to_video" {
 		return json.RawMessage(`{"id":"task-local-123","status":"processing"}`), nil
@@ -66,10 +66,10 @@ func TestCreateCharacterRunSendsCorrectRequest(t *testing.T) {
 	stub := &stubHTTPClient{}
 	client := NewClientWithHTTP(stub)
 	resp, err := client.CreateCharacter.Run(context.Background(), CreateCharacterParams{
-		Descriptions:  "A silver-haired cyberpunk guide",
-		ImageURLs:     []string{"https://file.runapi.ai/demo/character.png"},
-		AudioIDs:      []string{"audio-kie-123"},
-		CharacterName: "Jenny",
+		Descriptions:      "A silver-haired cyberpunk guide",
+		ReferenceImageURL: "https://file.runapi.ai/demo/character.png",
+		AudioIDs:          []string{"audio-kie-123"},
+		CharacterName:     "Jenny",
 	})
 	if err != nil {
 		t.Fatal(err)
@@ -87,11 +87,20 @@ func TestCreateCharacterRunSendsCorrectRequest(t *testing.T) {
 	if _, ok := body["description"]; ok {
 		t.Fatalf("unexpected singular description key in body: %#v", body)
 	}
+	if body["reference_image_url"] != "https://file.runapi.ai/demo/character.png" {
+		t.Fatalf("unexpected reference image in body: %#v", body)
+	}
+	if _, ok := body["image_urls"]; ok {
+		t.Fatalf("unexpected image_urls key in body: %#v", body)
+	}
 	if _, ok := body["imageUrls"]; ok {
 		t.Fatalf("unexpected camelCase key in body: %#v", body)
 	}
 	if resp.ID != "character-kie-123" {
 		t.Fatalf("unexpected response id: %s", resp.ID)
+	}
+	if resp.Character == nil || len(resp.Character.Images) != 1 || resp.Character.Images[0].URL != "https://file.runapi.ai/gemini/jenny.png" {
+		t.Fatalf("unexpected character images: %#v", resp.Character)
 	}
 }
 
@@ -100,14 +109,14 @@ func TestTextToVideoCreateAndGet(t *testing.T) {
 	client := NewClientWithHTTP(stub)
 	seed := 12345
 	created, err := client.TextToVideo.Create(context.Background(), TextToVideoParams{
-		Prompt:       "Create a neon city tracking shot",
-		Duration:     "8",
-		AspectRatio:  "16:9",
-		Resolution:   "1080p",
-		ImageURLs:    []string{"https://file.runapi.ai/demo/scene.png"},
-		AudioIDs:     []string{"audio-kie-123"},
-		CharacterIDs: []string{"character-kie-123"},
-		Seed:         &seed,
+		Prompt:             "Create a neon city tracking shot",
+		DurationSeconds:    8,
+		AspectRatio:        "16:9",
+		OutputResolution:   "1080p",
+		ReferenceImageURLs: []string{"https://file.runapi.ai/demo/scene.png"},
+		AudioIDs:           []string{"audio-kie-123"},
+		CharacterIDs:       []string{"character-kie-123"},
+		Seed:               &seed,
 	})
 	if err != nil {
 		t.Fatal(err)
@@ -119,8 +128,14 @@ func TestTextToVideoCreateAndGet(t *testing.T) {
 	if !ok {
 		t.Fatalf("expected flat body map, got %T", stub.body)
 	}
-	if body["prompt"] != "Create a neon city tracking shot" || body["duration"] != "8" || body["resolution"] != "1080p" {
+	if body["prompt"] != "Create a neon city tracking shot" || body["duration_seconds"] != float64(8) || body["output_resolution"] != "1080p" {
 		t.Fatalf("unexpected body: %#v", body)
+	}
+	if _, ok := body["image_urls"]; ok {
+		t.Fatalf("unexpected image_urls key in body: %#v", body)
+	}
+	if values, ok := body["reference_image_urls"].([]any); !ok || len(values) != 1 || values[0] != "https://file.runapi.ai/demo/scene.png" {
+		t.Fatalf("unexpected reference_image_urls in body: %#v", body)
 	}
 	if _, ok := body["characterIds"]; ok {
 		t.Fatalf("unexpected camelCase key in body: %#v", body)

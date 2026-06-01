@@ -21,10 +21,14 @@ module RunApi
         optional :error, String
       end
 
+      class Image < RunApi::Core::BaseModel
+        optional :url, String
+      end
+
       class Character < RunApi::Core::BaseModel
         required :id, String
         optional :name, String
-        optional :image_url, String
+        optional :images, [-> { Image }]
       end
 
       class CreateCharacterResponse < RunApi::Core::BaseModel
@@ -33,9 +37,9 @@ module RunApi
         optional :error, String
       end
 
-      DURATIONS = %w[4 6 8 10].freeze
+      DURATIONS = [4, 6, 8, 10].freeze
       ASPECT_RATIOS = %w[16:9 9:16].freeze
-      RESOLUTIONS = %w[720p 1080p 4k].freeze
+      OUTPUT_RESOLUTIONS = %w[720p 1080p 4k].freeze
       SEED_RANGE = (0..2_147_483_647)
 
       class Video < RunApi::Core::BaseModel
