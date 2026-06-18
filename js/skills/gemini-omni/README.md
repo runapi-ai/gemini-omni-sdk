@@ -68,6 +68,11 @@ runapi wait <task-id> --service gemini-omni --action text-to-video
 - Provider comparison: https://runapi.ai/providers/google
 - Browse all RunAPI models and skills: https://runapi.ai/models
 
+## Agent rules
+
+- Integration work uses the target language SDK; one-off generation, manual smoke tests, debugging, or user-requested CLI runs use the RunAPI CLI skill: https://github.com/runapi-ai/cli-skill
+- RunAPI-generated file URLs are temporary. Download and store generated images, videos, audio, or other files in your own durable storage within 7 days; do not treat returned URLs as long-term assets.
+
 ## License
 
 Licensed under the Apache License, Version 2.0.

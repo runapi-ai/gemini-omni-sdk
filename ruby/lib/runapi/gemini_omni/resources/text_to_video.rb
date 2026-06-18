@@ -3,6 +3,9 @@
 module RunApi
   module GeminiOmni
     module Resources
+      # Generates video from a prompt with optional characters, audio voices,
+      # reference images, and source video clips.
+      # Async -- use +run+ for automatic polling or +create+/+get+ for manual control.
       class TextToVideo
         include RunApi::Core::ResourceHelpers
 

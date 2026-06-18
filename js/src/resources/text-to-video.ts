@@ -10,9 +10,19 @@ import type {
 
 const ENDPOINT = '/api/v1/gemini_omni/text_to_video';
 
+/**
+ * Generates video from a prompt with optional characters, audio voices, reference images, and video clips.
+ * This is an async operation -- use `run()` for automatic polling or `create()`/`get()` for manual control.
+ */
 export class TextToVideo {
   constructor(private readonly http: HttpClient) {}
 
+  /**
+   * Generate a video and wait until complete.
+   * @param params Text-to-video parameters.
+   * @param options Per-request and polling overrides.
+   * @returns The completed text-to-video result.
+   */
   async run(params: TextToVideoParams, options?: RequestOptions & PollingOptions): Promise<CompletedTextToVideoResponse> {
     const { id } = await this.create(params, options);
     const response = await pollUntilComplete<TextToVideoResponse>(() => this.get(id, options), {
@@ -22,6 +32,12 @@ export class TextToVideo {
     return response as CompletedTextToVideoResponse;
   }
 
+  /**
+   * Create a text-to-video task; returns immediately with a task id.
+   * @param params Text-to-video parameters.
+   * @param options Per-request overrides.
+   * @returns The task creation result with id.
+   */
   async create(params: TextToVideoParams, options?: RequestOptions): Promise<TaskCreateResponse> {
     return this.http.request<TaskCreateResponse>('POST', ENDPOINT, {
       body: compactParams(params),
@@ -29,6 +45,12 @@ export class TextToVideo {
     });
   }
 
+  /**
+   * Fetch the current status of a text-to-video task.
+   * @param id The task id.
+   * @param options Per-request overrides.
+   * @returns The current text-to-video status.
+   */
   async get(id: string, options?: RequestOptions): Promise<TextToVideoResponse> {
     return this.http.request<TextToVideoResponse>('GET', `${ENDPOINT}/${id}`, {
       ...options,

@@ -3,6 +3,9 @@
 module RunApi
   module GeminiOmni
     module Resources
+      # Builds a reusable character from a reference image and description.
+      # Attach audio IDs to give the character a specific voice.
+      # Synchronous -- only +run+ is available (no create/get polling).
       class CreateCharacter
         include RunApi::Core::ResourceHelpers
 

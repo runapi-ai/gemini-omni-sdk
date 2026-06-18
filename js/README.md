@@ -32,6 +32,8 @@ const video = await client.textToVideo.run({
 });
 ```
 
+RunAPI-generated file URLs are temporary. Download and store generated images, videos, audio, or other files in your own durable storage within 7 days; do not treat returned URLs as long-term assets.
+
 ## Links
 
 - Model page: https://runapi.ai/models/gemini-omni

@@ -25,10 +25,19 @@ metadata:
 
 Create Gemini Omni voice resources, character resources, and text-to-video tasks through RunAPI. The default path for one-off agent tasks is the `runapi` CLI; SDKs are for application integration.
 
-## Routing decision
+## Critical: Integration Runtime
 
-- One-off voice, character, or video generation for the user → use the **CLI path** with the `runapi` binary.
-- Building an app, backend, worker, library, or production codebase → use the **SDK integration path**.
+- Integration work (app, backend, worker, library, Rails service, Node service, Go service, webhook pipeline, or production codebase) uses the **SDK integration path** for the target language.
+- One-off generation, editing, transformation, manual smoke tests, debugging, or user-requested CLI runs use the **CLI path** with the `runapi` binary. For full CLI-specific agent guidance, see https://github.com/runapi-ai/cli-skill.
+- Never shell out to the `runapi` CLI as the production runtime integration layer.
+
+## SDK integration path
+
+When integrating Gemini Omni into an app, backend, worker, library, Rails service, Node service, Go service, webhook pipeline, or production workflow, start by checking the current SDK package and official usage. Confirm install commands, client methods (`create`, `get`, `run`), request fields, response shape, and error classes before using CLI help or raw HTTP examples. Use a RunAPI SDK package:
+
+- JavaScript / TypeScript: `@runapi.ai/gemini-omni`
+- Ruby: `runapi-gemini-omni`
+- Go: `github.com/runapi-ai/gemini-omni-sdk/go`
 
 ## Variants
 
@@ -38,7 +47,7 @@ Create Gemini Omni voice resources, character resources, and text-to-video tasks
 
 ## CLI path
 
-The `runapi` binary is the runtime dependency. Run `runapi auth status` first. For agents and headless runs, prefer `RUNAPI_API_KEY` or import it into saved config.
+The `runapi` binary is the one-off and manual testing runtime dependency. For full CLI-specific agent guidance, see https://github.com/runapi-ai/cli-skill. Run `runapi auth status` first. For agents and headless runs, prefer `RUNAPI_API_KEY` or import it into saved config.
 
 Inspect the available commands and request fields with CLI help:
 
@@ -64,13 +73,9 @@ runapi wait <task-id> --service gemini-omni --action text-to-video
 
 Available commands: `create-audio`, `create-character`, `text-to-video`.
 
-## SDK integration path
+## Generated file storage
 
-When integrating Gemini Omni into an app, backend, worker, or library — not for one-off tasks — use a RunAPI SDK package:
-
-- JavaScript / TypeScript: `@runapi.ai/gemini-omni`
-- Ruby: `runapi-gemini-omni`
-- Go: `github.com/runapi-ai/gemini-omni-sdk/go`
+RunAPI-generated file URLs are temporary. Download and store generated images, videos, audio, or other files in your own durable storage within 7 days; do not treat returned URLs as long-term assets.
 
 ## References
 

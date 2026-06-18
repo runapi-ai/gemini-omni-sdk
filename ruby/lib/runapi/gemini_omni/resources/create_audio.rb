@@ -3,6 +3,8 @@
 module RunApi
   module GeminiOmni
     module Resources
+      # Registers a reusable voice preset from a built-in voice identity.
+      # Synchronous -- only +run+ is available (no create/get polling).
       class CreateAudio
         include RunApi::Core::ResourceHelpers
 
