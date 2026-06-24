@@ -3,8 +3,9 @@
 Dir.chdir(__dir__) do
 
   Gem::Specification.new do |spec|
-    spec.name = "runapi-gemini-omni"
+    spec.name = "runapi-gemini_omni"
     spec.version = "0.2.7"
+    spec.metadata["runapi_slug"] = "gemini-omni"
     spec.authors = ["RunAPI"]
     spec.email = ["contact@runapi.ai"]
 
@@ -17,7 +18,6 @@ Dir.chdir(__dir__) do
     spec.metadata["documentation_uri"] = "https://github.com/runapi-ai/gemini-omni-sdk/blob/main/ruby/README.md"
     spec.metadata["source_code_uri"] = "https://github.com/runapi-ai/gemini-omni-sdk"
     spec.metadata["changelog_uri"] = "https://github.com/runapi-ai/gemini-omni-sdk/blob/main/CHANGELOG.md"
-
 
 
     spec.files = Dir.glob("lib/**/*") + %w[LICENSE README.md]

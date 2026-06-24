@@ -5,7 +5,7 @@ The gemini omni api Ruby SDK is the language-specific package for Gemini Omni on
 ## Install
 
 ```bash
-gem install runapi-gemini-omni
+gem install runapi-gemini_omni
 ```
 
 ## Quick start

@@ -2,6 +2,7 @@
 
 require "runapi/core"
 require_relative "gemini_omni/types"
+require_relative "gemini_omni/contract_gen"
 require_relative "gemini_omni/resources/create_audio"
 require_relative "gemini_omni/resources/create_character"
 require_relative "gemini_omni/resources/text_to_video"

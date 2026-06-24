@@ -6,6 +6,7 @@ from typing import Any, Dict
 
 from runapi.core import Resource, ValidationError
 
+from ..contract_gen import CONTRACT
 from ..types import CreateCharacterResponse
 
 
@@ -15,6 +16,8 @@ class CreateCharacter(Resource):
     ENDPOINT = "/api/v1/gemini_omni/create_character"
 
     RESPONSE_CLASS = CreateCharacterResponse
+
+    MODEL = "gemini-omni-character"
 
     DESCRIPTIONS_MAX_LENGTH = 20_000
     CHARACTER_NAME_MAX_LENGTH = 210
@@ -33,24 +36,11 @@ class CreateCharacter(Resource):
         return self._request("post", self.ENDPOINT, body=compacted)
 
     def _validate_params(self, params: Dict[str, Any]) -> None:
-        self._validate_required(params, "descriptions")
-        self._validate_required(params, "reference_image_url")
+        self._validate_contract(CONTRACT["create-character"], {**params, "model": self.MODEL})
         if params.get("audio_ids") is not None:
             self._validate_array(params, "audio_ids")
         self._validate_length(params, "descriptions", self.DESCRIPTIONS_MAX_LENGTH)
         self._validate_length(params, "character_name", self.CHARACTER_NAME_MAX_LENGTH)
-
-    @staticmethod
-    def _validate_required(params: Dict[str, Any], key: str) -> None:
-        value = params.get(key)
-        if isinstance(value, list):
-            present = len(value) > 0
-        elif isinstance(value, str):
-            present = value != ""
-        else:
-            present = value is not None
-        if not present:
-            raise ValidationError(f"{key} is required")
 
     @staticmethod
     def _validate_array(params: Dict[str, Any], key: str) -> None:

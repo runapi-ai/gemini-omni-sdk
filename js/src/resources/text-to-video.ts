@@ -1,6 +1,7 @@
-import type { HttpClient, RequestOptions, PollingOptions } from '@runapi.ai/core';
-import { compactParams } from '@runapi.ai/core';
+import type { HttpClient, RequestOptions, PollingOptions, ActionSchema } from '@runapi.ai/core';
+import { compactParams, validateParams } from '@runapi.ai/core';
 import { pollUntilComplete } from '@runapi.ai/core/internal';
+import { contract } from '../contract_gen';
 import type {
   CompletedTextToVideoResponse,
   TaskCreateResponse,
@@ -9,6 +10,9 @@ import type {
 } from '../types';
 
 const ENDPOINT = '/api/v1/gemini_omni/text_to_video';
+
+// Fixed endpoint model, injected only for contract validation (never sent on the wire).
+const MODEL = 'gemini-omni-text-to-video';
 
 /**
  * Generates video from a prompt with optional characters, audio voices, reference images, and video clips.
@@ -39,8 +43,10 @@ export class TextToVideo {
    * @returns The task creation result with id.
    */
   async create(params: TextToVideoParams, options?: RequestOptions): Promise<TaskCreateResponse> {
+    const body = compactParams(params);
+    validateParams(contract['text-to-video'] as ActionSchema, { ...body, model: MODEL } as Record<string, unknown>);
     return this.http.request<TaskCreateResponse>('POST', ENDPOINT, {
-      body: compactParams(params),
+      body,
       ...options,
     });
   }

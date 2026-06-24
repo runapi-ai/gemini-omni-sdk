@@ -44,12 +44,6 @@ module RunApi
         optional :error, String
       end
 
-      # Allowed video durations in seconds. Longer durations consume more credits.
-      DURATIONS = [4, 6, 8, 10].freeze
-      # Output aspect ratios: landscape (16:9) or portrait (9:16).
-      ASPECT_RATIOS = %w[16:9 9:16].freeze
-      # Output resolutions -- higher values produce sharper video at higher cost.
-      OUTPUT_RESOLUTIONS = %w[720p 1080p 4k].freeze
       # Valid seed range for reproducible generation.
       SEED_RANGE = (0..2_147_483_647)
 

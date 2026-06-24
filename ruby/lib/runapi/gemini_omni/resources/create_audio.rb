@@ -10,6 +10,7 @@ module RunApi
 
         ENDPOINT = "/api/v1/gemini_omni/create_audio"
         RESPONSE_CLASS = Types::CreateAudioResponse
+        MODEL = "gemini-omni-audio"
         NAME_MAX_LENGTH = 210
         VOICE_DESCRIPTION_MAX_LENGTH = 20_000
         EXAMPLE_DIALOGUE_MAX_LENGTH = 120
@@ -27,18 +28,10 @@ module RunApi
         private
 
         def validate_params!(params)
-          validate_required!(params, :audio_id)
-          validate_required!(params, :name)
+          validate_contract!(CONTRACT["create-audio"], params.merge(model: MODEL))
           validate_length!(params, :name, NAME_MAX_LENGTH)
           validate_length!(params, :voice_description, VOICE_DESCRIPTION_MAX_LENGTH)
           validate_length!(params, :example_dialogue, EXAMPLE_DIALOGUE_MAX_LENGTH)
-        end
-
-        def validate_required!(params, key)
-          value = param(params, key)
-          return if value.is_a?(String) ? !value.empty? : !value.nil?
-
-          raise Core::ValidationError, "#{key} is required"
         end
 
         def validate_length!(params, key, max_length)

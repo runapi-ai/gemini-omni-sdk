@@ -12,6 +12,7 @@ module RunApi
         ENDPOINT = "/api/v1/gemini_omni/text_to_video"
         RESPONSE_CLASS = Types::TextToVideoResponse
         COMPLETED_RESPONSE_CLASS = Types::CompletedTextToVideoResponse
+        MODEL = "gemini-omni-text-to-video"
         PROMPT_MAX_LENGTH = 20_000
         REFERENCE_IMAGE_URLS_MAX = 7
         AUDIO_IDS_MAX = 3
@@ -43,12 +44,8 @@ module RunApi
         private
 
         def validate_params!(params)
-          validate_required!(params, :prompt)
-          validate_required!(params, :duration_seconds)
+          validate_contract!(CONTRACT["text-to-video"], params.merge(model: MODEL))
           validate_length!(params, :prompt, PROMPT_MAX_LENGTH)
-          validate_optional!(params, :duration_seconds, Types::DURATIONS)
-          validate_optional!(params, :aspect_ratio, Types::ASPECT_RATIOS)
-          validate_optional!(params, :output_resolution, Types::OUTPUT_RESOLUTIONS)
           validate_array!(params, :reference_image_urls, REFERENCE_IMAGE_URLS_MAX) if param(params, :reference_image_urls)
           validate_array!(params, :audio_ids, AUDIO_IDS_MAX) if param(params, :audio_ids)
           validate_array!(params, :video_list, VIDEO_LIST_MAX) if param(params, :video_list)
@@ -56,18 +53,6 @@ module RunApi
           validate_video_list!(param(params, :video_list)) if param(params, :video_list)
           validate_reference_units!(params)
           validate_seed!(params)
-        end
-
-        def validate_required!(params, key)
-          value = param(params, key)
-          present = if value.is_a?(Array)
-            value.any?
-          else
-            value.is_a?(String) ? !value.empty? : !value.nil?
-          end
-          return if present
-
-          raise Core::ValidationError, "#{key} is required"
         end
 
         def validate_length!(params, key, max_length)

@@ -13,6 +13,24 @@ const createAudioPath = "/api/v1/gemini_omni/create_audio"
 const createCharacterPath = "/api/v1/gemini_omni/create_character"
 const textToVideoPath = "/api/v1/gemini_omni/text_to_video"
 
+// Each endpoint targets a fixed model that is not sent on the wire, so the
+// model is injected only into a validation copy of the request body.
+const createAudioModel = "gemini-omni-audio"
+const createCharacterModel = "gemini-omni-character"
+const textToVideoModel = "gemini-omni-text-to-video"
+
+// validateAction validates a compacted request body against one contract
+// action, injecting the endpoint's fixed model (never posted) so contract
+// model-membership and per-field checks apply.
+func validateAction(action, model string, body map[string]any) error {
+	withModel := make(map[string]any, len(body)+1)
+	for key, value := range body {
+		withModel[key] = value
+	}
+	withModel["model"] = model
+	return core.ValidateParams(contractSchema[action], withModel)
+}
+
 // Client provides Gemini Omni multimodal generation: voice presets, character creation, and text-to-video.
 type Client struct {
 	base.Base
@@ -51,7 +69,11 @@ type CreateAudio struct{ http core.HTTPClient }
 // Run submits a Gemini Omni audio creation task and returns the result.
 func (r *CreateAudio) Run(ctx context.Context, params CreateAudioParams, opts ...option.RequestOption) (*CreateAudioResponse, error) {
 	requestOptions, _ := option.ResolveRequestOptions(opts...)
-	return core.PostJSON[CreateAudioResponse](ctx, r.http, createAudioPath, core.CompactParams(params), requestOptions)
+	body := core.CompactParams(params)
+	if err := validateAction("create-audio", createAudioModel, body); err != nil {
+		return nil, err
+	}
+	return core.PostJSON[CreateAudioResponse](ctx, r.http, createAudioPath, body, requestOptions)
 }
 
 // CreateCharacter builds a reusable character from a reference image and description.
@@ -61,7 +83,11 @@ type CreateCharacter struct{ http core.HTTPClient }
 // Run submits a Gemini Omni character creation task and returns the result.
 func (r *CreateCharacter) Run(ctx context.Context, params CreateCharacterParams, opts ...option.RequestOption) (*CreateCharacterResponse, error) {
 	requestOptions, _ := option.ResolveRequestOptions(opts...)
-	return core.PostJSON[CreateCharacterResponse](ctx, r.http, createCharacterPath, core.CompactParams(params), requestOptions)
+	body := core.CompactParams(params)
+	if err := validateAction("create-character", createCharacterModel, body); err != nil {
+		return nil, err
+	}
+	return core.PostJSON[CreateCharacterResponse](ctx, r.http, createCharacterPath, body, requestOptions)
 }
 
 // TextToVideo generates video from a prompt with optional characters, audio voices, reference images, and video clips.
@@ -71,7 +97,11 @@ type TextToVideo struct{ http core.HTTPClient }
 // Create submits a Gemini Omni text-to-video task and returns immediately with a task id.
 func (r *TextToVideo) Create(ctx context.Context, params TextToVideoParams, opts ...option.RequestOption) (*core.TaskCreateResponse, error) {
 	requestOptions, _ := option.ResolveRequestOptions(opts...)
-	return core.PostJSON[core.TaskCreateResponse](ctx, r.http, textToVideoPath, core.CompactParams(params), requestOptions)
+	body := core.CompactParams(params)
+	if err := validateAction("text-to-video", textToVideoModel, body); err != nil {
+		return nil, err
+	}
+	return core.PostJSON[core.TaskCreateResponse](ctx, r.http, textToVideoPath, body, requestOptions)
 }
 
 // Get fetches the current status of a Gemini Omni text-to-video task by id.

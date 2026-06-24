@@ -12,9 +12,6 @@ AUDIO_VOICES = [
     "vindemiatrix", "zephyr", "zubenelgenubi",
 ]
 
-DURATIONS = [4, 6, 8, 10]
-ASPECT_RATIOS = ["16:9", "9:16"]
-OUTPUT_RESOLUTIONS = ["720p", "1080p", "4k"]
 SEED_MIN = 0
 SEED_MAX = 2_147_483_647
 

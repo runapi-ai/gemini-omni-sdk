@@ -11,6 +11,7 @@ module RunApi
 
         ENDPOINT = "/api/v1/gemini_omni/create_character"
         RESPONSE_CLASS = Types::CreateCharacterResponse
+        MODEL = "gemini-omni-character"
         DESCRIPTIONS_MAX_LENGTH = 20_000
         CHARACTER_NAME_MAX_LENGTH = 210
 
@@ -27,23 +28,10 @@ module RunApi
         private
 
         def validate_params!(params)
-          validate_required!(params, :descriptions)
-          validate_required!(params, :reference_image_url)
+          validate_contract!(CONTRACT["create-character"], params.merge(model: MODEL))
           validate_array!(params, :audio_ids) if param(params, :audio_ids)
           validate_length!(params, :descriptions, DESCRIPTIONS_MAX_LENGTH)
           validate_length!(params, :character_name, CHARACTER_NAME_MAX_LENGTH)
-        end
-
-        def validate_required!(params, key)
-          value = param(params, key)
-          present = if value.is_a?(Array)
-            value.any?
-          else
-            value.is_a?(String) ? !value.empty? : !value.nil?
-          end
-          return if present
-
-          raise Core::ValidationError, "#{key} is required"
         end
 
         def validate_array!(params, key)

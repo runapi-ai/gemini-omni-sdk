@@ -1,7 +1,10 @@
 {
   "name": "@runapi.ai/gemini-omni",
+  "runapi": {
+    "slug": "gemini-omni"
+  },
   "version": "0.2.7",
-  "description": "RunAPI Gemini Omni SDK for audio, character, and video workflows in JavaScript, Ruby, and Go",
+  "description": "RunAPI Gemini Omni SDK for audio, character, and video workflows in JavaScript, Python, Ruby, Go, and Java",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -54,7 +57,13 @@
     "sdk",
     "typescript",
     "ruby",
-    "golang"
+    "golang",
+    "java",
+    "python",
+    "maven",
+    "gradle",
+    "multimodal",
+    "ai-video"
   ],
   "author": "RunAPI",
   "license": "Apache-2.0",

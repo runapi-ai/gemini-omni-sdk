@@ -138,7 +138,7 @@ def test_text_to_video_requires_prompt_and_duration():
 
 def test_text_to_video_duration_enum():
     client = GeminiOmniClient(api_key="k", http_client=FakeHttp())
-    with pytest.raises(ValidationError, match="Invalid duration_seconds"):
+    with pytest.raises(ValidationError, match="duration_seconds must be one of: 4, 6, 8, 10"):
         client.text_to_video.create(prompt="a fox", duration_seconds=7)
 
 

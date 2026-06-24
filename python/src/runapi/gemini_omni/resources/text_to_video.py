@@ -6,10 +6,8 @@ from typing import Any, Dict, List, Optional
 
 from runapi.core import Resource, ValidationError
 
+from ..contract_gen import CONTRACT
 from ..types import (
-    ASPECT_RATIOS,
-    DURATIONS,
-    OUTPUT_RESOLUTIONS,
     SEED_MAX,
     SEED_MIN,
     CompletedTextToVideoResponse,
@@ -24,6 +22,8 @@ class TextToVideo(Resource):
 
     RESPONSE_CLASS = TextToVideoResponse
     COMPLETED_RESPONSE_CLASS = CompletedTextToVideoResponse
+
+    MODEL = "gemini-omni-text-to-video"
 
     PROMPT_MAX_LENGTH = 20_000
     REFERENCE_IMAGE_URLS_MAX = 7
@@ -71,12 +71,8 @@ class TextToVideo(Resource):
         return self._request("get", f"{self.ENDPOINT}/{id}")
 
     def _validate_params(self, params: Dict[str, Any]) -> None:
-        self._validate_required(params, "prompt")
-        self._validate_required(params, "duration_seconds")
+        self._validate_contract(CONTRACT["text-to-video"], {**params, "model": self.MODEL})
         self._validate_length(params, "prompt", self.PROMPT_MAX_LENGTH)
-        self._validate_optional(params, "duration_seconds", DURATIONS)
-        self._validate_optional(params, "aspect_ratio", ASPECT_RATIOS)
-        self._validate_optional(params, "output_resolution", OUTPUT_RESOLUTIONS)
         if params.get("reference_image_urls") is not None:
             self._validate_array(params, "reference_image_urls", self.REFERENCE_IMAGE_URLS_MAX)
         if params.get("audio_ids") is not None:
@@ -89,18 +85,6 @@ class TextToVideo(Resource):
             self._validate_video_list(params.get("video_list"))
         self._validate_reference_units(params)
         self._validate_seed(params)
-
-    @staticmethod
-    def _validate_required(params: Dict[str, Any], key: str) -> None:
-        value = params.get(key)
-        if isinstance(value, list):
-            present = len(value) > 0
-        elif isinstance(value, str):
-            present = value != ""
-        else:
-            present = value is not None
-        if not present:
-            raise ValidationError(f"{key} is required")
 
     @staticmethod
     def _validate_length(params: Dict[str, Any], key: str, max_length: int) -> None:
