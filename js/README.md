@@ -1,6 +1,6 @@
-# Gemini Omni API JavaScript SDK for RunAPI
+# Gemini Omni JavaScript SDK for RunAPI
 
-The gemini omni api JavaScript SDK is the language-specific package for Gemini Omni on RunAPI. Use this package for voice resources, character resources, and multimodal video generation workflows that need JSON request bodies and consistent RunAPI errors in JavaScript.
+The Gemini Omni JavaScript SDK is the language-specific package for Gemini Omni on RunAPI. Use this package for voice resources, character resources, and multimodal video generation workflows when your application needs request bodies, task status lookup, and consistent RunAPI errors in JavaScript.
 
 ## Install
 

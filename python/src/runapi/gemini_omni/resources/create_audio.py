@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
-from runapi.core import Resource, ValidationError
+from runapi.core import Resource, ValidationError, RequestOptions
 
 from ..contract_gen import CONTRACT
 from ..types import CreateAudioResponse
@@ -23,7 +23,7 @@ class CreateAudio(Resource):
     VOICE_DESCRIPTION_MAX_LENGTH = 20_000
     EXAMPLE_DIALOGUE_MAX_LENGTH = 120
 
-    def run(self, **params: Any) -> Any:
+    def run(self, options: Optional[RequestOptions] = None, **params: Any) -> Any:
         """Create a reusable voice (synchronous).
 
         Args:
@@ -34,7 +34,7 @@ class CreateAudio(Resource):
         """
         compacted = self._compact_params(params)
         self._validate_params(compacted)
-        return self._request("post", self.ENDPOINT, body=compacted)
+        return self._request("post", self.ENDPOINT, body=compacted, options=options)
 
     def _validate_params(self, params: Dict[str, Any]) -> None:
         self._validate_contract(CONTRACT["create-audio"], {**params, "model": self.MODEL})

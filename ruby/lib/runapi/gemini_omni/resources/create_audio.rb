@@ -19,10 +19,10 @@ module RunApi
           @http = http
         end
 
-        def run(**params)
+        def run(options: nil, **params)
           params = compact_params(params)
           validate_params!(params)
-          request(:post, ENDPOINT, body: params)
+          request(:post, ENDPOINT, body: params, options: options)
         end
 
         private

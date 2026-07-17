@@ -7,14 +7,14 @@
 </h3>
 
 <p align="center">
-  Gemini Omni API SDKs for JavaScript, Python, Ruby, Go, and Java on RunAPI, covering audio, character, and video workflows.
+  Gemini Omni API SDKs for JavaScript, Python, Ruby, Go, Java, and PHP on RunAPI, covering audio, character, and video workflows.
 </p>
 
 <div align="center">
 
 [![npm](https://img.shields.io/npm/v/@runapi.ai/gemini-omni)](https://www.npmjs.com/package/@runapi.ai/gemini-omni)
 [![PyPI](https://img.shields.io/pypi/v/runapi-gemini-omni)](https://pypi.org/project/runapi-gemini-omni/)
-[![RubyGems](https://img.shields.io/gem/v/runapi-gemini_omni)](https://rubygems.org/gems/runapi-gemini_omni)
+[![RubyGems](https://img.shields.io/gem/v/runapi-gemini-omni)](https://rubygems.org/gems/runapi-gemini-omni)
 [![Go Reference](https://pkg.go.dev/badge/github.com/runapi-ai/gemini-omni-sdk/go.svg)](https://pkg.go.dev/github.com/runapi-ai/gemini-omni-sdk/go)
 [![Maven Central](https://img.shields.io/maven-central/v/ai.runapi/runapi-gemini-omni)](https://central.sonatype.com/artifact/ai.runapi/runapi-gemini-omni)
 [![License](https://img.shields.io/github/license/runapi-ai/gemini-omni-sdk)](https://github.com/runapi-ai/gemini-omni-sdk/blob/main/LICENSE)
@@ -22,16 +22,16 @@
 </div>
 <br/>
 
-The Gemini Omni API SDK packages JavaScript, Python, Ruby, Go, and Java clients for Gemini Omni on RunAPI. Use it for audio, character, and video workflows when your app needs typed request builders, predictable task polling, file upload helpers, account helpers, and consistent RunAPI errors.
+The Gemini Omni API SDK packages JavaScript, Python, Ruby, Go, Java, and PHP clients for Gemini Omni on RunAPI. Use it for audio, character, and video workflows when your app needs typed request builders, predictable task polling, file upload helpers, account helpers, and consistent RunAPI errors.
 
-Gemini Omni is listed in the RunAPI model catalog at https://runapi.ai/models/gemini-omni. Variant pages below carry pricing, rate-limit, and commercial-usage details. The public `gemini-omni-sdk` repository groups the language packages, examples, CI, and release tags for this model.
+Gemini Omni is listed in the RunAPI model catalog at https://runapi.ai/models/gemini-omni. Variant pages below carry pricing, rate-limit, and commercial-usage details. The public `gemini-omni-sdk` repository groups the non-PHP language packages, examples, CI, and release tags for this model. The PHP package is released from a split Composer repository.
 
 ## Install
 
 ```bash
 npm install @runapi.ai/gemini-omni
 pip install runapi-gemini-omni
-gem install runapi-gemini_omni
+gem install runapi-gemini-omni
 go get github.com/runapi-ai/gemini-omni-sdk/go@latest
 ```
 
@@ -61,6 +61,8 @@ dependencies {
   implementation("ai.runapi:runapi-gemini-omni")
 }
 ```
+
+The PHP package is published from the split Composer repository as `runapi-ai/gemini-omni`; see https://github.com/runapi-ai/gemini-omni-php for PHP install and examples.
 
 ## What you can build
 
@@ -103,7 +105,7 @@ Most media endpoints are asynchronous. `create()` submits a task and returns its
 
 - `js/` publishes `@runapi.ai/gemini-omni`.
 - `python/` publishes `runapi-gemini-omni`.
-- `ruby/` publishes `runapi-gemini_omni` when RubyGems publishing resumes.
+- `ruby/` publishes `runapi-gemini-omni`.
 - `go/` publishes `github.com/runapi-ai/gemini-omni-sdk/go` and depends on `github.com/runapi-ai/core-sdk/go`.
 - `java/` publishes `ai.runapi:runapi-gemini-omni` and depends on `ai.runapi:runapi-core`.
 
@@ -113,6 +115,7 @@ Most media endpoints are asynchronous. `create()` submits a task and returns its
 - SDK docs: https://runapi.ai/docs#sdk-gemini-omni
 - Product docs: https://runapi.ai/docs#gemini-omni
 - SDK repository: https://github.com/runapi-ai/gemini-omni-sdk
+- PHP package repository: https://github.com/runapi-ai/gemini-omni-php
 - Skill repository: https://github.com/runapi-ai/gemini-omni
 - Provider comparison: https://runapi.ai/providers/google
 - Full catalog: https://runapi.ai/models
@@ -134,7 +137,7 @@ RunAPI-generated file URLs are temporary. Download and store generated images, v
 
 ### Which package should I install for Gemini Omni work?
 
-Install the model package for your language: `@runapi.ai/gemini-omni` on npm, `runapi-gemini-omni` on PyPI, `runapi-gemini_omni` on RubyGems, `github.com/runapi-ai/gemini-omni-sdk/go`, or `ai.runapi:runapi-gemini-omni`. Install core SDK packages only when you are building shared SDK infrastructure.
+Install the model package for your language: `@runapi.ai/gemini-omni` on npm, `runapi-gemini-omni` on PyPI, `runapi-gemini-omni` on RubyGems, `github.com/runapi-ai/gemini-omni-sdk/go`, `ai.runapi:runapi-gemini-omni` on Maven Central, or `runapi-ai/gemini-omni` on Packagist. Install core SDK packages only when you are building shared SDK infrastructure.
 
 ### Where should public links point?
 

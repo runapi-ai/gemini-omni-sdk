@@ -1,6 +1,6 @@
-# Gemini Omni API Go SDK for RunAPI
+# Gemini Omni Go SDK for RunAPI
 
-The gemini omni api Go SDK is the language-specific package for Gemini Omni on RunAPI. Use this package for voice resources, character resources, and multimodal video workflows that need JSON request bodies, task status lookup, and consistent RunAPI errors in Go.
+The Gemini Omni Go SDK is the language-specific package for Gemini Omni on RunAPI. Use this package for voice resources, character resources, and multimodal video generation workflows when your application needs request bodies, task status lookup, and consistent RunAPI errors in Go.
 
 ## Install
 

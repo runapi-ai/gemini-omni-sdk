@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
-from runapi.core import Resource, ValidationError
+from runapi.core import Resource, ValidationError, RequestOptions
 
 from ..contract_gen import CONTRACT
 from ..types import CreateCharacterResponse
@@ -22,7 +22,7 @@ class CreateCharacter(Resource):
     DESCRIPTIONS_MAX_LENGTH = 20_000
     CHARACTER_NAME_MAX_LENGTH = 210
 
-    def run(self, **params: Any) -> Any:
+    def run(self, options: Optional[RequestOptions] = None, **params: Any) -> Any:
         """Create a reusable character (synchronous).
 
         Args:
@@ -33,7 +33,7 @@ class CreateCharacter(Resource):
         """
         compacted = self._compact_params(params)
         self._validate_params(compacted)
-        return self._request("post", self.ENDPOINT, body=compacted)
+        return self._request("post", self.ENDPOINT, body=compacted, options=options)
 
     def _validate_params(self, params: Dict[str, Any]) -> None:
         self._validate_contract(CONTRACT["create-character"], {**params, "model": self.MODEL})

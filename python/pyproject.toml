@@ -5,26 +5,25 @@ build-backend = "hatchling.build"
 [project]
 name = "runapi-gemini-omni"
 version = "0.1.0"
-description = "Gemini Omni voice, character, and text-to-video client for RunAPI"
+description = "RunAPI Gemini Omni SDK for audio, character, and video workflows in JavaScript, Python, Ruby, Go, Java, and PHP"
 readme = "README.md"
 requires-python = ">=3.9"
 license = "Apache-2.0"
 authors = [{ name = "RunAPI", email = "contact@runapi.ai" }]
-keywords = ["runapi", "gemini", "gemini-omni", "text-to-video", "ai", "sdk"]
-dependencies = ["runapi-core"]
+keywords = ["runapi", "runapi-ai", "gemini-omni", "gemini", "google", "audio", "character", "video", "api", "sdk", "typescript", "python", "ruby", "golang", "java", "maven", "gradle", "multimodal", "ai-video"]
+dependencies = ["runapi-core>=0.1.4"]
 
 [project.urls]
 Homepage = "https://runapi.ai/models/gemini-omni"
 Documentation = "https://runapi.ai/docs#sdk-gemini-omni"
+Source = "https://github.com/runapi-ai/gemini-omni-sdk"
+Issues = "https://github.com/runapi-ai/gemini-omni-sdk/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/runapi"]
 
 [tool.uv]
 package = true
-
-[tool.uv.sources]
-runapi-core = { workspace = true }
 
 [dependency-groups]
 dev = ["pytest>=8"]

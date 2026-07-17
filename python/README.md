@@ -1,6 +1,6 @@
-# Gemini Omni API Python SDK for RunAPI
+# Gemini Omni Python SDK for RunAPI
 
-The gemini omni api Python SDK is the language-specific package for Gemini Omni on RunAPI. Use this package for voice resources, character resources, and multimodal video workflows that need JSON request bodies, task status lookup, and consistent RunAPI errors in Python.
+The Gemini Omni Python SDK is the language-specific package for Gemini Omni on RunAPI. Use this package for voice resources, character resources, and multimodal video generation workflows when your application needs request bodies, task status lookup, and consistent RunAPI errors in Python.
 
 ## Install
 
@@ -21,7 +21,7 @@ voice = client.create_audio.run(audio_id="kore", name="Narrator")
 # Reusable character (returns immediately)
 character = client.create_character.run(
     descriptions="A friendly robot guide",
-    reference_image_url="https://example.com/robot.png",
+    reference_image_url="https://cdn.runapi.ai/public/samples/reference-1.jpg",
 )
 
 # Text-to-video (create + poll until complete)

@@ -1,17 +1,17 @@
-# Gemini Omni API Ruby SDK for RunAPI
+# Gemini Omni Ruby SDK for RunAPI
 
-The gemini omni api Ruby SDK is the language-specific package for Gemini Omni on RunAPI. Use this package for voice resources, character resources, and multimodal video workflows that need JSON request bodies, task status lookup, and consistent RunAPI errors in Ruby.
+The Gemini Omni Ruby SDK is the language-specific package for Gemini Omni on RunAPI. Use this package for voice resources, character resources, and multimodal video generation workflows when your application needs request bodies, task status lookup, and consistent RunAPI errors in Ruby.
 
 ## Install
 
 ```bash
-gem install runapi-gemini_omni
+gem install runapi-gemini-omni
 ```
 
 ## Quick start
 
 ```ruby
-require "runapi-gemini_omni"
+require "runapi/gemini_omni"
 
 client = RunApi::GeminiOmni::Client.new
 voice = client.create_audio.run(

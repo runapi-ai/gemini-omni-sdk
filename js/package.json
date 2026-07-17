@@ -3,8 +3,8 @@
   "runapi": {
     "slug": "gemini-omni"
   },
-  "version": "0.2.7",
-  "description": "RunAPI Gemini Omni SDK for audio, character, and video workflows in JavaScript, Python, Ruby, Go, and Java",
+  "version": "0.2.8",
+  "description": "RunAPI Gemini Omni SDK for audio, character, and video workflows in JavaScript, Python, Ruby, Go, Java, and PHP",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -31,7 +31,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@runapi.ai/core": "^0.2.6"
+    "@runapi.ai/core": "^0.2.11"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
@@ -52,14 +52,13 @@
     "audio",
     "character",
     "video",
-    "image",
     "api",
     "sdk",
     "typescript",
+    "python",
     "ruby",
     "golang",
     "java",
-    "python",
     "maven",
     "gradle",
     "multimodal",
@@ -71,5 +70,8 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/runapi-ai/gemini-omni-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/runapi-ai/gemini-omni-sdk/issues"
   }
 }
