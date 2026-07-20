@@ -26,10 +26,6 @@ class TextToVideo(Resource):
     DEFAULT_MODEL = "gemini-omni-text-to-video"
 
     PROMPT_MAX_LENGTH = 20_000
-    REFERENCE_IMAGE_URLS_MAX = 7
-    AUDIO_IDS_MAX = 3
-    VIDEO_LIST_MAX = 1
-    CHARACTER_IDS_MAX = 3
     REFERENCE_UNITS_MAX = 7
     VIDEO_REFERENCE_UNITS = 2
     MAX_TRIM_SECONDS = 10
@@ -74,14 +70,6 @@ class TextToVideo(Resource):
         selected_model = params.get("model") or self.DEFAULT_MODEL
         self._validate_contract(CONTRACT["text-to-video"], {**params, "model": selected_model})
         self._validate_length(params, "prompt", self.PROMPT_MAX_LENGTH)
-        if params.get("reference_image_urls") is not None:
-            self._validate_array(params, "reference_image_urls", self.REFERENCE_IMAGE_URLS_MAX)
-        if params.get("audio_ids") is not None:
-            self._validate_array(params, "audio_ids", self.AUDIO_IDS_MAX)
-        if params.get("video_list") is not None:
-            self._validate_array(params, "video_list", self.VIDEO_LIST_MAX)
-        if params.get("character_ids") is not None:
-            self._validate_array(params, "character_ids", self.CHARACTER_IDS_MAX)
         if params.get("video_list") is not None:
             self._validate_video_list(params.get("video_list"))
         self._validate_reference_units(params)
@@ -93,15 +81,6 @@ class TextToVideo(Resource):
         if value is None or len(str(value)) <= max_length:
             return
         raise ValidationError(f"{key} must be at most {max_length} characters")
-
-    @staticmethod
-    def _validate_array(params: Dict[str, Any], key: str, max_length: int) -> None:
-        value = params.get(key)
-        if not isinstance(value, list):
-            raise ValidationError(f"{key} must be an array")
-        if len(value) <= max_length:
-            return
-        raise ValidationError(f"{key} accepts at most {max_length} items")
 
     def _validate_video_list(self, items: List[Dict[str, Any]]) -> None:
         for index, item in enumerate(items):

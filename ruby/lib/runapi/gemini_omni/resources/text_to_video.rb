@@ -14,10 +14,6 @@ module RunApi
         COMPLETED_RESPONSE_CLASS = Types::CompletedTextToVideoResponse
         DEFAULT_MODEL = "gemini-omni-text-to-video"
         PROMPT_MAX_LENGTH = 20_000
-        REFERENCE_IMAGE_URLS_MAX = 7
-        AUDIO_IDS_MAX = 3
-        VIDEO_LIST_MAX = 1
-        CHARACTER_IDS_MAX = 3
         REFERENCE_UNITS_MAX = 7
         VIDEO_REFERENCE_UNITS = 2
         MAX_TRIM_SECONDS = 10
@@ -48,10 +44,6 @@ module RunApi
           selected_model = DEFAULT_MODEL if selected_model.nil? || selected_model.to_s.empty?
           validate_contract!(CONTRACT["text-to-video"], params.merge(model: selected_model))
           validate_length!(params, :prompt, PROMPT_MAX_LENGTH)
-          validate_array!(params, :reference_image_urls, REFERENCE_IMAGE_URLS_MAX) if param(params, :reference_image_urls)
-          validate_array!(params, :audio_ids, AUDIO_IDS_MAX) if param(params, :audio_ids)
-          validate_array!(params, :video_list, VIDEO_LIST_MAX) if param(params, :video_list)
-          validate_array!(params, :character_ids, CHARACTER_IDS_MAX) if param(params, :character_ids)
           validate_video_list!(param(params, :video_list)) if param(params, :video_list)
           validate_reference_units!(params)
           validate_seed!(params)
@@ -62,14 +54,6 @@ module RunApi
           return if value.nil? || value.to_s.length <= max_length
 
           raise Core::ValidationError, "#{key} must be at most #{max_length} characters"
-        end
-
-        def validate_array!(params, key, max_length)
-          value = param(params, key)
-          raise Core::ValidationError, "#{key} must be an array" unless value.is_a?(Array)
-          return if value.length <= max_length
-
-          raise Core::ValidationError, "#{key} accepts at most #{max_length} items"
         end
 
         def validate_video_list!(items)

@@ -64,6 +64,12 @@ export const contract = {
             "9:16"
           ]
         },
+        "audio_ids": {
+          "max_items": 3
+        },
+        "character_ids": {
+          "max_items": 3
+        },
         "duration_seconds": {
           "enum": [
             4,
@@ -84,8 +90,14 @@ export const contract = {
         "prompt": {
           "required": true
         },
+        "reference_image_urls": {
+          "max_items": 7
+        },
         "seed": {
           "type": "integer"
+        },
+        "video_list": {
+          "max_items": 1
         }
       }
     },

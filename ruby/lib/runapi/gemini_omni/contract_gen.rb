@@ -53,6 +53,12 @@ module RunApi
             "aspect_ratio" => {
               "enum" => ["16:9", "9:16"]
             },
+            "audio_ids" => {
+              "max_items" => 3
+            },
+            "character_ids" => {
+              "max_items" => 3
+            },
             "duration_seconds" => {
               "enum" => [4, 6, 8, 10],
               "required" => true,
@@ -64,8 +70,14 @@ module RunApi
             "prompt" => {
               "required" => true
             },
+            "reference_image_urls" => {
+              "max_items" => 7
+            },
             "seed" => {
               "type" => "integer"
+            },
+            "video_list" => {
+              "max_items" => 1
             }
           }
         },

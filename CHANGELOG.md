@@ -1,5 +1,11 @@
 # Changelog
 
+## [js/v0.3.1](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/js%2Fv0.3.1), [ruby/v0.3.1](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/ruby%2Fv0.3.1), [go/v0.3.1](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/go%2Fv0.3.1), [python/v0.2.1](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/python%2Fv0.2.1) - 2026-07-20
+
+### Changed
+- Validate generated limits for reference images, audio IDs, video items, and character IDs.
+
+
 ## [js/v0.3.0](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/js%2Fv0.3.0), [ruby/v0.3.0](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/ruby%2Fv0.3.0), [go/v0.3.0](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/go%2Fv0.3.0), [python/v0.2.0](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/python%2Fv0.2.0), [java/v0.2.0](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/java%2Fv0.2.0) - 2026-07-20
 
 ### Added

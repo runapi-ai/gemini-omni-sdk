@@ -49,6 +49,12 @@ CONTRACT = {
                 "aspect_ratio": {
                     "enum": ["16:9", "9:16"]
                 },
+                "audio_ids": {
+                    "max_items": 3
+                },
+                "character_ids": {
+                    "max_items": 3
+                },
                 "duration_seconds": {
                     "enum": [4, 6, 8, 10],
                     "required": True,
@@ -60,8 +66,14 @@ CONTRACT = {
                 "prompt": {
                     "required": True
                 },
+                "reference_image_urls": {
+                    "max_items": 7
+                },
                 "seed": {
                     "type": "integer"
+                },
+                "video_list": {
+                    "max_items": 1
                 }
             }
         },
