@@ -21,7 +21,7 @@ func (s *stubHTTPClient) Request(_ context.Context, method, path string, opts *c
 		s.body = opts.Body
 	}
 	if path == "/api/v1/gemini_omni/create_character" {
-		return json.RawMessage(`{"id":"character-kie-123","character":{"id":"character-kie-123","name":"Jenny","images":[{"url":"https://file.runapi.ai/gemini/jenny.png"}]}}`), nil
+		return json.RawMessage(`{"id":"character-runapi-123","character":{"id":"character-runapi-123","name":"Jenny","images":[{"url":"https://file.runapi.ai/gemini/jenny.png"}]}}`), nil
 	}
 	if path == "/api/v1/gemini_omni/text_to_video" {
 		return json.RawMessage(`{"id":"task-local-123","status":"processing"}`), nil
@@ -29,7 +29,7 @@ func (s *stubHTTPClient) Request(_ context.Context, method, path string, opts *c
 	if path == "/api/v1/gemini_omni/text_to_video/task-local-123" {
 		return json.RawMessage(`{"id":"task-local-123","status":"completed","videos":[{"url":"https://tempfile.runapi.ai/gemini/output.mp4"}]}`), nil
 	}
-	return json.RawMessage(`{"id":"audio-kie-123","audio":{"id":"audio-kie-123","name":"Acher Narrator"}}`), nil
+	return json.RawMessage(`{"id":"audio-runapi-123","audio":{"id":"audio-runapi-123","name":"Acher Narrator"}}`), nil
 }
 
 func TestCreateAudioRunSendsCorrectRequest(t *testing.T) {
@@ -57,7 +57,7 @@ func TestCreateAudioRunSendsCorrectRequest(t *testing.T) {
 	if _, ok := body["audioId"]; ok {
 		t.Fatalf("unexpected camelCase key in body: %#v", body)
 	}
-	if resp.ID != "audio-kie-123" {
+	if resp.ID != "audio-runapi-123" {
 		t.Fatalf("unexpected response id: %s", resp.ID)
 	}
 }
@@ -68,7 +68,7 @@ func TestCreateCharacterRunSendsCorrectRequest(t *testing.T) {
 	resp, err := client.CreateCharacter.Run(context.Background(), CreateCharacterParams{
 		Descriptions:      "A silver-haired cyberpunk guide",
 		ReferenceImageURL: "https://file.runapi.ai/demo/character.png",
-		AudioIDs:          []string{"audio-kie-123"},
+		AudioIDs:          []string{"audio-runapi-123"},
 		CharacterName:     "Jenny",
 	})
 	if err != nil {
@@ -96,7 +96,7 @@ func TestCreateCharacterRunSendsCorrectRequest(t *testing.T) {
 	if _, ok := body["imageUrls"]; ok {
 		t.Fatalf("unexpected camelCase key in body: %#v", body)
 	}
-	if resp.ID != "character-kie-123" {
+	if resp.ID != "character-runapi-123" {
 		t.Fatalf("unexpected response id: %s", resp.ID)
 	}
 	if resp.Character == nil || len(resp.Character.Images) != 1 || resp.Character.Images[0].URL != "https://file.runapi.ai/gemini/jenny.png" {
@@ -114,8 +114,8 @@ func TestTextToVideoCreateAndGet(t *testing.T) {
 		AspectRatio:        "16:9",
 		OutputResolution:   "1080p",
 		ReferenceImageURLs: []string{"https://file.runapi.ai/demo/scene.png"},
-		AudioIDs:           []string{"audio-kie-123"},
-		CharacterIDs:       []string{"character-kie-123"},
+		AudioIDs:           []string{"audio-runapi-123"},
+		CharacterIDs:       []string{"character-runapi-123"},
 		Seed:               &seed,
 	})
 	if err != nil {
