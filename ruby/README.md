@@ -21,14 +21,14 @@ voice = client.create_audio.run(
 
 character = client.create_character.run(
   descriptions: "A silver-haired cyberpunk guide",
-  image_urls: ["https://file.runapi.ai/demo/character.png"]
+  reference_image_url: "https://cdn.runapi.ai/public/samples/reference-1.jpg"
 )
 
 video = client.text_to_video.run(
-  prompt: "Create a neon city tracking shot with the character walking forward.",
-  duration: "8",
-  resolution: "1080p",
-  character_ids: [character.id]
+  model: "gemini-omni-flash-preview",
+  prompt: "A paper airplane glides through a sunlit studio.",
+  aspect_ratio: "16:9",
+  output_resolution: "720p"
 )
 ```
 
@@ -39,7 +39,7 @@ RunAPI-generated file URLs are temporary. Download and store generated images, v
 - Model page: https://runapi.ai/models/gemini-omni
 - SDK docs: https://runapi.ai/docs#sdk-gemini-omni
 - Product docs: https://runapi.ai/docs#gemini-omni
-- Pricing and rate limits: https://runapi.ai/models/gemini-omni
+- Flash Preview pricing and rate limits: https://runapi.ai/models/gemini-omni/flash-preview
 - Provider comparison: https://runapi.ai/providers/google
 - Full catalog: https://runapi.ai/models
 

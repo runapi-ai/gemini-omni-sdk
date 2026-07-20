@@ -128,6 +128,29 @@ def test_text_to_video_create_and_get_shapes():
     ]
 
 
+def test_text_to_video_flash_preview_sends_model_without_duration():
+    fake = FakeHttp({"id": "t-flash", "status": "pending"})
+    client = GeminiOmniClient(api_key="k", http_client=fake)
+    client.text_to_video.create(
+        model="gemini-omni-flash-preview",
+        prompt="A paper airplane flying through a sunlit studio",
+        aspect_ratio="9:16",
+        output_resolution="720p",
+    )
+    assert fake.calls == [
+        (
+            "post",
+            "/api/v1/gemini_omni/text_to_video",
+            {
+                "model": "gemini-omni-flash-preview",
+                "prompt": "A paper airplane flying through a sunlit studio",
+                "aspect_ratio": "9:16",
+                "output_resolution": "720p",
+            },
+        )
+    ]
+
+
 def test_text_to_video_requires_prompt_and_duration():
     client = GeminiOmniClient(api_key="k", http_client=FakeHttp())
     with pytest.raises(ValidationError, match="prompt is required"):

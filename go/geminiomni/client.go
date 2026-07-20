@@ -13,8 +13,8 @@ const createAudioPath = "/api/v1/gemini_omni/create_audio"
 const createCharacterPath = "/api/v1/gemini_omni/create_character"
 const textToVideoPath = "/api/v1/gemini_omni/text_to_video"
 
-// Each endpoint targets a fixed model that is not sent on the wire, so the
-// model is injected only into a validation copy of the request body.
+// Fixed-model endpoints inject their model only into a validation copy. The
+// text-to-video endpoint preserves an explicitly selected model on the wire.
 const createAudioModel = "gemini-omni-audio"
 const createCharacterModel = "gemini-omni-character"
 const textToVideoModel = "gemini-omni-text-to-video"
@@ -27,7 +27,9 @@ func validateAction(action, model string, body map[string]any) error {
 	for key, value := range body {
 		withModel[key] = value
 	}
-	withModel["model"] = model
+	if selected, ok := withModel["model"]; !ok || selected == nil || selected == "" {
+		withModel["model"] = model
+	}
 	return core.ValidateParams(contractSchema[action], withModel)
 }
 

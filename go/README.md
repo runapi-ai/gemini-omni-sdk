@@ -13,27 +13,22 @@ go get github.com/runapi-ai/gemini-omni-sdk/go@latest
 ```go
 import (
   "context"
+  "fmt"
 
   "github.com/runapi-ai/gemini-omni-sdk/go/geminiomni"
 )
 
 client, err := geminiomni.NewClient()
-voice, err := client.CreateAudio.Run(context.Background(), geminiomni.CreateAudioParams{
-  AudioID: "achernar",
-  Name:    "Acher Narrator",
-})
-
-character, err := client.CreateCharacter.Run(context.Background(), geminiomni.CreateCharacterParams{
-  Descriptions: "A silver-haired cyberpunk guide",
-  ImageURLs:    []string{"https://file.runapi.ai/demo/character.png"},
-})
-
 video, err := client.TextToVideo.Run(context.Background(), geminiomni.TextToVideoParams{
-  Prompt:       "Create a neon city tracking shot with the character walking forward.",
-  Duration:     "8",
-  Resolution:   "1080p",
-  CharacterIDs: []string{character.ID},
+  Model:            geminiomni.ModelGeminiOmniFlashPreview,
+  Prompt:           "A paper airplane glides through a sunlit studio.",
+  AspectRatio:      "16:9",
+  OutputResolution: "720p",
 })
+if err != nil {
+  panic(err)
+}
+fmt.Println(video.Videos[0].URL)
 ```
 
 RunAPI-generated file URLs are temporary. Download and store generated images, videos, audio, or other files in your own durable storage within 7 days; do not treat returned URLs as long-term assets.
@@ -43,7 +38,7 @@ RunAPI-generated file URLs are temporary. Download and store generated images, v
 - Model page: https://runapi.ai/models/gemini-omni
 - SDK docs: https://runapi.ai/docs#sdk-gemini-omni
 - Product docs: https://runapi.ai/docs#gemini-omni
-- Pricing and rate limits: https://runapi.ai/models/gemini-omni
+- Flash Preview pricing and rate limits: https://runapi.ai/models/gemini-omni/flash-preview
 - Provider comparison: https://runapi.ai/providers/google
 - Full catalog: https://runapi.ai/models
 

@@ -26,8 +26,25 @@ CONTRACT = {
         }
     },
     "text-to-video": {
-        "models": ["gemini-omni-text-to-video"],
+        "models": ["gemini-omni-flash-preview", "gemini-omni-text-to-video"],
         "fields_by_model": {
+            "gemini-omni-flash-preview": {
+                "aspect_ratio": {
+                    "enum": ["16:9", "9:16"]
+                },
+                "duration_seconds": {
+                    "type": "integer"
+                },
+                "output_resolution": {
+                    "enum": ["720p"]
+                },
+                "prompt": {
+                    "required": True
+                },
+                "seed": {
+                    "type": "integer"
+                }
+            },
             "gemini-omni-text-to-video": {
                 "aspect_ratio": {
                     "enum": ["16:9", "9:16"]
@@ -47,6 +64,12 @@ CONTRACT = {
                     "type": "integer"
                 }
             }
-        }
+        },
+        "rules": [{
+            "when": {
+                "model": "gemini-omni-flash-preview"
+            },
+            "forbidden": ["reference_image_urls", "audio_ids", "video_list", "character_ids", "duration_seconds", "seed"]
+        }]
     }
 }

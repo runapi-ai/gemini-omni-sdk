@@ -90,6 +90,16 @@ type CreateCharacterResponse struct {
 	Error     string     `json:"error,omitempty"`
 }
 
+// TextToVideoModel selects a Gemini Omni text-to-video model.
+type TextToVideoModel string
+
+const (
+	// ModelGeminiOmniFlashPreview is the prompt-only 720p Flash Preview model.
+	ModelGeminiOmniFlashPreview TextToVideoModel = "gemini-omni-flash-preview"
+	// ModelGeminiOmniTextToVideo is the multimodal Gemini Omni model.
+	ModelGeminiOmniTextToVideo TextToVideoModel = "gemini-omni-text-to-video"
+)
+
 // VideoClip defines a trimmed segment of a source video for use in text-to-video generation.
 // The trimmed segment (Start to Ends) must be within 10 seconds.
 type VideoClip struct {
@@ -102,16 +112,17 @@ type VideoClip struct {
 // reference images, and source video clips. Pre-create characters via [CreateCharacter] and
 // audio voices via [CreateAudio], then reference their IDs here.
 type TextToVideoParams struct {
-	Prompt             string      `json:"prompt" help:"required; video prompt, max 20000 chars"`
-	DurationSeconds    int         `json:"duration_seconds" help:"required; duration in seconds"`
-	CallbackURL        string      `json:"callback_url,omitempty" help:"optional; HTTPS callback URL"`
-	ReferenceImageURLs []string    `json:"reference_image_urls,omitempty" help:"optional; reference image URLs, max 7"`
-	AudioIDs           []string    `json:"audio_ids,omitempty" help:"optional; audio IDs from create-audio, max 3"`
-	VideoList          []VideoClip `json:"video_list,omitempty" help:"optional; source video clips, max 1; each clip uses 2 reference units"`
-	CharacterIDs       []string    `json:"character_ids,omitempty" help:"optional; character IDs from create-character, max 3"`
-	AspectRatio        string      `json:"aspect_ratio,omitempty" help:"optional; output aspect ratio"`
-	OutputResolution   string      `json:"output_resolution,omitempty" help:"optional; output resolution; default 720p"`
-	Seed               *int        `json:"seed,omitempty" help:"optional; integer in [0, 2147483647]"`
+	Model              TextToVideoModel `json:"model,omitempty" help:"optional; model slug; defaults to gemini-omni-text-to-video"`
+	Prompt             string           `json:"prompt" help:"required; video prompt, max 20000 chars"`
+	DurationSeconds    int              `json:"duration_seconds,omitempty" help:"required for gemini-omni-text-to-video; not accepted by gemini-omni-flash-preview"`
+	CallbackURL        string           `json:"callback_url,omitempty" help:"optional; HTTPS callback URL"`
+	ReferenceImageURLs []string         `json:"reference_image_urls,omitempty" help:"optional; reference image URLs, max 7"`
+	AudioIDs           []string         `json:"audio_ids,omitempty" help:"optional; audio IDs from create-audio, max 3"`
+	VideoList          []VideoClip      `json:"video_list,omitempty" help:"optional; source video clips, max 1; each clip uses 2 reference units"`
+	CharacterIDs       []string         `json:"character_ids,omitempty" help:"optional; character IDs from create-character, max 3"`
+	AspectRatio        string           `json:"aspect_ratio,omitempty" help:"optional; output aspect ratio"`
+	OutputResolution   string           `json:"output_resolution,omitempty" help:"optional; output resolution; default 720p"`
+	Seed               *int             `json:"seed,omitempty" help:"optional; integer in [0, 2147483647]"`
 }
 
 // TaskResponse carries the task ID, lifecycle status, and error for Gemini Omni async operations.

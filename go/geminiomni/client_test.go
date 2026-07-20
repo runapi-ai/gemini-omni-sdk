@@ -155,3 +155,30 @@ func TestTextToVideoCreateAndGet(t *testing.T) {
 		t.Fatalf("unexpected response: %#v", got)
 	}
 }
+
+func TestTextToVideoCreateFlashPreviewSendsModelWithoutDuration(t *testing.T) {
+	stub := &stubHTTPClient{}
+	client := NewClientWithHTTP(stub)
+	created, err := client.TextToVideo.Create(context.Background(), TextToVideoParams{
+		Model:            ModelGeminiOmniFlashPreview,
+		Prompt:           "A paper airplane flying through a sunlit studio",
+		AspectRatio:      "9:16",
+		OutputResolution: "720p",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	body, ok := stub.body.(map[string]any)
+	if !ok {
+		t.Fatalf("expected flat body map, got %T", stub.body)
+	}
+	if body["model"] != string(ModelGeminiOmniFlashPreview) {
+		t.Fatalf("expected Flash Preview model in body: %#v", body)
+	}
+	if _, ok := body["duration_seconds"]; ok {
+		t.Fatalf("unexpected duration_seconds in Flash Preview body: %#v", body)
+	}
+	if created.ID != "task-local-123" {
+		t.Fatalf("unexpected task id: %s", created.ID)
+	}
+}

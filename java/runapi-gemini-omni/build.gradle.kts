@@ -3,6 +3,8 @@ plugins {
   `maven-publish`
 }
 
+extra["runapiSlug"] = "gemini-omni"
+
 description = "RunAPI Gemini Omni Java SDK for Gemini Omni workflows."
 
 java {
@@ -11,7 +13,7 @@ java {
 }
 
 dependencies {
-  api("ai.runapi:runapi-core:0.1.5")
+  api("ai.runapi:runapi-core:0.2.0")
 
   testImplementation(platform("org.junit:junit-bom:5.10.3"))
   testImplementation("org.junit.jupiter:junit-jupiter")

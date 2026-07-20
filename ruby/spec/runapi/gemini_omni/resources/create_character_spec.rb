@@ -11,15 +11,15 @@ RSpec.describe RunApi::GeminiOmni::Resources::CreateCharacter do
     params = {
       descriptions: "A silver-haired cyberpunk guide",
       reference_image_url: "https://file.runapi.ai/demo/character.png",
-      audio_ids: ["audio-demo-123"],
+      audio_ids: ["audio-runapi-123"],
       character_name: "Jenny"
     }
     expect(http).to receive(:request).with(:post, endpoint, body: params)
-      .and_return("id" => "character-demo-123", "character" => {"id" => "character-demo-123", "name" => "Jenny", "images" => [{"url" => "https://file.runapi.ai/gemini/jenny.png"}]})
+      .and_return("id" => "character-runapi-123", "character" => {"id" => "character-runapi-123", "name" => "Jenny", "images" => [{"url" => "https://file.runapi.ai/gemini/jenny.png"}]})
 
     result = resource.run(**params)
 
-    expect(result.id).to eq("character-demo-123")
+    expect(result.id).to eq("character-runapi-123")
     expect(result.character.name).to eq("Jenny")
     expect(result.character.images.first.url).to eq("https://file.runapi.ai/gemini/jenny.png")
   end

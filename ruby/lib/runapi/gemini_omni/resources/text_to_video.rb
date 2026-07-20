@@ -12,7 +12,7 @@ module RunApi
         ENDPOINT = "/api/v1/gemini_omni/text_to_video"
         RESPONSE_CLASS = Types::TextToVideoResponse
         COMPLETED_RESPONSE_CLASS = Types::CompletedTextToVideoResponse
-        MODEL = "gemini-omni-text-to-video"
+        DEFAULT_MODEL = "gemini-omni-text-to-video"
         PROMPT_MAX_LENGTH = 20_000
         REFERENCE_IMAGE_URLS_MAX = 7
         AUDIO_IDS_MAX = 3
@@ -44,7 +44,9 @@ module RunApi
         private
 
         def validate_params!(params)
-          validate_contract!(CONTRACT["text-to-video"], params.merge(model: MODEL))
+          selected_model = param(params, :model)
+          selected_model = DEFAULT_MODEL if selected_model.nil? || selected_model.to_s.empty?
+          validate_contract!(CONTRACT["text-to-video"], params.merge(model: selected_model))
           validate_length!(params, :prompt, PROMPT_MAX_LENGTH)
           validate_array!(params, :reference_image_urls, REFERENCE_IMAGE_URLS_MAX) if param(params, :reference_image_urls)
           validate_array!(params, :audio_ids, AUDIO_IDS_MAX) if param(params, :audio_ids)

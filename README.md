@@ -39,7 +39,7 @@ Gradle:
 
 ```kotlin
 dependencies {
-  implementation("ai.runapi:runapi-gemini-omni:0.1.1")
+  implementation("ai.runapi:runapi-gemini-omni:0.2.0")
 }
 ```
 
@@ -49,7 +49,7 @@ Maven:
 <dependency>
   <groupId>ai.runapi</groupId>
   <artifactId>runapi-gemini-omni</artifactId>
-  <version>0.1.1</version>
+  <version>0.2.0</version>
 </dependency>
 ```
 
@@ -57,7 +57,7 @@ Use the Java BOM when installing multiple RunAPI Java modules:
 
 ```kotlin
 dependencies {
-  implementation(platform("ai.runapi:runapi-bom:0.1.7"))
+  implementation(platform("ai.runapi:runapi-bom:0.2.0"))
   implementation("ai.runapi:runapi-gemini-omni")
 }
 ```
@@ -86,9 +86,8 @@ GeminiOmniClient client = GeminiOmniClient.builder()
 
 CompletedTextToVideoResponse result = client.textToVideo().run(
     TextToVideoParams.builder()
-        .model(TextToVideoModel.GEMINI_OMNI_TEXT_TO_VIDEO)
+        .model(TextToVideoModel.GEMINI_OMNI_FLASH_PREVIEW)
         .prompt("A tiny paper boat floating through a glowing cave")
-        .durationSeconds(8)
         .aspectRatio("16:9")
         .outputResolution("720p")
         .build()
@@ -125,6 +124,7 @@ Most media endpoints are asynchronous. `create()` submits a task and returns its
 Use the most specific Gemini Omni variant page for pricing, rate limits, and commercial usage:
 - [Audio](https://runapi.ai/models/gemini-omni)
 - [Character](https://runapi.ai/models/gemini-omni/character)
+- [Flash Preview](https://runapi.ai/models/gemini-omni/flash-preview)
 - [Text to video](https://runapi.ai/models/gemini-omni/text-to-video)
 
 Default pricing link for the Gemini Omni SDK: https://runapi.ai/models/gemini-omni

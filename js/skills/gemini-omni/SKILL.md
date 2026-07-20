@@ -1,6 +1,6 @@
 ---
 name: gemini-omni
-description: Create Gemini Omni voice resources, character resources, and text-to-video tasks through RunAPI. Use when the user asks an agent to create or manage Gemini Omni audio voices, character resources, or multimodal video. Default to the RunAPI CLI for one-off calls; use SDKs only when integrating RunAPI into an app or backend.
+description: Create Gemini Omni voice resources, character resources, and Flash Preview or multimodal text-to-video tasks through RunAPI. Use when the user asks an agent to create or manage Gemini Omni audio voices, character resources, or video. Default to the RunAPI CLI for one-off calls; use SDKs only when integrating RunAPI into an app or backend.
 documentation: https://runapi.ai/models/gemini-omni.md
 provider_page: https://runapi.ai/providers/google.md
 catalog: https://runapi.ai/models.md
@@ -36,14 +36,17 @@ Create Gemini Omni voice resources, character resources, and text-to-video tasks
 When integrating Gemini Omni into an app, backend, worker, library, Rails service, Node service, Go service, webhook pipeline, or production workflow, start by checking the current SDK package and official usage. Confirm install commands, client methods (`create`, `get`, `run`), request fields, response shape, and error classes before using CLI help or raw HTTP examples. Use a RunAPI SDK package:
 
 - JavaScript / TypeScript: `@runapi.ai/gemini-omni`
+- Python: `runapi-gemini-omni`
 - Ruby: `runapi-gemini-omni`
 - Go: `github.com/runapi-ai/gemini-omni-sdk/go`
+- Java: `ai.runapi:runapi-gemini-omni`
+- PHP: `runapi-ai/gemini-omni`
 
 ## Variants
 
 - Audio: create reusable voice resources with `runapi gemini-omni create-audio`.
 - Character: create reusable character resources with `runapi gemini-omni create-character`.
-- Video: create text-to-video tasks with `runapi gemini-omni text-to-video`.
+- Video: use `gemini-omni-flash-preview` for prompt-only 720p generation, or `gemini-omni-text-to-video` for the existing multimodal workflow.
 
 ## CLI path
 
@@ -66,6 +69,15 @@ runapi gemini-omni create-audio --input-file request.json
 
 For video tasks, submit asynchronously and wait for completion:
 
+```json
+{
+  "model": "gemini-omni-flash-preview",
+  "prompt": "A paper airplane glides through a sunlit studio.",
+  "aspect_ratio": "16:9",
+  "output_resolution": "720p"
+}
+```
+
 ```shell
 runapi gemini-omni text-to-video --async --input-file request.json
 runapi wait <task-id> --service gemini-omni --action text-to-video
@@ -79,6 +91,6 @@ RunAPI-generated file URLs are temporary. Download and store generated images, v
 
 ## References
 
-- Model overview, pricing, and rate limits: https://runapi.ai/models/gemini-omni.md
+- Flash Preview model, pricing, and rate limits: https://runapi.ai/models/gemini-omni/flash-preview.md
 - Provider comparison: https://runapi.ai/providers/google.md
 - Full model catalog: https://runapi.ai/models.md

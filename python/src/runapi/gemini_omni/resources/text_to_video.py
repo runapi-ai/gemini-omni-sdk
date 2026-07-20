@@ -23,7 +23,7 @@ class TextToVideo(Resource):
     RESPONSE_CLASS = TextToVideoResponse
     COMPLETED_RESPONSE_CLASS = CompletedTextToVideoResponse
 
-    MODEL = "gemini-omni-text-to-video"
+    DEFAULT_MODEL = "gemini-omni-text-to-video"
 
     PROMPT_MAX_LENGTH = 20_000
     REFERENCE_IMAGE_URLS_MAX = 7
@@ -71,7 +71,8 @@ class TextToVideo(Resource):
         return self._request("get", f"{self.ENDPOINT}/{id}", options=options)
 
     def _validate_params(self, params: Dict[str, Any]) -> None:
-        self._validate_contract(CONTRACT["text-to-video"], {**params, "model": self.MODEL})
+        selected_model = params.get("model") or self.DEFAULT_MODEL
+        self._validate_contract(CONTRACT["text-to-video"], {**params, "model": selected_model})
         self._validate_length(params, "prompt", self.PROMPT_MAX_LENGTH)
         if params.get("reference_image_urls") is not None:
             self._validate_array(params, "reference_image_urls", self.REFERENCE_IMAGE_URLS_MAX)

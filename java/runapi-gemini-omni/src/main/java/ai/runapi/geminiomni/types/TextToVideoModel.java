@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 
 /** Model slug for text to video operations. */
 public final class TextToVideoModel extends GeminiomniValue {
+  /** gemini-omni-flash-preview model slug. */
+  public static final TextToVideoModel GEMINI_OMNI_FLASH_PREVIEW = new TextToVideoModel("gemini-omni-flash-preview");
   /** gemini-omni-text-to-video model slug. */
   public static final TextToVideoModel GEMINI_OMNI_TEXT_TO_VIDEO = new TextToVideoModel("gemini-omni-text-to-video");
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## [js/v0.3.0](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/js%2Fv0.3.0), [ruby/v0.3.0](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/ruby%2Fv0.3.0), [go/v0.3.0](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/go%2Fv0.3.0), [python/v0.2.0](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/python%2Fv0.2.0), [java/v0.2.0](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/java%2Fv0.2.0) - 2026-07-20
+
+### Added
+- Add prompt-only Gemini Omni Flash Preview text-to-video requests with model-specific validation.
+
+
 ## [js/v0.2.8](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/js%2Fv0.2.8), [go/v0.2.8](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/go%2Fv0.2.8) - 2026-07-17
 
 ### Fixed

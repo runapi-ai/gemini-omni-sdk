@@ -16,7 +16,7 @@ Gradle:
 
 ```kotlin
 dependencies {
-  implementation("ai.runapi:runapi-gemini-omni:0.1.1")
+  implementation("ai.runapi:runapi-gemini-omni:0.2.0")
 }
 ```
 
@@ -26,7 +26,7 @@ Maven:
 <dependency>
   <groupId>ai.runapi</groupId>
   <artifactId>runapi-gemini-omni</artifactId>
-  <version>0.1.1</version>
+  <version>0.2.0</version>
 </dependency>
 ```
 
@@ -34,7 +34,7 @@ Use the BOM when multiple RunAPI Java modules are installed:
 
 ```kotlin
 dependencies {
-  implementation(platform("ai.runapi:runapi-bom:0.1.7"))
+  implementation(platform("ai.runapi:runapi-bom:0.2.0"))
   implementation("ai.runapi:runapi-gemini-omni")
 }
 ```
@@ -47,7 +47,7 @@ Maven BOM:
     <dependency>
       <groupId>ai.runapi</groupId>
       <artifactId>runapi-bom</artifactId>
-      <version>0.1.7</version>
+      <version>0.2.0</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -69,9 +69,8 @@ GeminiOmniClient client = GeminiOmniClient.builder()
 
 CompletedTextToVideoResponse result = client.textToVideo().run(
     TextToVideoParams.builder()
-        .model(TextToVideoModel.GEMINI_OMNI_TEXT_TO_VIDEO)
+        .model(TextToVideoModel.GEMINI_OMNI_FLASH_PREVIEW)
         .prompt("A tiny paper boat floating through a glowing cave")
-        .durationSeconds(8)
         .aspectRatio("16:9")
         .outputResolution("720p")
         .build()
@@ -96,9 +95,8 @@ GeminiOmniClient client = GeminiOmniClient.builder()
     .build();
 
 TextToVideoParams params = TextToVideoParams.builder()
-    .model(TextToVideoModel.GEMINI_OMNI_TEXT_TO_VIDEO)
+    .model(TextToVideoModel.GEMINI_OMNI_FLASH_PREVIEW)
     .prompt("A tiny paper boat floating through a glowing cave")
-    .durationSeconds(8)
     .aspectRatio("16:9")
     .outputResolution("720p")
     .build();
@@ -181,7 +179,7 @@ try {
 - Model page: https://runapi.ai/models/gemini-omni
 - SDK docs: https://runapi.ai/docs#sdk-gemini-omni
 - Product docs: https://runapi.ai/docs#gemini-omni
-- Pricing and rate limits: https://runapi.ai/models/gemini-omni
+- Flash Preview pricing and rate limits: https://runapi.ai/models/gemini-omni/flash-preview
 - Full catalog: https://runapi.ai/models
 - Repository: https://github.com/runapi-ai/gemini-omni-sdk
 

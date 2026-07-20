@@ -7,6 +7,8 @@ import java.util.Map;
 
 /** Parameters for text to video operations. */
 public final class TextToVideoParams {
+  private static final String DEFAULT_MODEL = "gemini-omni-text-to-video";
+
   private final String prompt;
   private final Integer durationSeconds;
   private final String callbackUrl;
@@ -21,7 +23,7 @@ public final class TextToVideoParams {
 
   private TextToVideoParams(Builder builder) {
     this.prompt = GeminiomniParamUtils.requireNonBlank(builder.prompt, "prompt");
-    this.durationSeconds = java.util.Objects.requireNonNull(builder.durationSeconds, "durationSeconds");
+    this.durationSeconds = builder.durationSeconds;
     this.callbackUrl = builder.callbackUrl;
     this.referenceImageUrls = GeminiomniParamUtils.strings(builder.referenceImageUrls);
     this.audioIds = GeminiomniParamUtils.strings(builder.audioIds);
@@ -30,7 +32,7 @@ public final class TextToVideoParams {
     this.aspectRatio = builder.aspectRatio;
     this.outputResolution = builder.outputResolution;
     this.seed = builder.seed;
-    this.model = builder.model;
+    this.model = builder.model == null ? DEFAULT_MODEL : builder.model;
   }
 
   /** Creates a new TextToVideoParams builder. */

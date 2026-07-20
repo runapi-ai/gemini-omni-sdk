@@ -26,9 +26,10 @@ character = client.create_character.run(
 
 # Text-to-video (create + poll until complete)
 result = client.text_to_video.run(
-    prompt="A fox trotting across fresh snow at dawn",
-    duration_seconds=8,
+    model="gemini-omni-flash-preview",
+    prompt="A paper airplane glides through a sunlit studio.",
     aspect_ratio="16:9",
+    output_resolution="720p",
 )
 print(result.videos[0].url)
 ```
@@ -46,7 +47,7 @@ Pass parameters as keyword arguments and catch the `runapi.gemini_omni` error cl
 - Model page: https://runapi.ai/models/gemini-omni
 - SDK docs: https://runapi.ai/docs#sdk-gemini-omni
 - Product docs: https://runapi.ai/docs#gemini-omni
-- Pricing and rate limits: https://runapi.ai/models/gemini-omni
+- Flash Preview pricing and rate limits: https://runapi.ai/models/gemini-omni/flash-preview
 - Provider comparison: https://runapi.ai/providers/google
 - Full catalog: https://runapi.ai/models
 

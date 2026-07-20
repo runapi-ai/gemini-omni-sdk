@@ -99,6 +99,30 @@ describe('Gemini Omni resources', () => {
     expect(result.id).toBe('task-local-123');
   });
 
+  it('creates Flash Preview tasks with an explicit model and no duration', async () => {
+    vi.mocked(mockHttp.request).mockResolvedValueOnce({
+      id: 'task-flash-123',
+      status: 'processing',
+    });
+    const textToVideo = new TextToVideo(mockHttp);
+
+    await textToVideo.create({
+      model: 'gemini-omni-flash-preview',
+      prompt: 'A paper airplane flying through a sunlit studio',
+      aspect_ratio: '9:16',
+      output_resolution: '720p',
+    });
+
+    expect(mockHttp.request).toHaveBeenCalledWith('POST', '/api/v1/gemini_omni/text_to_video', {
+      body: {
+        model: 'gemini-omni-flash-preview',
+        prompt: 'A paper airplane flying through a sunlit studio',
+        aspect_ratio: '9:16',
+        output_resolution: '720p',
+      },
+    });
+  });
+
   it('gets text-to-video task status', async () => {
     vi.mocked(mockHttp.request).mockResolvedValueOnce({
       id: 'task-local-123',

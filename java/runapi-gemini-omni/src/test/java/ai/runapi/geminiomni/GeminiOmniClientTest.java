@@ -68,6 +68,25 @@ class GeminiOmniClientTest {
   }
 
   @Test
+  void flashPreviewSendsModelWithoutDuration() throws Exception {
+    CapturingTransport transport = new CapturingTransport("{\"id\":\"task_flash\",\"status\":\"processing\"}");
+    GeminiOmniClient client = GeminiOmniClient.builder().apiKey("sk-test").transport(transport).build();
+
+    client.textToVideo().create(
+        TextToVideoParams.builder()
+            .model(TextToVideoModel.GEMINI_OMNI_FLASH_PREVIEW)
+            .prompt("A paper airplane flying through a sunlit studio")
+            .aspectRatio("9:16")
+            .outputResolution("720p")
+            .build()
+    );
+
+    JsonNode body = bodyJson(transport.request);
+    assertEquals("gemini-omni-flash-preview", body.get("model").asText());
+    assertEquals(false, body.has("duration_seconds"));
+  }
+
+  @Test
   void getDecodesTaskResponseAndExtraFields() {
     CapturingTransport transport = new CapturingTransport("{\"id\":\"task_456\",\"status\":\"completed\",\"videos\":[{\"url\":\"https://file.runapi.ai/generated\"}],\"custom\":\"kept\"}");
     GeminiOmniClient client = GeminiOmniClient.builder().apiKey("sk-test").transport(transport).build();

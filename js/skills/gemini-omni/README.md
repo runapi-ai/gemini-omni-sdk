@@ -29,7 +29,7 @@ The canonical agent file is `skills/gemini-omni/SKILL.md`.
 
 - Audio: create reusable voice resources with `runapi gemini-omni create-audio`.
 - Character: create reusable character resources with `runapi gemini-omni create-character`.
-- Video: create text-to-video tasks with `runapi gemini-omni text-to-video`.
+- Video: use `gemini-omni-flash-preview` for prompt-only 720p generation, or `gemini-omni-text-to-video` for the existing multimodal workflow.
 
 ## Install
 
@@ -64,7 +64,7 @@ runapi wait <task-id> --service gemini-omni --action text-to-video
 - Product docs: https://runapi.ai/docs#gemini-omni
 - SDK docs: https://runapi.ai/docs#sdk-gemini-omni
 - SDK repository: https://github.com/runapi-ai/gemini-omni-sdk
-- Pricing and rate limits: https://runapi.ai/models/gemini-omni
+- Flash Preview pricing and rate limits: https://runapi.ai/models/gemini-omni/flash-preview
 - Provider comparison: https://runapi.ai/providers/google
 - Browse all RunAPI models and skills: https://runapi.ai/models
 

@@ -15,11 +15,11 @@ RSpec.describe RunApi::GeminiOmni::Resources::CreateAudio do
       example_dialogue: "Hello, I am achernar"
     }
     expect(http).to receive(:request).with(:post, endpoint, body: params)
-      .and_return("id" => "audio-demo-123", "audio" => {"id" => "audio-demo-123", "name" => "Acher Narrator"})
+      .and_return("id" => "audio-runapi-123", "audio" => {"id" => "audio-runapi-123", "name" => "Acher Narrator"})
 
     result = resource.run(**params)
 
-    expect(result.id).to eq("audio-demo-123")
+    expect(result.id).to eq("audio-runapi-123")
     expect(result.audio.name).to eq("Acher Narrator")
   end
 

@@ -111,6 +111,10 @@ export interface CreateCharacterResponse {
 
 /** Video duration in seconds. Longer durations consume more credits. */
 export type GeminiOmniTextToVideoDuration = 4 | 6 | 8 | 10;
+/** Gemini Omni model exposed by the text-to-video endpoint. */
+export type GeminiOmniTextToVideoModel =
+  | 'gemini-omni-flash-preview'
+  | 'gemini-omni-text-to-video';
 /** Output aspect ratio -- landscape (16:9) or portrait (9:16). */
 export type GeminiOmniTextToVideoAspectRatio = '16:9' | '9:16';
 /** Output resolution -- higher resolutions produce sharper video at higher cost. */
@@ -139,10 +143,12 @@ export interface GeminiOmniTextToVideoClip {
  * must total 7 or fewer.
  */
 export interface TextToVideoParams {
+  /** Model to use. Defaults to gemini-omni-text-to-video for backward compatibility. */
+  model?: GeminiOmniTextToVideoModel;
   /** Video generation prompt, max 20 000 characters. */
   prompt: string;
-  /** Output video duration in seconds. */
-  duration_seconds: GeminiOmniTextToVideoDuration;
+  /** Output duration for gemini-omni-text-to-video; not accepted by gemini-omni-flash-preview. */
+  duration_seconds?: GeminiOmniTextToVideoDuration;
   /** HTTPS callback URL for task completion notification. */
   callback_url?: string;
   /** Reference image URLs, max 7. Each consumes 1 reference unit. */

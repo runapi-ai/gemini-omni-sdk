@@ -14,8 +14,8 @@ RSpec.describe RunApi::GeminiOmni::Resources::TextToVideo do
       aspect_ratio: "16:9",
       output_resolution: "1080p",
       reference_image_urls: ["https://file.runapi.ai/demo/scene.png"],
-      audio_ids: ["audio-demo-123"],
-      character_ids: ["character-demo-123"]
+      audio_ids: ["audio-runapi-123"],
+      character_ids: ["character-runapi-123"]
     }
     expect(http).to receive(:request).with(:post, endpoint, body: params)
       .and_return("id" => "task-local-123", "status" => "processing")
@@ -34,6 +34,21 @@ RSpec.describe RunApi::GeminiOmni::Resources::TextToVideo do
 
     expect(result.status).to eq("completed")
     expect(result.videos.first.url).to eq("https://tempfile.runapi.ai/gemini/output.mp4")
+  end
+
+  it "POSTs Flash Preview with an explicit model and no duration" do
+    params = {
+      model: "gemini-omni-flash-preview",
+      prompt: "A paper airplane flying through a sunlit studio",
+      aspect_ratio: "9:16",
+      output_resolution: "720p"
+    }
+    expect(http).to receive(:request).with(:post, endpoint, body: params)
+      .and_return("id" => "task-flash-123", "status" => "processing")
+
+    result = resource.create(**params)
+
+    expect(result.id).to eq("task-flash-123")
   end
 
   it "raises ValidationError when required fields are missing" do
