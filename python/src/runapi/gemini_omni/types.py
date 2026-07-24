@@ -21,7 +21,7 @@ class Audio(BaseModel):
     name = optional(str)
 
 
-class CreateAudioResponse(BaseModel):
+class CreateAudioResponse(TaskResponse):
     """Result of creating a Gemini Omni reusable voice."""
     id = required(str)
     audio = optional(lambda: Audio)
@@ -38,7 +38,7 @@ class Character(BaseModel):
     images = optional([lambda: Image])
 
 
-class CreateCharacterResponse(BaseModel):
+class CreateCharacterResponse(TaskResponse):
     """Result of creating a Gemini Omni reusable character."""
     id = required(str)
     character = optional(lambda: Character)
