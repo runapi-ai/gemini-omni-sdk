@@ -19,7 +19,7 @@ module RunApi
       end
 
       # Result of a synchronous create-audio call.
-      class CreateAudioResponse < RunApi::Core::BaseModel
+      class CreateAudioResponse < RunApi::Core::TaskResponse
         required :id, String
         optional :audio, -> { Audio }
         optional :error, String
@@ -38,7 +38,7 @@ module RunApi
       end
 
       # Result of a synchronous create-character call.
-      class CreateCharacterResponse < RunApi::Core::BaseModel
+      class CreateCharacterResponse < RunApi::Core::TaskResponse
         required :id, String
         optional :character, -> { Character }
         optional :error, String

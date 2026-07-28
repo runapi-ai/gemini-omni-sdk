@@ -1,5 +1,21 @@
 # Changelog
 
+## [java/v0.2.1](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/java%2Fv0.2.1) - 2026-07-28
+
+### Added
+- Decode typed Task Billing Facts on synchronous audio and character responses.
+
+## [go/v0.3.2](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/go%2Fv0.3.2) - 2026-07-28
+
+### Added
+- Expose persisted billing facts on task responses.
+
+## [js/v0.3.2](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/js%2Fv0.3.2), [ruby/v0.3.2](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/ruby%2Fv0.3.2) - 2026-07-28
+
+### Added
+- Type task billing facts on task-backed responses.
+
+
 ## [python/v0.3.0](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/python%2Fv0.3.0) - 2026-07-24
 
 ### Added

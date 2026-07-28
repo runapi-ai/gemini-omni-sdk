@@ -21,7 +21,7 @@ func (s *stubHTTPClient) Request(_ context.Context, method, path string, opts *c
 		s.body = opts.Body
 	}
 	if path == "/api/v1/gemini_omni/create_character" {
-		return json.RawMessage(`{"id":"character-runapi-123","character":{"id":"character-runapi-123","name":"Jenny","images":[{"url":"https://file.runapi.ai/gemini/jenny.png"}]}}`), nil
+		return json.RawMessage(`{"id":"character-runapi-123","character":{"id":"character-runapi-123","name":"Jenny","images":[{"url":"https://file.runapi.ai/gemini/jenny.png"}]},"billing":{"reservation":{"amount_cents":10}}}`), nil
 	}
 	if path == "/api/v1/gemini_omni/text_to_video" {
 		return json.RawMessage(`{"id":"task-local-123","status":"processing"}`), nil
@@ -29,7 +29,7 @@ func (s *stubHTTPClient) Request(_ context.Context, method, path string, opts *c
 	if path == "/api/v1/gemini_omni/text_to_video/task-local-123" {
 		return json.RawMessage(`{"id":"task-local-123","status":"completed","videos":[{"url":"https://tempfile.runapi.ai/gemini/output.mp4"}]}`), nil
 	}
-	return json.RawMessage(`{"id":"audio-runapi-123","audio":{"id":"audio-runapi-123","name":"Acher Narrator"}}`), nil
+	return json.RawMessage(`{"id":"audio-runapi-123","audio":{"id":"audio-runapi-123","name":"Acher Narrator"},"billing":{"reservation":{"amount_cents":10}}}`), nil
 }
 
 func TestCreateAudioRunSendsCorrectRequest(t *testing.T) {
@@ -59,6 +59,9 @@ func TestCreateAudioRunSendsCorrectRequest(t *testing.T) {
 	}
 	if resp.ID != "audio-runapi-123" {
 		t.Fatalf("unexpected response id: %s", resp.ID)
+	}
+	if resp.Billing == nil || resp.Billing.Reservation == nil {
+		t.Fatalf("expected billing facts: %#v", resp.Billing)
 	}
 }
 
@@ -101,6 +104,9 @@ func TestCreateCharacterRunSendsCorrectRequest(t *testing.T) {
 	}
 	if resp.Character == nil || len(resp.Character.Images) != 1 || resp.Character.Images[0].URL != "https://file.runapi.ai/gemini/jenny.png" {
 		t.Fatalf("unexpected character images: %#v", resp.Character)
+	}
+	if resp.Billing == nil || resp.Billing.Reservation == nil {
+		t.Fatalf("expected billing facts: %#v", resp.Billing)
 	}
 }
 

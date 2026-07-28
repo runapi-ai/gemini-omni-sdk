@@ -42,10 +42,10 @@ class GeminiOmniClientTest {
 
   @Test
   void openValueClassesSerializeAsScalarStrings() throws Exception {
-    String json = Json.mapper().writeValueAsString(new TextToVideoModel("gemini-omni-text-to-video"));
+    String json = Json.mapper().writeValueAsString(new TextToVideoModel("gemini-omni-flash-preview"));
 
-    assertEquals("\"gemini-omni-text-to-video\"", json);
-    assertEquals(new TextToVideoModel("gemini-omni-text-to-video"), Json.mapper().readValue(json, TextToVideoModel.class));
+    assertEquals("\"gemini-omni-flash-preview\"", json);
+    assertEquals(new TextToVideoModel("gemini-omni-flash-preview"), Json.mapper().readValue(json, TextToVideoModel.class));
   }
 
   @Test
@@ -55,8 +55,8 @@ class GeminiOmniClientTest {
 
     client.textToVideo().create(
         TextToVideoParams.builder()
+            .model(TextToVideoModel.GEMINI_OMNI_FLASH_PREVIEW)
             .prompt("A small red cube on a plain white table, studio product photo")
-            .durationSeconds(4)
             .aspectRatio("16:9")
             .build()
     );
@@ -65,25 +65,7 @@ class GeminiOmniClientTest {
     assertEquals("/api/v1/gemini_omni/text_to_video", transport.request.getPath());
     JsonNode body = bodyJson(transport.request);
     assertNotNull(body);
-  }
 
-  @Test
-  void flashPreviewSendsModelWithoutDuration() throws Exception {
-    CapturingTransport transport = new CapturingTransport("{\"id\":\"task_flash\",\"status\":\"processing\"}");
-    GeminiOmniClient client = GeminiOmniClient.builder().apiKey("sk-test").transport(transport).build();
-
-    client.textToVideo().create(
-        TextToVideoParams.builder()
-            .model(TextToVideoModel.GEMINI_OMNI_FLASH_PREVIEW)
-            .prompt("A paper airplane flying through a sunlit studio")
-            .aspectRatio("9:16")
-            .outputResolution("720p")
-            .build()
-    );
-
-    JsonNode body = bodyJson(transport.request);
-    assertEquals("gemini-omni-flash-preview", body.get("model").asText());
-    assertEquals(false, body.has("duration_seconds"));
   }
 
   @Test
@@ -109,8 +91,8 @@ class GeminiOmniClientTest {
 
     CompletedTextToVideoResponse response = client.textToVideo().run(
         TextToVideoParams.builder()
+            .model(TextToVideoModel.GEMINI_OMNI_FLASH_PREVIEW)
             .prompt("A small red cube on a plain white table, studio product photo")
-            .durationSeconds(4)
             .aspectRatio("16:9")
             .build(),
         RequestOptions.builder().pollingInterval(Duration.ofMillis(1)).pollingMaxWait(Duration.ofSeconds(1)).build());
@@ -132,8 +114,8 @@ class GeminiOmniClientTest {
         ValidationException.class,
         () -> client.textToVideo().run(
                 TextToVideoParams.builder()
+                    .model(TextToVideoModel.GEMINI_OMNI_FLASH_PREVIEW)
                     .prompt("A small red cube on a plain white table, studio product photo")
-                    .durationSeconds(4)
                     .aspectRatio("16:9")
                     .build(),
             RequestOptions.builder().pollingInterval(Duration.ofMillis(1)).pollingMaxWait(Duration.ofSeconds(1)).build()));
@@ -141,7 +123,7 @@ class GeminiOmniClientTest {
 
     @Test
     void coversCreateaudioResourceMethods() {
-      CapturingTransport transport = new CapturingTransport("{\"id\":\"sync_create_audio\",\"audio\":{\"value\":\"sample\"}}");
+      CapturingTransport transport = new CapturingTransport("{\"id\":\"sync_create_audio\",\"audio\":{\"value\":\"sample\"},\"billing\":{\"reservation\":{\"amount_cents\":12}}}");
       GeminiOmniClient client = GeminiOmniClient.builder().apiKey("sk-test").transport(transport).build();
 
       CreateAudioResponse response = client.createAudio().run(
@@ -151,8 +133,9 @@ class GeminiOmniClientTest {
                   .build()
       );
       assertNotNull(response);
+      assertEquals(Long.valueOf(12), response.getBilling().getReservation().getAmountCents());
 
-      CapturingTransport transportWithOptions = new CapturingTransport("{\"id\":\"sync_create_audio_options\",\"audio\":{\"value\":\"sample\"}}");
+      CapturingTransport transportWithOptions = new CapturingTransport("{\"id\":\"sync_create_audio_options\",\"audio\":{\"value\":\"sample\"},\"billing\":{\"reservation\":{\"amount_cents\":12}}}");
       GeminiOmniClient clientWithOptions = GeminiOmniClient.builder().apiKey("sk-test").transport(transportWithOptions).build();
       assertNotNull(clientWithOptions.createAudio().run(
               CreateAudioParams.builder()
@@ -164,7 +147,7 @@ class GeminiOmniClientTest {
 
     @Test
     void coversCreatecharacterResourceMethods() {
-      CapturingTransport transport = new CapturingTransport("{\"id\":\"sync_create_character\",\"character\":{\"value\":\"sample\"}}");
+      CapturingTransport transport = new CapturingTransport("{\"id\":\"sync_create_character\",\"character\":{\"value\":\"sample\"},\"billing\":{\"refund\":{\"refunded_at\":\"2026-07-23T12:00:00.000000Z\"}}}");
       GeminiOmniClient client = GeminiOmniClient.builder().apiKey("sk-test").transport(transport).build();
 
       CreateCharacterResponse response = client.createCharacter().run(
@@ -174,8 +157,9 @@ class GeminiOmniClientTest {
                   .build()
       );
       assertNotNull(response);
+      assertEquals("2026-07-23T12:00:00.000000Z", response.getBilling().getRefund().getRefundedAt());
 
-      CapturingTransport transportWithOptions = new CapturingTransport("{\"id\":\"sync_create_character_options\",\"character\":{\"value\":\"sample\"}}");
+      CapturingTransport transportWithOptions = new CapturingTransport("{\"id\":\"sync_create_character_options\",\"character\":{\"value\":\"sample\"},\"billing\":{\"refund\":{\"refunded_at\":\"2026-07-23T12:00:00.000000Z\"}}}");
       GeminiOmniClient clientWithOptions = GeminiOmniClient.builder().apiKey("sk-test").transport(transportWithOptions).build();
       assertNotNull(clientWithOptions.createCharacter().run(
               CreateCharacterParams.builder()
@@ -191,8 +175,8 @@ class GeminiOmniClientTest {
       GeminiOmniClient createClient = GeminiOmniClient.builder().apiKey("sk-test").transport(createTransport).build();
       assertNotNull(createClient.textToVideo().create(
               TextToVideoParams.builder()
+                  .model(TextToVideoModel.GEMINI_OMNI_FLASH_PREVIEW)
                   .prompt("A small red cube on a plain white table, studio product photo")
-                  .durationSeconds(4)
                   .aspectRatio("16:9")
                   .build()
       ));
@@ -201,8 +185,8 @@ class GeminiOmniClientTest {
       GeminiOmniClient createWithOptionsClient = GeminiOmniClient.builder().apiKey("sk-test").transport(createWithOptionsTransport).build();
       assertNotNull(createWithOptionsClient.textToVideo().create(
               TextToVideoParams.builder()
+                  .model(TextToVideoModel.GEMINI_OMNI_FLASH_PREVIEW)
                   .prompt("A small red cube on a plain white table, studio product photo")
-                  .durationSeconds(4)
                   .aspectRatio("16:9")
                   .build(),
           RequestOptions.none()));
@@ -221,8 +205,8 @@ class GeminiOmniClientTest {
       GeminiOmniClient runClient = GeminiOmniClient.builder().apiKey("sk-test").transport(runTransport).build();
       CompletedTextToVideoResponse runResponse = runClient.textToVideo().run(
               TextToVideoParams.builder()
+                  .model(TextToVideoModel.GEMINI_OMNI_FLASH_PREVIEW)
                   .prompt("A small red cube on a plain white table, studio product photo")
-                  .durationSeconds(4)
                   .aspectRatio("16:9")
                   .build(),
           RequestOptions.builder().pollingInterval(Duration.ofMillis(1)).pollingMaxWait(Duration.ofSeconds(1)).build());
@@ -234,8 +218,8 @@ class GeminiOmniClientTest {
       GeminiOmniClient runWithOptionsClient = GeminiOmniClient.builder().apiKey("sk-test").transport(runWithOptionsTransport).build();
       assertNotNull(runWithOptionsClient.textToVideo().run(
               TextToVideoParams.builder()
+                  .model(TextToVideoModel.GEMINI_OMNI_FLASH_PREVIEW)
                   .prompt("A small red cube on a plain white table, studio product photo")
-                  .durationSeconds(4)
                   .aspectRatio("16:9")
                   .build(),
           RequestOptions.builder().pollingInterval(Duration.ofMillis(1)).pollingMaxWait(Duration.ofSeconds(1)).build()));

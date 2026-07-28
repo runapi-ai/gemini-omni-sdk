@@ -17,6 +17,11 @@ describe('Gemini Omni resources', () => {
     vi.mocked(mockHttp.request).mockResolvedValueOnce({
       id: 'audio-runapi-123',
       audio: { id: 'audio-runapi-123', name: 'Acher Narrator' },
+      billing: {
+        reservation: null,
+        settlement: { charged_amount_cents: 0, amount_micro_cents: 0 },
+        refund: null,
+      },
     });
     const createAudio = new CreateAudio(mockHttp);
 
@@ -36,6 +41,7 @@ describe('Gemini Omni resources', () => {
       },
     });
     expect(result.id).toBe('audio-runapi-123');
+    expect(result.billing?.settlement?.charged_amount_cents).toBe(0);
   });
 
   it('creates characters with direct service params', async () => {
@@ -45,6 +51,11 @@ describe('Gemini Omni resources', () => {
         id: 'character-runapi-123',
         name: 'Jenny',
         images: [{ url: 'https://file.runapi.ai/gemini/jenny.png' }],
+      },
+      billing: {
+        reservation: { amount_cents: 10 },
+        settlement: { charged_amount_cents: 10, amount_micro_cents: 10_000_000 },
+        refund: null,
       },
     });
     const createCharacter = new CreateCharacter(mockHttp);
@@ -66,6 +77,7 @@ describe('Gemini Omni resources', () => {
     });
     expect(result.id).toBe('character-runapi-123');
     expect(result.character?.images?.[0]?.url).toBe('https://file.runapi.ai/gemini/jenny.png');
+    expect(result.billing?.reservation?.amount_cents).toBe(10);
   });
 
   it('creates text-to-video tasks with direct service params', async () => {

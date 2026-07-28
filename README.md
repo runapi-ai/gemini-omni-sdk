@@ -39,7 +39,7 @@ Gradle:
 
 ```kotlin
 dependencies {
-  implementation("ai.runapi:runapi-gemini-omni:0.2.0")
+  implementation("ai.runapi:runapi-gemini-omni:0.2.1")
 }
 ```
 
@@ -49,7 +49,7 @@ Maven:
 <dependency>
   <groupId>ai.runapi</groupId>
   <artifactId>runapi-gemini-omni</artifactId>
-  <version>0.2.0</version>
+  <version>0.2.1</version>
 </dependency>
 ```
 
@@ -57,7 +57,7 @@ Use the Java BOM when installing multiple RunAPI Java modules:
 
 ```kotlin
 dependencies {
-  implementation(platform("ai.runapi:runapi-bom:0.2.6"))
+  implementation(platform("ai.runapi:runapi-bom:0.2.7"))
   implementation("ai.runapi:runapi-gemini-omni")
 }
 ```

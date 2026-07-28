@@ -15,12 +15,14 @@ RSpec.describe RunApi::GeminiOmni::Resources::CreateAudio do
       example_dialogue: "Hello, I am achernar"
     }
     expect(http).to receive(:request).with(:post, endpoint, body: params)
-      .and_return("id" => "audio-runapi-123", "audio" => {"id" => "audio-runapi-123", "name" => "Acher Narrator"})
+      .and_return("id" => "audio-runapi-123", "audio" => {"id" => "audio-runapi-123", "name" => "Acher Narrator"}, "billing" => {"reservation" => nil, "settlement" => {"charged_amount_cents" => 0, "amount_micro_cents" => 0}, "refund" => nil})
 
     result = resource.run(**params)
 
     expect(result.id).to eq("audio-runapi-123")
     expect(result.audio.name).to eq("Acher Narrator")
+    expect(result.billing).to be_a(RunApi::Core::TaskBillingFacts)
+    expect(result.billing.settlement.charged_amount_cents).to eq(0)
   end
 
   it "raises ValidationError when required fields are missing" do
