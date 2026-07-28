@@ -111,8 +111,8 @@ Most media endpoints are asynchronous. `create()` submits a task and returns its
 ## Public links
 
 - Model page: https://runapi.ai/models/gemini-omni
-- SDK docs: https://runapi.ai/docs#sdk-gemini-omni
-- Product docs: https://runapi.ai/docs#gemini-omni
+- SDK docs: https://runapi.ai/docs/resources/sdks
+- Product docs: https://runapi.ai/docs/api/gemini-omni/text-to-video
 - SDK repository: https://github.com/runapi-ai/gemini-omni-sdk
 - PHP package repository: https://github.com/runapi-ai/gemini-omni-php
 - Skill repository: https://github.com/runapi-ai/gemini-omni

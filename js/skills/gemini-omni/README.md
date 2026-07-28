@@ -61,8 +61,8 @@ runapi wait <task-id> --service gemini-omni --action text-to-video
 ## Routing
 
 - Model page: https://runapi.ai/models/gemini-omni
-- Product docs: https://runapi.ai/docs#gemini-omni
-- SDK docs: https://runapi.ai/docs#sdk-gemini-omni
+- Product docs: https://runapi.ai/docs/api/gemini-omni/text-to-video
+- SDK docs: https://runapi.ai/docs/resources/sdks
 - SDK repository: https://github.com/runapi-ai/gemini-omni-sdk
 - Flash Preview pricing and rate limits: https://runapi.ai/models/gemini-omni/flash-preview
 - Provider comparison: https://runapi.ai/providers/google
