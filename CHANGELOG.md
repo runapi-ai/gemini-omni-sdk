@@ -1,5 +1,11 @@
 # Changelog
 
+## [js/v0.3.3](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/js%2Fv0.3.3), [ruby/v0.3.3](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/ruby%2Fv0.3.3), [go/v0.3.3](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/go%2Fv0.3.3), [python/v0.3.1](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/python%2Fv0.3.1), [java/v0.2.2](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/java%2Fv0.2.2) - 2026-07-28
+
+### Changed
+- Describe verified mixed-media fields, required inputs, and documented collection and length limits, including video trim validation precedence.
+
+
 ## [java/v0.2.1](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/java%2Fv0.2.1) - 2026-07-28
 
 ### Added

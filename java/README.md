@@ -4,7 +4,7 @@
 
 The Gemini Omni Java SDK is the language-specific package for Gemini Omni on RunAPI. Use it when your Java application needs typed builders, strict request validation, task status lookup, local polling helpers, file uploads, account helpers, and consistent RunAPI errors for Gemini Omni workflows.
 
-This README is the Java package guide inside the public `gemini-omni-sdk` repository. For the repository overview, start at `../README.md`; for model details, use https://runapi.ai/models/gemini-omni; for API reference, use https://runapi.ai/docs/api/gemini-omni/text-to-video; for SDK docs, use https://runapi.ai/docs/resources/sdks.
+This README is the Java package guide inside the public `gemini-omni-sdk` repository. For the repository overview, start at `../README.md`; for model details, use https://runapi.ai/models/gemini-omni; for API reference, use https://runapi.ai/docs#gemini-omni; for SDK docs, use https://runapi.ai/docs#sdk-gemini-omni.
 
 ## Requirements
 
@@ -16,7 +16,7 @@ Gradle:
 
 ```kotlin
 dependencies {
-  implementation("ai.runapi:runapi-gemini-omni:0.2.1")
+  implementation("ai.runapi:runapi-gemini-omni:0.2.2")
 }
 ```
 
@@ -26,7 +26,7 @@ Maven:
 <dependency>
   <groupId>ai.runapi</groupId>
   <artifactId>runapi-gemini-omni</artifactId>
-  <version>0.2.1</version>
+  <version>0.2.2</version>
 </dependency>
 ```
 
@@ -34,7 +34,7 @@ Use the BOM when multiple RunAPI Java modules are installed:
 
 ```kotlin
 dependencies {
-  implementation(platform("ai.runapi:runapi-bom:0.2.7"))
+  implementation(platform("ai.runapi:runapi-bom:0.2.8"))
   implementation("ai.runapi:runapi-gemini-omni")
 }
 ```
@@ -47,7 +47,7 @@ Maven BOM:
     <dependency>
       <groupId>ai.runapi</groupId>
       <artifactId>runapi-bom</artifactId>
-      <version>0.2.7</version>
+      <version>0.2.8</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -177,8 +177,8 @@ try {
 ## Links
 
 - Model page: https://runapi.ai/models/gemini-omni
-- SDK docs: https://runapi.ai/docs/resources/sdks
-- Product docs: https://runapi.ai/docs/api/gemini-omni/text-to-video
+- SDK docs: https://runapi.ai/docs#sdk-gemini-omni
+- Product docs: https://runapi.ai/docs#gemini-omni
 - Flash Preview pricing and rate limits: https://runapi.ai/models/gemini-omni/flash-preview
 - Full catalog: https://runapi.ai/models
 - Repository: https://github.com/runapi-ai/gemini-omni-sdk

@@ -3,6 +3,7 @@ package geminiomni
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/runapi-ai/core-sdk/go/base"
 	"github.com/runapi-ai/core-sdk/go/core"
@@ -103,7 +104,30 @@ func (r *TextToVideo) Create(ctx context.Context, params TextToVideoParams, opts
 	if err := validateAction("text-to-video", textToVideoModel, body); err != nil {
 		return nil, err
 	}
+	if err := validateVideoList(params.VideoList); err != nil {
+		return nil, err
+	}
 	return core.PostJSON[core.TaskCreateResponse](ctx, r.http, textToVideoPath, body, requestOptions)
+}
+
+func validateVideoList(items []VideoClip) error {
+	for index, item := range items {
+		message := ""
+		switch {
+		case item.URL == "":
+			message = fmt.Sprintf("video_list[%d].url is required", index)
+		case item.Start < 0:
+			message = fmt.Sprintf("video_list[%d].start must be 0 or greater", index)
+		case item.Ends <= item.Start:
+			message = fmt.Sprintf("video_list[%d].ends must be greater than start", index)
+		case item.Ends-item.Start > 10:
+			message = fmt.Sprintf("video_list[%d] trim range must be 10 seconds or less", index)
+		}
+		if message != "" {
+			return core.NewError(core.ErrValidation, message, 400, "", nil, nil)
+		}
+	}
+	return nil
 }
 
 // Get fetches the current status of a Gemini Omni text-to-video task by id.

@@ -10,8 +10,18 @@ module RunApi
             "audio_id" => {
               "required" => true
             },
+            "example_dialogue" => {
+              "max" => 120,
+              "length" => true
+            },
             "name" => {
-              "required" => true
+              "required" => true,
+              "max" => 210,
+              "length" => true
+            },
+            "voice_description" => {
+              "max" => 20000,
+              "length" => true
             }
           }
         }
@@ -20,8 +30,14 @@ module RunApi
         "models" => ["gemini-omni-character"],
         "fields_by_model" => {
           "gemini-omni-character" => {
+            "character_name" => {
+              "max" => 210,
+              "length" => true
+            },
             "descriptions" => {
-              "required" => true
+              "required" => true,
+              "max" => 20000,
+              "length" => true
             },
             "reference_image_url" => {
               "required" => true
@@ -43,7 +59,9 @@ module RunApi
               "enum" => ["720p"]
             },
             "prompt" => {
-              "required" => true
+              "required" => true,
+              "max" => 20000,
+              "length" => true
             },
             "seed" => {
               "type" => "integer"
@@ -68,12 +86,16 @@ module RunApi
               "enum" => ["720p", "1080p", "4k"]
             },
             "prompt" => {
-              "required" => true
+              "required" => true,
+              "max" => 20000,
+              "length" => true
             },
             "reference_image_urls" => {
               "max_items" => 7
             },
             "seed" => {
+              "min" => 0,
+              "max" => 2147483647,
               "type" => "integer"
             },
             "video_list" => {

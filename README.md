@@ -39,7 +39,7 @@ Gradle:
 
 ```kotlin
 dependencies {
-  implementation("ai.runapi:runapi-gemini-omni:0.2.1")
+  implementation("ai.runapi:runapi-gemini-omni:0.2.2")
 }
 ```
 
@@ -49,7 +49,7 @@ Maven:
 <dependency>
   <groupId>ai.runapi</groupId>
   <artifactId>runapi-gemini-omni</artifactId>
-  <version>0.2.1</version>
+  <version>0.2.2</version>
 </dependency>
 ```
 
@@ -57,7 +57,7 @@ Use the Java BOM when installing multiple RunAPI Java modules:
 
 ```kotlin
 dependencies {
-  implementation(platform("ai.runapi:runapi-bom:0.2.7"))
+  implementation(platform("ai.runapi:runapi-bom:0.2.8"))
   implementation("ai.runapi:runapi-gemini-omni")
 }
 ```
@@ -111,8 +111,8 @@ Most media endpoints are asynchronous. `create()` submits a task and returns its
 ## Public links
 
 - Model page: https://runapi.ai/models/gemini-omni
-- SDK docs: https://runapi.ai/docs/resources/sdks
-- Product docs: https://runapi.ai/docs/api/gemini-omni/text-to-video
+- SDK docs: https://runapi.ai/docs#sdk-gemini-omni
+- Product docs: https://runapi.ai/docs#gemini-omni
 - SDK repository: https://github.com/runapi-ai/gemini-omni-sdk
 - PHP package repository: https://github.com/runapi-ai/gemini-omni-php
 - Skill repository: https://github.com/runapi-ai/gemini-omni

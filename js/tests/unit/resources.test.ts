@@ -135,6 +135,19 @@ describe('Gemini Omni resources', () => {
     });
   });
 
+  it('rejects invalid video clips before sending a request', async () => {
+    const textToVideo = new TextToVideo(mockHttp);
+
+    await expect(
+      textToVideo.create({
+        prompt: 'Create a neon city tracking shot',
+        duration_seconds: 8,
+        video_list: [{ url: '', start: 0, ends: 10 }],
+      }),
+    ).rejects.toThrow('video_list[0].url is required');
+    expect(mockHttp.request).not.toHaveBeenCalled();
+  });
+
   it('gets text-to-video task status', async () => {
     vi.mocked(mockHttp.request).mockResolvedValueOnce({
       id: 'task-local-123',

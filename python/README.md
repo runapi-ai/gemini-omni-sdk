@@ -45,8 +45,8 @@ Pass parameters as keyword arguments and catch the `runapi.gemini_omni` error cl
 ## Links
 
 - Model page: https://runapi.ai/models/gemini-omni
-- SDK docs: https://runapi.ai/docs/resources/sdks
-- Product docs: https://runapi.ai/docs/api/gemini-omni/text-to-video
+- SDK docs: https://runapi.ai/docs#sdk-gemini-omni
+- Product docs: https://runapi.ai/docs#gemini-omni
 - Flash Preview pricing and rate limits: https://runapi.ai/models/gemini-omni/flash-preview
 - Provider comparison: https://runapi.ai/providers/google
 - Full catalog: https://runapi.ai/models

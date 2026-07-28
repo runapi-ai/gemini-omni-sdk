@@ -8,8 +8,18 @@ export const contract = {
         "audio_id": {
           "required": true
         },
+        "example_dialogue": {
+          "max": 120,
+          "length": true
+        },
         "name": {
-          "required": true
+          "required": true,
+          "max": 210,
+          "length": true
+        },
+        "voice_description": {
+          "max": 20000,
+          "length": true
         }
       }
     }
@@ -20,8 +30,14 @@ export const contract = {
     ],
     "fields_by_model": {
       "gemini-omni-character": {
+        "character_name": {
+          "max": 210,
+          "length": true
+        },
         "descriptions": {
-          "required": true
+          "required": true,
+          "max": 20000,
+          "length": true
         },
         "reference_image_url": {
           "required": true
@@ -51,7 +67,9 @@ export const contract = {
           ]
         },
         "prompt": {
-          "required": true
+          "required": true,
+          "max": 20000,
+          "length": true
         },
         "seed": {
           "type": "integer"
@@ -88,12 +106,16 @@ export const contract = {
           ]
         },
         "prompt": {
-          "required": true
+          "required": true,
+          "max": 20000,
+          "length": true
         },
         "reference_image_urls": {
           "max_items": 7
         },
         "seed": {
+          "min": 0,
+          "max": 2147483647,
           "type": "integer"
         },
         "video_list": {

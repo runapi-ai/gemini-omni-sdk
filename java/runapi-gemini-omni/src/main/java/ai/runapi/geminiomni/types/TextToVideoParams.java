@@ -73,7 +73,7 @@ public final class TextToVideoParams {
 
   /** Builder for {@link TextToVideoParams}. */
   public static final class Builder {
-    private String model;
+    private String model = TextToVideoModel.GEMINI_OMNI_TEXT_TO_VIDEO.value();
     private String prompt;
     private Integer durationSeconds;
     private String callbackUrl;

@@ -6,8 +6,18 @@ CONTRACT = {
                 "audio_id": {
                     "required": True
                 },
+                "example_dialogue": {
+                    "max": 120,
+                    "length": True
+                },
                 "name": {
-                    "required": True
+                    "required": True,
+                    "max": 210,
+                    "length": True
+                },
+                "voice_description": {
+                    "max": 20000,
+                    "length": True
                 }
             }
         }
@@ -16,8 +26,14 @@ CONTRACT = {
         "models": ["gemini-omni-character"],
         "fields_by_model": {
             "gemini-omni-character": {
+                "character_name": {
+                    "max": 210,
+                    "length": True
+                },
                 "descriptions": {
-                    "required": True
+                    "required": True,
+                    "max": 20000,
+                    "length": True
                 },
                 "reference_image_url": {
                     "required": True
@@ -39,7 +55,9 @@ CONTRACT = {
                     "enum": ["720p"]
                 },
                 "prompt": {
-                    "required": True
+                    "required": True,
+                    "max": 20000,
+                    "length": True
                 },
                 "seed": {
                     "type": "integer"
@@ -64,12 +82,16 @@ CONTRACT = {
                     "enum": ["720p", "1080p", "4k"]
                 },
                 "prompt": {
-                    "required": True
+                    "required": True,
+                    "max": 20000,
+                    "length": True
                 },
                 "reference_image_urls": {
                     "max_items": 7
                 },
                 "seed": {
+                    "min": 0,
+                    "max": 2147483647,
                     "type": "integer"
                 },
                 "video_list": {

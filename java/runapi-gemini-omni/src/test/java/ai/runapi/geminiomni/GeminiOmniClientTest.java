@@ -69,6 +69,22 @@ class GeminiOmniClientTest {
   }
 
   @Test
+  void createUsesDocumentedDefaultModelWhenModelIsOmitted() throws Exception {
+    CapturingTransport transport = new CapturingTransport("{\"id\":\"task_default\",\"status\":\"processing\"}");
+    GeminiOmniClient client = GeminiOmniClient.builder().apiKey("sk-test").transport(transport).build();
+
+    client.textToVideo().create(
+        TextToVideoParams.builder()
+            .prompt("A small red cube on a plain white table, studio product photo")
+            .durationSeconds(4)
+            .build()
+    );
+
+    JsonNode body = bodyJson(transport.request);
+    assertEquals("gemini-omni-text-to-video", body.get("model").asText());
+  }
+
+  @Test
   void getDecodesTaskResponseAndExtraFields() {
     CapturingTransport transport = new CapturingTransport("{\"id\":\"task_456\",\"status\":\"completed\",\"videos\":[{\"url\":\"https://file.runapi.ai/generated\"}],\"custom\":\"kept\"}");
     GeminiOmniClient client = GeminiOmniClient.builder().apiKey("sk-test").transport(transport).build();

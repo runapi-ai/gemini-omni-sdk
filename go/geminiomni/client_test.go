@@ -162,6 +162,22 @@ func TestTextToVideoCreateAndGet(t *testing.T) {
 	}
 }
 
+func TestTextToVideoRejectsInvalidVideoClip(t *testing.T) {
+	stub := &stubHTTPClient{}
+	client := NewClientWithHTTP(stub)
+	_, err := client.TextToVideo.Create(context.Background(), TextToVideoParams{
+		Prompt:          "Create a neon city tracking shot",
+		DurationSeconds: 8,
+		VideoList:       []VideoClip{{URL: "", Start: 0, Ends: 10}},
+	})
+	if err == nil || err.Error() != "video_list[0].url is required" {
+		t.Fatalf("expected video clip validation error, got %v", err)
+	}
+	if stub.method != "" {
+		t.Fatalf("request should not be sent, got %s %s", stub.method, stub.path)
+	}
+}
+
 func TestTextToVideoCreateFlashPreviewSendsModelWithoutDuration(t *testing.T) {
 	stub := &stubHTTPClient{}
 	client := NewClientWithHTTP(stub)
