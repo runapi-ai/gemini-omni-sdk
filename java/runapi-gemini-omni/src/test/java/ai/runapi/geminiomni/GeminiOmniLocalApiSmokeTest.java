@@ -53,8 +53,8 @@ import ai.runapi.geminiomni.types.VideoClip;
       CompletedTextToVideoResponse response =
           client.textToVideo().run(
               TextToVideoParams.builder()
+                  .model(TextToVideoModel.GEMINI_OMNI_FLASH_PREVIEW)
                   .prompt("A small red cube on a plain white table, studio product photo")
-                  .durationSeconds(4)
                   .aspectRatio("16:9")
                   .build(),
               RequestOptions.builder()

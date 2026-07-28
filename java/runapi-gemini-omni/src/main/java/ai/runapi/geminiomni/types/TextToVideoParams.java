@@ -7,8 +7,7 @@ import java.util.Map;
 
 /** Parameters for text to video operations. */
 public final class TextToVideoParams {
-  private static final String DEFAULT_MODEL = "gemini-omni-text-to-video";
-
+  private final String model;
   private final String prompt;
   private final Integer durationSeconds;
   private final String callbackUrl;
@@ -19,9 +18,9 @@ public final class TextToVideoParams {
   private final String aspectRatio;
   private final String outputResolution;
   private final Integer seed;
-  private final String model;
 
   private TextToVideoParams(Builder builder) {
+    this.model = builder.model;
     this.prompt = GeminiomniParamUtils.requireNonBlank(builder.prompt, "prompt");
     this.durationSeconds = builder.durationSeconds;
     this.callbackUrl = builder.callbackUrl;
@@ -32,7 +31,6 @@ public final class TextToVideoParams {
     this.aspectRatio = builder.aspectRatio;
     this.outputResolution = builder.outputResolution;
     this.seed = builder.seed;
-    this.model = builder.model == null ? DEFAULT_MODEL : builder.model;
   }
 
   /** Creates a new TextToVideoParams builder. */
@@ -48,6 +46,7 @@ public final class TextToVideoParams {
   /** Converts these parameters to the JSON request body shape. */
   public Map<String, Object> toMap() {
     Map<String, Object> raw = new LinkedHashMap<String, Object>();
+    raw.put("model", GeminiomniParamUtils.wireValue(model));
     raw.put("prompt", GeminiomniParamUtils.wireValue(prompt));
     raw.put("duration_seconds", GeminiomniParamUtils.wireValue(durationSeconds));
     raw.put("callback_url", GeminiomniParamUtils.wireValue(callbackUrl));
@@ -58,7 +57,6 @@ public final class TextToVideoParams {
     raw.put("aspect_ratio", GeminiomniParamUtils.wireValue(aspectRatio));
     raw.put("output_resolution", GeminiomniParamUtils.wireValue(outputResolution));
     raw.put("seed", GeminiomniParamUtils.wireValue(seed));
-    raw.put("model", GeminiomniParamUtils.wireValue(model));
     return GeminiomniParamUtils.compact(raw);
   }
 
@@ -75,6 +73,7 @@ public final class TextToVideoParams {
 
   /** Builder for {@link TextToVideoParams}. */
   public static final class Builder {
+    private String model;
     private String prompt;
     private Integer durationSeconds;
     private String callbackUrl;
@@ -85,9 +84,21 @@ public final class TextToVideoParams {
     private String aspectRatio;
     private String outputResolution;
     private Integer seed;
-    private String model;
 
     private Builder() {}
+
+    /** Sets the model slug using a typed model value. */
+    public Builder model(TextToVideoModel value) {
+      this.model = java.util.Objects.requireNonNull(value, "model").value();
+      return this;
+    }
+
+    /** Sets the model slug using a string value. */
+    public Builder model(String value) {
+      this.model = GeminiomniParamUtils.requireNonBlankTrim(value, "model");
+      return this;
+    }
+
 
     /** Sets the text prompt. */
     public Builder prompt(String value) {
@@ -146,18 +157,6 @@ public final class TextToVideoParams {
     /** Sets the random seed. */
     public Builder seed(int value) {
       this.seed = value;
-      return this;
-    }
-
-    /** Sets the model slug using a typed model value. */
-    public Builder model(TextToVideoModel value) {
-      this.model = java.util.Objects.requireNonNull(value, "model").value();
-      return this;
-    }
-
-    /** Sets the model slug using a string value. */
-    public Builder model(String value) {
-      this.model = GeminiomniParamUtils.requireNonBlankTrim(value, "model");
       return this;
     }
 

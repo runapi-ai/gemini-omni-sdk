@@ -1,4 +1,4 @@
-import type { AsyncTaskStatus } from '@runapi.ai/core';
+import type { AsyncTaskStatus, TaskBillingResponse, TaskResponse } from '@runapi.ai/core';
 
 /**
  * One of 30 preset voice identities for audio creation.
@@ -61,7 +61,7 @@ export interface GeminiOmniAudio {
 }
 
 /** Result of a synchronous create-audio call. */
-export interface CreateAudioResponse {
+export interface CreateAudioResponse extends TaskBillingResponse {
   id: string;
   /** The created voice preset; present on success. */
   audio?: GeminiOmniAudio;
@@ -101,7 +101,7 @@ export interface GeminiOmniCharacter {
 }
 
 /** Result of a synchronous create-character call. */
-export interface CreateCharacterResponse {
+export interface CreateCharacterResponse extends TaskBillingResponse {
   id: string;
   /** The created character; present on success. */
   character?: GeminiOmniCharacter;
@@ -167,7 +167,7 @@ export interface TextToVideoParams {
 }
 
 /** Acknowledgement returned by `create()` before the task starts processing. */
-export interface TaskCreateResponse {
+export interface TaskCreateResponse extends TaskBillingResponse {
   id: string;
   status?: AsyncTaskStatus;
 }
@@ -178,7 +178,7 @@ export interface VideoMetadata {
 }
 
 /** Async text-to-video task result with lifecycle status. */
-export interface TextToVideoResponse {
+export interface TextToVideoResponse extends TaskResponse {
   id: string;
   status: AsyncTaskStatus;
   /** Generated video files; populated once the task completes. */

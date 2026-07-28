@@ -15,13 +15,15 @@ RSpec.describe RunApi::GeminiOmni::Resources::CreateCharacter do
       character_name: "Jenny"
     }
     expect(http).to receive(:request).with(:post, endpoint, body: params)
-      .and_return("id" => "character-runapi-123", "character" => {"id" => "character-runapi-123", "name" => "Jenny", "images" => [{"url" => "https://file.runapi.ai/gemini/jenny.png"}]})
+      .and_return("id" => "character-runapi-123", "character" => {"id" => "character-runapi-123", "name" => "Jenny", "images" => [{"url" => "https://file.runapi.ai/gemini/jenny.png"}]}, "billing" => {"reservation" => {"amount_cents" => 10}, "settlement" => {"charged_amount_cents" => 10, "amount_micro_cents" => 10_000_000}, "refund" => nil})
 
     result = resource.run(**params)
 
     expect(result.id).to eq("character-runapi-123")
     expect(result.character.name).to eq("Jenny")
     expect(result.character.images.first.url).to eq("https://file.runapi.ai/gemini/jenny.png")
+    expect(result.billing).to be_a(RunApi::Core::TaskBillingFacts)
+    expect(result.billing.reservation.amount_cents).to eq(10)
   end
 
   it "raises ValidationError when required fields are missing" do
