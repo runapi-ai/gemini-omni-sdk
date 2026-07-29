@@ -15,7 +15,7 @@ dependencies = ["runapi-core>=0.3.2"]
 
 [project.urls]
 Homepage = "https://runapi.ai/models/gemini-omni"
-Documentation = "https://runapi.ai/docs#sdk-gemini-omni"
+Documentation = "https://runapi.ai/docs/resources/sdks"
 Source = "https://github.com/runapi-ai/gemini-omni-sdk"
 Issues = "https://github.com/runapi-ai/gemini-omni-sdk/issues"
 Changelog = "https://github.com/runapi-ai/gemini-omni-sdk/blob/main/CHANGELOG.md"

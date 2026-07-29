@@ -4,7 +4,7 @@
 
 The Gemini Omni Java SDK is the language-specific package for Gemini Omni on RunAPI. Use it when your Java application needs typed builders, strict request validation, task status lookup, local polling helpers, file uploads, account helpers, and consistent RunAPI errors for Gemini Omni workflows.
 
-This README is the Java package guide inside the public `gemini-omni-sdk` repository. For the repository overview, start at `../README.md`; for model details, use https://runapi.ai/models/gemini-omni; for API reference, use https://runapi.ai/docs#gemini-omni; for SDK docs, use https://runapi.ai/docs#sdk-gemini-omni.
+This README is the Java package guide inside the public `gemini-omni-sdk` repository. For the repository overview, start at `../README.md`; for model details, use https://runapi.ai/models/gemini-omni; for API reference, use https://runapi.ai/docs/api/gemini-omni/text-to-video; for SDK docs, use https://runapi.ai/docs/resources/sdks.
 
 ## Requirements
 
@@ -177,8 +177,8 @@ try {
 ## Links
 
 - Model page: https://runapi.ai/models/gemini-omni
-- SDK docs: https://runapi.ai/docs#sdk-gemini-omni
-- Product docs: https://runapi.ai/docs#gemini-omni
+- SDK docs: https://runapi.ai/docs/resources/sdks
+- Product docs: https://runapi.ai/docs/api/gemini-omni/text-to-video
 - Flash Preview pricing and rate limits: https://runapi.ai/models/gemini-omni/flash-preview
 - Full catalog: https://runapi.ai/models
 - Repository: https://github.com/runapi-ai/gemini-omni-sdk
