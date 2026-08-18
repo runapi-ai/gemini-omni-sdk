@@ -1,5 +1,11 @@
 # Changelog
 
+## [ruby/v0.3.4](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/ruby%2Fv0.3.4) - 2026-08-18
+
+### Changed
+- Allow Ruby clients to install the core SDK release that adds persistent Files and multipart Uploads alongside this model SDK.
+
+
 ## [js/v0.3.3](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/js%2Fv0.3.3), [ruby/v0.3.3](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/ruby%2Fv0.3.3), [go/v0.3.3](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/go%2Fv0.3.3), [python/v0.3.1](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/python%2Fv0.3.1), [java/v0.2.2](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/java%2Fv0.2.2) - 2026-07-28
 
 ### Changed
