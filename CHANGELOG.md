@@ -1,5 +1,11 @@
 # Changelog
 
+## [ruby/v0.3.5](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/ruby%2Fv0.3.5) - 2026-09-04
+
+### Changed
+- Update the `runapi-core` dependency range so this package remains installable with other current RunAPI Ruby SDKs.
+
+
 ## [ruby/v0.3.4](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/ruby%2Fv0.3.4) - 2026-08-18
 
 ### Changed
