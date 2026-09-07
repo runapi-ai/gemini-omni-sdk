@@ -30,14 +30,14 @@ module RunApi
         optional :url, String
       end
 
-      # A created character with its ID, name, and reference images.
+      # A created character whose images contain the portrait first and optional full-body image second.
       class Character < RunApi::Core::BaseModel
         required :id, String
         optional :name, String
         optional :images, [-> { Image }]
       end
 
-      # Result of a synchronous create-character call.
+      # Terminal result of a create-character call.
       class CreateCharacterResponse < RunApi::Core::TaskResponse
         required :id, String
         optional :character, -> { Character }

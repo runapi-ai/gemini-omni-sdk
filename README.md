@@ -24,6 +24,8 @@
 
 The Gemini Omni API SDK packages JavaScript, Python, Ruby, Go, Java, and PHP clients for Gemini Omni on RunAPI. Use it for audio, character, and video workflows when your app needs typed request builders, predictable task polling, file upload helpers, account helpers, and consistent RunAPI errors.
 
+Character creation accepts a required portrait and an optional full-body reference. The returned images preserve that order, and a dual-image character consumes two of the seven reference units in a multimodal video request.
+
 Gemini Omni is listed in the RunAPI model catalog at https://runapi.ai/models/gemini-omni. Variant pages below carry pricing, rate-limit, and commercial-usage details. The public `gemini-omni-sdk` repository groups the non-PHP language packages, examples, CI, and release tags for this model. The PHP package is released from a split Composer repository.
 
 ## Install
@@ -39,7 +41,7 @@ Gradle:
 
 ```kotlin
 dependencies {
-  implementation("ai.runapi:runapi-gemini-omni:0.2.2")
+  implementation("ai.runapi:runapi-gemini-omni:0.2.3")
 }
 ```
 
@@ -49,7 +51,7 @@ Maven:
 <dependency>
   <groupId>ai.runapi</groupId>
   <artifactId>runapi-gemini-omni</artifactId>
-  <version>0.2.2</version>
+  <version>0.2.3</version>
 </dependency>
 ```
 
@@ -57,7 +59,7 @@ Use the Java BOM when installing multiple RunAPI Java modules:
 
 ```kotlin
 dependencies {
-  implementation(platform("ai.runapi:runapi-bom:0.6.2"))
+  implementation(platform("ai.runapi:runapi-bom:0.6.3"))
   implementation("ai.runapi:runapi-gemini-omni")
 }
 ```
@@ -86,13 +88,18 @@ GeminiOmniClient client = GeminiOmniClient.builder()
 
 CompletedTextToVideoResponse result = client.textToVideo().run(
     TextToVideoParams.builder()
-        .model(TextToVideoModel.GEMINI_OMNI_FLASH_PREVIEW)
-        .prompt("A tiny paper boat floating through a glowing cave")
+        .model(TextToVideoModel.GEMINI_OMNI_FLASH_1_1)
+        .prompt("A tiny paper boat travels from dawn into dusk")
+        .durationSeconds(6)
+        .firstFrameImageUrl("https://cdn.runapi.ai/public/samples/first-frame.jpg")
+        .lastFrameImageUrl("https://cdn.runapi.ai/public/samples/last-frame.jpg")
         .aspectRatio("16:9")
-        .outputResolution("720p")
+        .outputResolution("360p")
         .build()
 );
 ```
+
+For `gemini-omni-flash-1-1`, `first_frame_image_url` cannot be combined with reference images, audio IDs, video clips, or character IDs. `last_frame_image_url` requires `first_frame_image_url`.
 
 Java packages target Java 8 bytecode and are tested on Java 8, 11, 17, and 21. Each model artifact depends on `ai.runapi:runapi-core`, so application code normally installs only `ai.runapi:runapi-gemini-omni`.
 
@@ -116,7 +123,6 @@ Most media endpoints are asynchronous. `create()` submits a task and returns its
 - SDK repository: https://github.com/runapi-ai/gemini-omni-sdk
 - PHP package repository: https://github.com/runapi-ai/gemini-omni-php
 - Skill repository: https://github.com/runapi-ai/gemini-omni
-- Provider comparison: https://runapi.ai/providers/google
 - Full catalog: https://runapi.ai/models
 
 ## Pricing and variants
@@ -124,6 +130,7 @@ Most media endpoints are asynchronous. `create()` submits a task and returns its
 Use the most specific Gemini Omni variant page for pricing, rate limits, and commercial usage:
 - [Audio](https://runapi.ai/models/gemini-omni)
 - [Character](https://runapi.ai/models/gemini-omni/character)
+- [Flash 1.1](https://runapi.ai/models/gemini-omni/flash-1-1)
 - [Flash Preview](https://runapi.ai/models/gemini-omni/flash-preview)
 - [Text to video](https://runapi.ai/models/gemini-omni/text-to-video)
 
@@ -141,7 +148,7 @@ Install the model package for your language: `@runapi.ai/gemini-omni` on npm, `r
 
 ### Where should public links point?
 
-Primary Gemini Omni links point to https://runapi.ai/models/gemini-omni. Pricing and usage-policy links point to variant pages such as https://runapi.ai/models/gemini-omni. Provider comparisons point to https://runapi.ai/providers/google, and broad browsing points to https://runapi.ai/models.
+Primary Gemini Omni links point to https://runapi.ai/models/gemini-omni. Pricing and usage-policy links point to the relevant variant page, including https://runapi.ai/models/gemini-omni/flash-1-1. Broad catalog browsing points to https://runapi.ai/models.
 
 ## License
 

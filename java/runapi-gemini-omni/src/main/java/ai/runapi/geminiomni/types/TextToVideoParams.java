@@ -15,6 +15,8 @@ public final class TextToVideoParams {
   private final List<String> audioIds;
   private final List<VideoClip> videoList;
   private final List<String> characterIds;
+  private final String firstFrameImageUrl;
+  private final String lastFrameImageUrl;
   private final String aspectRatio;
   private final String outputResolution;
   private final Integer seed;
@@ -28,6 +30,8 @@ public final class TextToVideoParams {
     this.audioIds = GeminiomniParamUtils.strings(builder.audioIds);
     this.videoList = GeminiomniParamUtils.list(builder.videoList, "videoList");
     this.characterIds = GeminiomniParamUtils.strings(builder.characterIds);
+    this.firstFrameImageUrl = builder.firstFrameImageUrl;
+    this.lastFrameImageUrl = builder.lastFrameImageUrl;
     this.aspectRatio = builder.aspectRatio;
     this.outputResolution = builder.outputResolution;
     this.seed = builder.seed;
@@ -54,6 +58,8 @@ public final class TextToVideoParams {
     raw.put("audio_ids", GeminiomniParamUtils.wireValue(audioIds));
     raw.put("video_list", videoListToMaps(videoList));
     raw.put("character_ids", GeminiomniParamUtils.wireValue(characterIds));
+    raw.put("first_frame_image_url", GeminiomniParamUtils.wireValue(firstFrameImageUrl));
+    raw.put("last_frame_image_url", GeminiomniParamUtils.wireValue(lastFrameImageUrl));
     raw.put("aspect_ratio", GeminiomniParamUtils.wireValue(aspectRatio));
     raw.put("output_resolution", GeminiomniParamUtils.wireValue(outputResolution));
     raw.put("seed", GeminiomniParamUtils.wireValue(seed));
@@ -81,6 +87,8 @@ public final class TextToVideoParams {
     private List<String> audioIds;
     private List<VideoClip> videoList;
     private List<String> characterIds;
+    private String firstFrameImageUrl;
+    private String lastFrameImageUrl;
     private String aspectRatio;
     private String outputResolution;
     private Integer seed;
@@ -136,9 +144,21 @@ public final class TextToVideoParams {
       return this;
     }
 
-    /** Sets the character IDs. */
+    /** Sets character IDs; characters created with two reference images use two reference units. */
     public Builder characterIds(List<String> value) {
       this.characterIds = value;
+      return this;
+    }
+
+    /** Sets the first frame image URL. It cannot be combined with other reference inputs. */
+    public Builder firstFrameImageUrl(String value) {
+      this.firstFrameImageUrl = GeminiomniParamUtils.requireNonBlank(value, "firstFrameImageUrl");
+      return this;
+    }
+
+    /** Sets the last frame image URL. A first frame image URL is also required. */
+    public Builder lastFrameImageUrl(String value) {
+      this.lastFrameImageUrl = GeminiomniParamUtils.requireNonBlank(value, "lastFrameImageUrl");
       return this;
     }
 

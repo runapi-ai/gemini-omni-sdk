@@ -1,4 +1,4 @@
-"""Gemini Omni create-character resource (synchronous)."""
+"""Gemini Omni create-character terminal-or-accepted Task resource."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from ..types import CreateCharacterResponse
 
 
 class CreateCharacter(Resource):
-    """Create a reusable character. Synchronous: ``run()`` returns the result directly."""
+    """Create a character from a portrait and optional full-body reference image."""
 
     ENDPOINT = "/api/v1/gemini_omni/create_character"
 
@@ -23,17 +23,18 @@ class CreateCharacter(Resource):
     CHARACTER_NAME_MAX_LENGTH = 210
 
     def run(self, options: Optional[RequestOptions] = None, **params: Any) -> Any:
-        """Create a reusable character (synchronous).
+        """Create a reusable character and follow an accepted Task to completion.
 
         Args:
-            **params: Reusable character parameters (descriptions, reference_image_url, ...).
+            **params: Reusable character parameters. ``reference_image_url`` is the
+                portrait; ``body_reference_image_url`` optionally adds a full-body reference.
 
         Returns:
             The result.
         """
         compacted = self._compact_params(params)
         self._validate_params(compacted)
-        return self._request("post", self.ENDPOINT, body=compacted, options=options)
+        return self._run_hybrid("post", self.ENDPOINT, body=compacted, options=options)
 
     def _validate_params(self, params: Dict[str, Any]) -> None:
         self._validate_contract(CONTRACT["create-character"], {**params, "model": self.MODEL})

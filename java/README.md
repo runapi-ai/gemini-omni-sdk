@@ -16,7 +16,7 @@ Gradle:
 
 ```kotlin
 dependencies {
-  implementation("ai.runapi:runapi-gemini-omni:0.2.2")
+  implementation("ai.runapi:runapi-gemini-omni:0.2.3")
 }
 ```
 
@@ -26,7 +26,7 @@ Maven:
 <dependency>
   <groupId>ai.runapi</groupId>
   <artifactId>runapi-gemini-omni</artifactId>
-  <version>0.2.2</version>
+  <version>0.2.3</version>
 </dependency>
 ```
 
@@ -34,7 +34,7 @@ Use the BOM when multiple RunAPI Java modules are installed:
 
 ```kotlin
 dependencies {
-  implementation(platform("ai.runapi:runapi-bom:0.6.2"))
+  implementation(platform("ai.runapi:runapi-bom:0.6.3"))
   implementation("ai.runapi:runapi-gemini-omni")
 }
 ```
@@ -47,7 +47,7 @@ Maven BOM:
     <dependency>
       <groupId>ai.runapi</groupId>
       <artifactId>runapi-bom</artifactId>
-      <version>0.6.2</version>
+      <version>0.6.3</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -59,6 +59,7 @@ Maven BOM:
 
 ```java
 import ai.runapi.geminiomni.GeminiOmniClient;
+import ai.runapi.geminiomni.types.CreateCharacterParams;
 import ai.runapi.geminiomni.types.TextToVideoParams;
 import ai.runapi.geminiomni.types.CompletedTextToVideoResponse;
 import ai.runapi.geminiomni.types.TextToVideoModel;
@@ -67,15 +68,30 @@ GeminiOmniClient client = GeminiOmniClient.builder()
     .apiKey(System.getenv("RUNAPI_API_KEY"))
     .build();
 
+client.createCharacter().run(
+    CreateCharacterParams.builder()
+        .descriptions("A silver-haired cyberpunk guide")
+        .referenceImageUrl("https://cdn.runapi.ai/public/samples/portrait.jpg")
+        .bodyReferenceImageUrl("https://cdn.runapi.ai/public/samples/image.jpg")
+        .build()
+);
+
 CompletedTextToVideoResponse result = client.textToVideo().run(
     TextToVideoParams.builder()
-        .model(TextToVideoModel.GEMINI_OMNI_FLASH_PREVIEW)
-        .prompt("A tiny paper boat floating through a glowing cave")
+        .model(TextToVideoModel.GEMINI_OMNI_FLASH_1_1)
+        .prompt("A tiny paper boat travels from dawn into dusk")
+        .durationSeconds(6)
+        .firstFrameImageUrl("https://cdn.runapi.ai/public/samples/first-frame.jpg")
+        .lastFrameImageUrl("https://cdn.runapi.ai/public/samples/last-frame.jpg")
         .aspectRatio("16:9")
-        .outputResolution("720p")
+        .outputResolution("360p")
         .build()
 );
 ```
+
+The response `character.images` list is ordered portrait first and optional full-body image second. A character created with both references consumes two of the seven reference units in a multimodal video request.
+
+For `gemini-omni-flash-1-1`, `firstFrameImageUrl` cannot be combined with reference images, audio IDs, video clips, or character IDs. `lastFrameImageUrl` requires `firstFrameImageUrl`.
 
 The client builder reads `RUNAPI_API_KEY` when `.apiKey(...)` is omitted. Set `RUNAPI_BASE_URL` or `.baseUrl(...)` only when using a non-default RunAPI endpoint.
 
@@ -95,10 +111,13 @@ GeminiOmniClient client = GeminiOmniClient.builder()
     .build();
 
 TextToVideoParams params = TextToVideoParams.builder()
-    .model(TextToVideoModel.GEMINI_OMNI_FLASH_PREVIEW)
-    .prompt("A tiny paper boat floating through a glowing cave")
+    .model(TextToVideoModel.GEMINI_OMNI_FLASH_1_1)
+    .prompt("A tiny paper boat travels from dawn into dusk")
+    .durationSeconds(6)
+    .firstFrameImageUrl("https://cdn.runapi.ai/public/samples/first-frame.jpg")
+    .lastFrameImageUrl("https://cdn.runapi.ai/public/samples/last-frame.jpg")
     .aspectRatio("16:9")
-    .outputResolution("720p")
+    .outputResolution("360p")
     .build();
 
 TaskCreateResponse task = client.textToVideo().create(params);
@@ -179,6 +198,7 @@ try {
 - Model page: https://runapi.ai/models/gemini-omni
 - SDK docs: https://runapi.ai/docs/resources/sdks
 - Product docs: https://runapi.ai/docs/api/gemini-omni/text-to-video
+- Flash 1.1 pricing and rate limits: https://runapi.ai/models/gemini-omni/flash-1-1
 - Flash Preview pricing and rate limits: https://runapi.ai/models/gemini-omni/flash-preview
 - Full catalog: https://runapi.ai/models
 - Repository: https://github.com/runapi-ai/gemini-omni-sdk

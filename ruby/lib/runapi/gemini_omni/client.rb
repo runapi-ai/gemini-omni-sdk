@@ -18,7 +18,7 @@ module RunApi
     class Client < RunApi::Core::Client
       # @return [Resources::CreateAudio] Registers reusable voice presets (synchronous).
       attr_reader :create_audio
-      # @return [Resources::CreateCharacter] Builds reusable characters from reference images (synchronous).
+      # @return [Resources::CreateCharacter] Builds reusable characters and follows accepted Tasks to completion.
       attr_reader :create_character
       # @return [Resources::TextToVideo] Generates video from prompts with optional characters and voices (async).
       attr_reader :text_to_video

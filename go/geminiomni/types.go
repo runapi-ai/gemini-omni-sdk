@@ -64,14 +64,16 @@ type CreateAudioResponse struct {
 	Error string `json:"error,omitempty"`
 }
 
-// CreateCharacterParams configures a reusable character from a reference image and description.
+// CreateCharacterParams configures a reusable character from a required portrait,
+// an optional full-body reference image, and a description.
 // The returned character ID can be passed to [TextToVideoParams].CharacterIDs for consistent identity across videos.
-// Optionally attach AudioIDs to give the character a specific voice. This is synchronous (use Run directly).
+// Optionally attach AudioIDs to give the character a specific voice. Run follows an accepted Task to completion.
 type CreateCharacterParams struct {
-	Descriptions      string   `json:"descriptions" help:"required; character appearance, identity, style, clothing, or personality description"`
-	ReferenceImageURL string   `json:"reference_image_url" help:"required; character reference image URL, max 20MB"`
-	AudioIDs          []string `json:"audio_ids,omitempty" help:"optional; audio IDs from create-audio to guide voice traits"`
-	CharacterName     string   `json:"character_name,omitempty" help:"optional; character name, max 210 chars"`
+	Descriptions          string   `json:"descriptions" help:"required; character appearance, identity, style, clothing, or personality description"`
+	ReferenceImageURL     string   `json:"reference_image_url" help:"required; portrait reference image URL, max 20MB"`
+	BodyReferenceImageURL string   `json:"body_reference_image_url,omitempty" help:"optional; full-body reference image URL, max 20MB; requires the portrait reference image"`
+	AudioIDs              []string `json:"audio_ids,omitempty" help:"optional; audio IDs from create-audio to guide voice traits"`
+	CharacterName         string   `json:"character_name,omitempty" help:"optional; character name, max 210 chars"`
 }
 
 // Image holds a URL to a generated or reference image.
@@ -79,14 +81,15 @@ type Image struct {
 	URL string `json:"url"`
 }
 
-// Character holds the ID, name, and reference images for a created character.
+// Character holds the ID, name, and ordered reference images for a created character.
+// Images contains the portrait first and the optional full-body image second.
 type Character struct {
 	ID     string  `json:"id"`
 	Name   string  `json:"name,omitempty"`
 	Images []Image `json:"images,omitempty"`
 }
 
-// CreateCharacterResponse is the result of a synchronous create-character call.
+// CreateCharacterResponse is the terminal result of a create-character call.
 type CreateCharacterResponse struct {
 	core.TaskBillingFacts
 	ID        string     `json:"id"`
@@ -98,10 +101,12 @@ type CreateCharacterResponse struct {
 type TextToVideoModel string
 
 const (
+	// ModelGeminiOmniFlash11 supports prompt, multimodal reference, and first/last-frame video generation.
+	ModelGeminiOmniFlash11 TextToVideoModel = generatedTextToVideoModelGeminiOmniFlash11
 	// ModelGeminiOmniFlashPreview is the prompt-only 720p Flash Preview model.
-	ModelGeminiOmniFlashPreview TextToVideoModel = "gemini-omni-flash-preview"
+	ModelGeminiOmniFlashPreview TextToVideoModel = generatedTextToVideoModelGeminiOmniFlashPreview
 	// ModelGeminiOmniTextToVideo is the multimodal Gemini Omni model.
-	ModelGeminiOmniTextToVideo TextToVideoModel = "gemini-omni-text-to-video"
+	ModelGeminiOmniTextToVideo TextToVideoModel = generatedTextToVideoModelGeminiOmniTextToVideo
 )
 
 // VideoClip defines a trimmed segment of a source video for use in text-to-video generation.
@@ -118,12 +123,14 @@ type VideoClip struct {
 type TextToVideoParams struct {
 	Model              TextToVideoModel `json:"model,omitempty" help:"optional; model slug; defaults to gemini-omni-text-to-video"`
 	Prompt             string           `json:"prompt" help:"required; video prompt, max 20000 chars"`
-	DurationSeconds    int              `json:"duration_seconds,omitempty" help:"required for gemini-omni-text-to-video; not accepted by gemini-omni-flash-preview"`
+	DurationSeconds    int              `json:"duration_seconds,omitempty" help:"required except for gemini-omni-flash-preview"`
 	CallbackURL        string           `json:"callback_url,omitempty" help:"optional; HTTPS callback URL"`
 	ReferenceImageURLs []string         `json:"reference_image_urls,omitempty" help:"optional; reference image URLs, max 7"`
 	AudioIDs           []string         `json:"audio_ids,omitempty" help:"optional; audio IDs from create-audio, max 3"`
 	VideoList          []VideoClip      `json:"video_list,omitempty" help:"optional; source video clips, max 1; each clip uses 2 reference units"`
-	CharacterIDs       []string         `json:"character_ids,omitempty" help:"optional; character IDs from create-character, max 3"`
+	CharacterIDs       []string         `json:"character_ids,omitempty" help:"optional; character IDs from create-character, max 3; dual-image characters use 2 reference units"`
+	FirstFrameImageURL string           `json:"first_frame_image_url,omitempty" help:"optional for gemini-omni-flash-1-1; public first-frame image URL; cannot be combined with reference_image_urls, audio_ids, video_list, or character_ids"`
+	LastFrameImageURL  string           `json:"last_frame_image_url,omitempty" help:"optional for gemini-omni-flash-1-1; public last-frame image URL; requires first_frame_image_url"`
 	AspectRatio        string           `json:"aspect_ratio,omitempty" help:"optional; output aspect ratio"`
 	OutputResolution   string           `json:"output_resolution,omitempty" help:"optional; output resolution; default 720p"`
 	Seed               *int             `json:"seed,omitempty" help:"optional; integer in [0, 2147483647]"`

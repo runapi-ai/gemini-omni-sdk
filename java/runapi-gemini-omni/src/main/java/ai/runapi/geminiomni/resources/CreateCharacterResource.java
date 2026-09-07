@@ -16,13 +16,13 @@ public final class CreateCharacterResource extends GeminiomniResource {
     super(transport, options, ENDPOINT);
   }
 
-  /** Runs create character and returns the response. */
+  /** Creates a character and returns its terminal response. */
   public CreateCharacterResponse run(CreateCharacterParams params) {
     return run(params, RequestOptions.none());
   }
 
-  /** Runs create character with per-request options and returns the response. */
+  /** Creates a character with per-request options and returns its terminal response. */
   public CreateCharacterResponse run(CreateCharacterParams params, RequestOptions options) {
-    return runSync(params.action(), params.toMap(), options, CreateCharacterResponse.class);
+    return createHybridTask(params.action(), params.toMap(), options, CreateCharacterResponse.class).subscribe();
   }
 }

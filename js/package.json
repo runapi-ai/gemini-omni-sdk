@@ -3,7 +3,7 @@
   "runapi": {
     "slug": "gemini-omni"
   },
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "RunAPI Gemini Omni SDK for audio, character, and video workflows in JavaScript, Python, Ruby, Go, Java, and PHP",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

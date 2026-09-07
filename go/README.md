@@ -19,17 +19,34 @@ import (
 )
 
 client, err := geminiomni.NewClient()
-video, err := client.TextToVideo.Run(context.Background(), geminiomni.TextToVideoParams{
-  Model:            geminiomni.ModelGeminiOmniFlashPreview,
-  Prompt:           "A paper airplane glides through a sunlit studio.",
-  AspectRatio:      "16:9",
-  OutputResolution: "720p",
+character, err := client.CreateCharacter.Run(context.Background(), geminiomni.CreateCharacterParams{
+  Descriptions:          "A silver-haired cyberpunk guide",
+  ReferenceImageURL:     "https://cdn.runapi.ai/public/samples/portrait.jpg",
+  BodyReferenceImageURL: "https://cdn.runapi.ai/public/samples/image.jpg",
 })
 if err != nil {
   panic(err)
 }
+
+video, err := client.TextToVideo.Run(context.Background(), geminiomni.TextToVideoParams{
+  Model:              geminiomni.ModelGeminiOmniFlash11,
+  Prompt:             "A paper airplane travels from dawn into dusk.",
+  DurationSeconds:    6,
+  FirstFrameImageURL: "https://cdn.runapi.ai/public/samples/first-frame.jpg",
+  LastFrameImageURL:  "https://cdn.runapi.ai/public/samples/last-frame.jpg",
+  AspectRatio:        "16:9",
+  OutputResolution:   "360p",
+})
+if err != nil {
+  panic(err)
+}
+fmt.Println(character.Character.Images[0].URL, character.Character.Images[1].URL)
 fmt.Println(video.Videos[0].URL)
 ```
+
+Character images are ordered portrait first and optional full-body image second. A character created with both references consumes two of the seven reference units in a multimodal video request.
+
+For `gemini-omni-flash-1-1`, `FirstFrameImageURL` cannot be combined with reference images, audio IDs, video clips, or character IDs. `LastFrameImageURL` requires `FirstFrameImageURL`.
 
 RunAPI-generated file URLs are temporary. Download and store generated images, videos, audio, or other files in your own durable storage within 7 days; do not treat returned URLs as long-term assets.
 
@@ -38,8 +55,8 @@ RunAPI-generated file URLs are temporary. Download and store generated images, v
 - Model page: https://runapi.ai/models/gemini-omni
 - SDK docs: https://runapi.ai/docs/resources/sdks
 - Product docs: https://runapi.ai/docs/api/gemini-omni/text-to-video
+- Flash 1.1 pricing and rate limits: https://runapi.ai/models/gemini-omni/flash-1-1
 - Flash Preview pricing and rate limits: https://runapi.ai/models/gemini-omni/flash-preview
-- Provider comparison: https://runapi.ai/providers/google
 - Full catalog: https://runapi.ai/models
 
 ## License

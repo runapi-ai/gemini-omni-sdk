@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { HttpClient } from '@runapi.ai/core';
+import { createHttpClient, type HttpClient } from '@runapi.ai/core';
 import { CreateAudio } from '../../src/resources/create-audio';
 import { CreateCharacter } from '../../src/resources/create-character';
 import { TextToVideo } from '../../src/resources/text-to-video';
@@ -50,7 +50,10 @@ describe('Gemini Omni resources', () => {
       character: {
         id: 'character-runapi-123',
         name: 'Jenny',
-        images: [{ url: 'https://file.runapi.ai/gemini/jenny.png' }],
+        images: [
+          { url: 'https://file.runapi.ai/gemini/jenny.png' },
+          { url: 'https://file.runapi.ai/gemini/jenny-body.png' },
+        ],
       },
       billing: {
         reservation: { amount_cents: 10 },
@@ -63,21 +66,85 @@ describe('Gemini Omni resources', () => {
     const result = await createCharacter.run({
       descriptions: 'A silver-haired cyberpunk guide',
       reference_image_url: 'https://file.runapi.ai/demo/character.png',
+      body_reference_image_url: 'https://file.runapi.ai/demo/character-body.png',
       audio_ids: ['audio-runapi-123'],
       character_name: 'Jenny',
     });
 
-    expect(mockHttp.request).toHaveBeenCalledWith('POST', '/api/v1/gemini_omni/create_character', {
-      body: {
-        descriptions: 'A silver-haired cyberpunk guide',
-        reference_image_url: 'https://file.runapi.ai/demo/character.png',
-        audio_ids: ['audio-runapi-123'],
-        character_name: 'Jenny',
-      },
-    });
+    expect(mockHttp.request).toHaveBeenCalledWith(
+      'POST',
+      '/api/v1/gemini_omni/create_character',
+      expect.objectContaining({
+        body: {
+          descriptions: 'A silver-haired cyberpunk guide',
+          reference_image_url: 'https://file.runapi.ai/demo/character.png',
+          body_reference_image_url: 'https://file.runapi.ai/demo/character-body.png',
+          audio_ids: ['audio-runapi-123'],
+          character_name: 'Jenny',
+        },
+      }),
+    );
     expect(result.id).toBe('character-runapi-123');
     expect(result.character?.images?.[0]?.url).toBe('https://file.runapi.ai/gemini/jenny.png');
+    expect(result.character?.images?.[1]?.url).toBe('https://file.runapi.ai/gemini/jenny-body.png');
     expect(result.billing?.reservation?.amount_cents).toBe(10);
+  });
+
+  it('follows an accepted character task to its stored result', async () => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        id: 'task-character-1',
+        status: 'processing',
+      }), {
+        status: 202,
+        headers: {
+          'content-type': 'application/json',
+          location: '/api/v1/tasks/task-character-1',
+          'retry-after': '0',
+        },
+      }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        id: 'task-character-1',
+        status: 'completed',
+        response: {
+          status: 200,
+          content_type: 'application/json',
+          headers: {},
+          body: {
+            id: 'character-runapi-123',
+            character: { id: 'character-runapi-123', name: 'Jenny', images: [] },
+          },
+        },
+      }), {
+        headers: { 'content-type': 'application/json' },
+      }));
+    const createCharacter = new CreateCharacter(createHttpClient({
+      apiKey: 'test-key',
+      fetch: fetchMock as typeof fetch,
+      maxRetries: 0,
+    }));
+
+    const result = await createCharacter.run(
+      {
+        descriptions: 'A silver-haired cyberpunk guide',
+        reference_image_url: 'https://file.runapi.ai/demo/character.png',
+        character_name: 'Jenny',
+      },
+      { headers: { Prefer: 'wait=0' }, pollIntervalMs: 0 },
+    );
+
+    expect(result.id).toBe('character-runapi-123');
+    expect(result.character?.id).toBe('character-runapi-123');
+    expect(fetchMock).toHaveBeenNthCalledWith(1, expect.stringContaining('/api/v1/gemini_omni/create_character'), expect.objectContaining({
+      method: 'POST',
+      headers: expect.objectContaining({
+        'Idempotency-Key': expect.any(String),
+        Prefer: 'wait=0',
+      }),
+    }));
+    expect(fetchMock.mock.calls.slice(1).map(([url]) => url)).toEqual([
+      'https://runapi.ai/api/v1/tasks/task-character-1',
+    ]);
   });
 
   it('creates text-to-video tasks with direct service params', async () => {
@@ -133,6 +200,64 @@ describe('Gemini Omni resources', () => {
         output_resolution: '720p',
       },
     });
+  });
+
+  it('creates Flash 1.1 tasks with first and last frames at 360p', async () => {
+    vi.mocked(mockHttp.request).mockResolvedValueOnce({
+      id: 'task-flash-1-1-123',
+      status: 'processing',
+    });
+    const textToVideo = new TextToVideo(mockHttp);
+
+    await textToVideo.create({
+      model: 'gemini-omni-flash-1-1',
+      prompt: 'A paper airplane crosses from dawn into dusk',
+      duration_seconds: 6,
+      first_frame_image_url: 'https://cdn.runapi.ai/public/samples/first-frame.jpg',
+      last_frame_image_url: 'https://cdn.runapi.ai/public/samples/last-frame.jpg',
+      aspect_ratio: '16:9',
+      output_resolution: '360p',
+    });
+
+    expect(mockHttp.request).toHaveBeenCalledWith('POST', '/api/v1/gemini_omni/text_to_video', {
+      body: {
+        model: 'gemini-omni-flash-1-1',
+        prompt: 'A paper airplane crosses from dawn into dusk',
+        duration_seconds: 6,
+        first_frame_image_url: 'https://cdn.runapi.ai/public/samples/first-frame.jpg',
+        last_frame_image_url: 'https://cdn.runapi.ai/public/samples/last-frame.jpg',
+        aspect_ratio: '16:9',
+        output_resolution: '360p',
+      },
+    });
+  });
+
+  it('enforces Flash 1.1 frame input rules', async () => {
+    const textToVideo = new TextToVideo(mockHttp);
+
+    await expect(
+      textToVideo.create({
+        model: 'gemini-omni-flash-1-1',
+        prompt: 'A paper airplane crosses from dawn into dusk',
+        duration_seconds: 6,
+        first_frame_image_url: 'https://cdn.runapi.ai/public/samples/first-frame.jpg',
+        reference_image_urls: ['https://cdn.runapi.ai/public/samples/reference-1.jpg'],
+      }),
+    ).rejects.toThrow(
+      'reference_image_urls is not allowed when model is gemini-omni-flash-1-1 and first_frame_image_url is present',
+    );
+
+    await expect(
+      textToVideo.create({
+        model: 'gemini-omni-flash-1-1',
+        prompt: 'A paper airplane crosses from dawn into dusk',
+        duration_seconds: 6,
+        last_frame_image_url: 'https://cdn.runapi.ai/public/samples/last-frame.jpg',
+      }),
+    ).rejects.toThrow(
+      'first_frame_image_url is required when model is gemini-omni-flash-1-1 and last_frame_image_url is present',
+    );
+    expect(mockHttp.request).not.toHaveBeenCalled();
   });
 
   it('rejects invalid video clips before sending a request', async () => {

@@ -8,6 +8,7 @@ import java.util.Map;
 public final class CreateCharacterParams {
   private final String descriptions;
   private final String referenceImageUrl;
+  private final String bodyReferenceImageUrl;
   private final List<String> audioIds;
   private final String characterName;
   private final String model;
@@ -15,6 +16,7 @@ public final class CreateCharacterParams {
   private CreateCharacterParams(Builder builder) {
     this.descriptions = GeminiomniParamUtils.requireNonBlank(builder.descriptions, "descriptions");
     this.referenceImageUrl = GeminiomniParamUtils.requireNonBlank(builder.referenceImageUrl, "referenceImageUrl");
+    this.bodyReferenceImageUrl = builder.bodyReferenceImageUrl;
     this.audioIds = GeminiomniParamUtils.strings(builder.audioIds);
     this.characterName = builder.characterName;
     this.model = builder.model;
@@ -35,6 +37,7 @@ public final class CreateCharacterParams {
     Map<String, Object> raw = new LinkedHashMap<String, Object>();
     raw.put("descriptions", GeminiomniParamUtils.wireValue(descriptions));
     raw.put("reference_image_url", GeminiomniParamUtils.wireValue(referenceImageUrl));
+    raw.put("body_reference_image_url", GeminiomniParamUtils.wireValue(bodyReferenceImageUrl));
     raw.put("audio_ids", GeminiomniParamUtils.wireValue(audioIds));
     raw.put("character_name", GeminiomniParamUtils.wireValue(characterName));
     raw.put("model", GeminiomniParamUtils.wireValue(model));
@@ -47,6 +50,7 @@ public final class CreateCharacterParams {
   public static final class Builder {
     private String descriptions;
     private String referenceImageUrl;
+    private String bodyReferenceImageUrl;
     private List<String> audioIds;
     private String characterName;
     private String model;
@@ -59,9 +63,15 @@ public final class CreateCharacterParams {
       return this;
     }
 
-    /** Sets the reference image URL. */
+    /** Sets the required portrait reference image URL. */
     public Builder referenceImageUrl(String value) {
       this.referenceImageUrl = GeminiomniParamUtils.requireNonBlank(value, "referenceImageUrl");
+      return this;
+    }
+
+    /** Sets the optional full-body reference image URL; a portrait reference is still required. */
+    public Builder bodyReferenceImageUrl(String value) {
+      this.bodyReferenceImageUrl = GeminiomniParamUtils.requireNonBlank(value, "bodyReferenceImageUrl");
       return this;
     }
 

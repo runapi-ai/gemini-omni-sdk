@@ -80,17 +80,17 @@ func (r *CreateAudio) Run(ctx context.Context, params CreateAudioParams, opts ..
 }
 
 // CreateCharacter builds a reusable character from a reference image and description.
-// Attach AudioIDs to give the character a specific voice. This is synchronous -- only Run is available.
+// Attach AudioIDs to give the character a specific voice. Run waits for the terminal result.
 type CreateCharacter struct{ http core.HTTPClient }
 
 // Run submits a Gemini Omni character creation task and returns the result.
 func (r *CreateCharacter) Run(ctx context.Context, params CreateCharacterParams, opts ...option.RequestOption) (*CreateCharacterResponse, error) {
-	requestOptions, _ := option.ResolveRequestOptions(opts...)
+	requestOptions, pollingOptions := option.ResolveRequestOptions(opts...)
 	body := core.CompactParams(params)
 	if err := validateAction("create-character", createCharacterModel, body); err != nil {
 		return nil, err
 	}
-	return core.PostJSON[CreateCharacterResponse](ctx, r.http, createCharacterPath, body, requestOptions)
+	return core.RunHybrid[CreateCharacterResponse](ctx, r.http, createCharacterPath, body, requestOptions, pollingOptions)
 }
 
 // TextToVideo generates video from a prompt with optional characters, audio voices, reference images, and video clips.

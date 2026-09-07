@@ -1,4 +1,5 @@
 import type { AsyncTaskStatus, TaskBillingResponse, TaskResponse } from '@runapi.ai/core';
+import type { contract, modelValues } from './contract_gen';
 
 /**
  * One of 30 preset voice identities for audio creation.
@@ -70,15 +71,17 @@ export interface CreateAudioResponse extends TaskBillingResponse {
 }
 
 /**
- * Parameters for building a reusable character from a reference image and description.
+ * Parameters for building a reusable character from portrait and optional full-body references.
  * The returned character ID can be passed to {@link TextToVideoParams.character_ids}
  * for consistent identity across videos.
  */
 export interface CreateCharacterParams {
   /** Appearance, identity, style, clothing, or personality description. */
   descriptions: string;
-  /** Character reference image URL, max 20 MB. */
+  /** Portrait reference image URL, max 20 MB. */
   reference_image_url: string;
+  /** Optional full-body reference image URL, max 20 MB. Requires the portrait reference image. */
+  body_reference_image_url?: string;
   /** Audio IDs from create-audio to give the character a specific voice. */
   audio_ids?: string[];
   /** Character display name, max 210 characters. */
@@ -95,12 +98,12 @@ export interface ImageMetadata {
 export interface GeminiOmniCharacter {
   id: string;
   name?: string;
-  /** Reference images associated with this character. */
+  /** Ordered reference images: portrait first, then the optional full-body image. */
   images?: ImageMetadata[];
   [key: string]: unknown;
 }
 
-/** Result of a synchronous create-character call. */
+/** Terminal result of a create-character call. */
 export interface CreateCharacterResponse extends TaskBillingResponse {
   id: string;
   /** The created character; present on success. */
@@ -113,12 +116,12 @@ export interface CreateCharacterResponse extends TaskBillingResponse {
 export type GeminiOmniTextToVideoDuration = 4 | 6 | 8 | 10;
 /** Gemini Omni model exposed by the text-to-video endpoint. */
 export type GeminiOmniTextToVideoModel =
-  | 'gemini-omni-flash-preview'
-  | 'gemini-omni-text-to-video';
+  (typeof modelValues.textToVideo)[keyof typeof modelValues.textToVideo];
 /** Output aspect ratio -- landscape (16:9) or portrait (9:16). */
 export type GeminiOmniTextToVideoAspectRatio = '16:9' | '9:16';
 /** Output resolution -- higher resolutions produce sharper video at higher cost. */
-export type GeminiOmniTextToVideoResolution = '720p' | '1080p' | '4k';
+export type GeminiOmniTextToVideoResolution =
+  (typeof contract)['text-to-video']['fields_by_model']['gemini-omni-flash-1-1']['output_resolution']['enum'][number];
 
 /**
  * A trimmed segment of a source video for use in text-to-video generation.
@@ -139,15 +142,15 @@ export interface GeminiOmniTextToVideoClip {
  * Pre-create characters via `createCharacter` and audio voices via `createAudio`,
  * then reference their IDs here.
  *
- * Reference units are shared: images (1 each) + video clips (2 each) + characters (1 each)
- * must total 7 or fewer.
+ * Reference units are shared: images (1 each) + video clips (2 each) + characters
+ * (1 each, or 2 for a dual-image character) must total 7 or fewer.
  */
 export interface TextToVideoParams {
   /** Model to use. Defaults to gemini-omni-text-to-video for backward compatibility. */
   model?: GeminiOmniTextToVideoModel;
   /** Video generation prompt, max 20 000 characters. */
   prompt: string;
-  /** Output duration for gemini-omni-text-to-video; not accepted by gemini-omni-flash-preview. */
+  /** Output duration for all models except gemini-omni-flash-preview. */
   duration_seconds?: GeminiOmniTextToVideoDuration;
   /** HTTPS callback URL for task completion notification. */
   callback_url?: string;
@@ -157,8 +160,15 @@ export interface TextToVideoParams {
   audio_ids?: string[];
   /** Source video clips for motion reference, max 1. Each consumes 2 reference units. */
   video_list?: GeminiOmniTextToVideoClip[];
-  /** Character IDs from create-character for consistent identity, max 3. Each consumes 1 reference unit. */
+  /** Character IDs from create-character, max 3. Dual-image characters consume 2 reference units. */
   character_ids?: string[];
+  /**
+   * Public first-frame image URL for gemini-omni-flash-1-1.
+   * Cannot be combined with reference_image_urls, audio_ids, video_list, or character_ids.
+   */
+  first_frame_image_url?: string;
+  /** Public last-frame image URL for gemini-omni-flash-1-1. Requires first_frame_image_url. */
+  last_frame_image_url?: string;
   aspect_ratio?: GeminiOmniTextToVideoAspectRatio;
   /** Defaults to 720p. */
   output_resolution?: GeminiOmniTextToVideoResolution;

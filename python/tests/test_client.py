@@ -1,6 +1,6 @@
 import pytest
 
-from runapi.core import config
+from runapi.core import ApiResponse, config
 from runapi.core.errors import AuthenticationError, ValidationError
 from runapi.gemini_omni import GeminiOmniClient
 from runapi.gemini_omni.resources.create_audio import CreateAudio
@@ -63,7 +63,7 @@ def test_uses_injected_http_client_and_accessors():
     assert client.text_to_video._http is fake
 
 
-# --- synchronous resources ------------------------------------------------
+# --- terminal resources ---------------------------------------------------
 
 
 def test_create_audio_posts_once_and_returns_typed():
@@ -90,12 +90,68 @@ def test_create_audio_name_length():
 
 
 def test_create_character_returns_typed_and_validates():
-    fake = FakeHttp({"id": "c1", "character": {"id": "c1", "name": "Robot"}})
+    fake = FakeHttp({"id": "c1", "character": {"id": "c1", "name": "Robot", "images": [{"url": "https://x/r.png"}, {"url": "https://x/b.png"}]}})
     client = GeminiOmniClient(api_key="k", http_client=fake)
-    result = client.create_character.run(descriptions="A robot", reference_image_url="https://x/r.png")
-    assert fake.calls[0][0:2] == ("post", "/api/v1/gemini_omni/create_character")
+    result = client.create_character.run(
+        descriptions="A robot",
+        reference_image_url="https://x/r.png",
+        body_reference_image_url="https://x/b.png",
+    )
+    assert fake.calls[0] == (
+        "post",
+        "/api/v1/gemini_omni/create_character",
+        {
+            "descriptions": "A robot",
+            "reference_image_url": "https://x/r.png",
+            "body_reference_image_url": "https://x/b.png",
+        },
+    )
     assert isinstance(result, CreateCharacterResponse)
     assert result.character.id == "c1"
+    assert result.character.images[1].url == "https://x/b.png"
+
+
+def test_create_character_follows_accepted_task_result():
+    location = "https://runapi.ai/api/v1/tasks/task_1/result"
+    fake = FakeHttp(
+        ApiResponse(
+            {"id": "task_1", "status": "processing"},
+            {"Location": location, "Retry-After": "0"},
+            status_code=202,
+        ),
+        ApiResponse(
+            {
+                "id": "task_1",
+                "status": "completed",
+                "response": {
+                    "status": 200,
+                    "content_type": "application/json",
+                    "headers": {},
+                    "body": {
+                        "id": "character_1",
+                        "character": {
+                            "id": "character_1",
+                            "name": "Robot",
+                            "images": [],
+                        },
+                    },
+                },
+            }
+        ),
+    )
+    client = GeminiOmniClient(api_key="k", http_client=fake)
+
+    result = client.create_character.run(
+        descriptions="A robot", reference_image_url="https://x/r.png"
+    )
+
+    assert isinstance(result, CreateCharacterResponse)
+    assert result.id == "character_1"
+    assert result.character.id == "character_1"
+    assert [call[:2] for call in fake.calls] == [
+        ("post", "/api/v1/gemini_omni/create_character"),
+        ("get", location),
+    ]
 
 
 def test_create_character_requires_fields():
@@ -149,6 +205,60 @@ def test_text_to_video_flash_preview_sends_model_without_duration():
             },
         )
     ]
+
+
+def test_text_to_video_flash_1_1_sends_frame_fields_and_360p():
+    fake = FakeHttp({"id": "t-flash-1-1", "status": "pending"})
+    client = GeminiOmniClient(api_key="k", http_client=fake)
+    client.text_to_video.create(
+        model="gemini-omni-flash-1-1",
+        prompt="A paper airplane crosses from dawn into dusk",
+        duration_seconds=6,
+        first_frame_image_url="https://cdn.runapi.ai/public/samples/first-frame.jpg",
+        last_frame_image_url="https://cdn.runapi.ai/public/samples/last-frame.jpg",
+        aspect_ratio="16:9",
+        output_resolution="360p",
+    )
+    assert fake.calls == [
+        (
+            "post",
+            "/api/v1/gemini_omni/text_to_video",
+            {
+                "model": "gemini-omni-flash-1-1",
+                "prompt": "A paper airplane crosses from dawn into dusk",
+                "duration_seconds": 6,
+                "first_frame_image_url": "https://cdn.runapi.ai/public/samples/first-frame.jpg",
+                "last_frame_image_url": "https://cdn.runapi.ai/public/samples/last-frame.jpg",
+                "aspect_ratio": "16:9",
+                "output_resolution": "360p",
+            },
+        )
+    ]
+
+
+def test_text_to_video_flash_1_1_enforces_frame_rules():
+    client = GeminiOmniClient(api_key="k", http_client=FakeHttp())
+    with pytest.raises(
+        ValidationError,
+        match="reference_image_urls is not allowed when model is gemini-omni-flash-1-1 and first_frame_image_url is present",
+    ):
+        client.text_to_video.create(
+            model="gemini-omni-flash-1-1",
+            prompt="A paper airplane crosses from dawn into dusk",
+            duration_seconds=6,
+            first_frame_image_url="https://cdn.runapi.ai/public/samples/first-frame.jpg",
+            reference_image_urls=["https://cdn.runapi.ai/public/samples/reference-1.jpg"],
+        )
+    with pytest.raises(
+        ValidationError,
+        match="first_frame_image_url is required when model is gemini-omni-flash-1-1 and last_frame_image_url is present",
+    ):
+        client.text_to_video.create(
+            model="gemini-omni-flash-1-1",
+            prompt="A paper airplane crosses from dawn into dusk",
+            duration_seconds=6,
+            last_frame_image_url="https://cdn.runapi.ai/public/samples/last-frame.jpg",
+        )
 
 
 def test_text_to_video_requires_prompt_and_duration():

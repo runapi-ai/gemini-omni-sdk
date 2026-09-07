@@ -50,6 +50,10 @@ Traverse nested objects and arrays before execution. Close every relationship st
 
 For a discovered local media input, including file-typed fields and top-level media URL fields, put an agent-readable local file path directly in `request.json`. The CLI consumes file fields as declared and uploads local paths in top-level media URL fields. Use `runapi files create` only when the user needs a reusable URL, provides Base64, or the discovered contract explicitly requires a separate upload.
 
+Semantic invariants:
+- For `create-character`, use `reference_image_url` for the required portrait and `body_reference_image_url` only for an optional full-body reference. The returned `character.images` keeps that same order.
+- When building a `text-to-video` request, count a character created with both references as two of the seven available reference units.
+
 Validate the file before sending it:
 
 ```shell
@@ -117,5 +121,6 @@ Use this route only for application or production-code integration. Open the cur
 ## Variants
 - `gemini-omni-audio`: https://runapi.ai/models/gemini-omni/audio.md
 - `gemini-omni-character`: https://runapi.ai/models/gemini-omni/character.md
+- `gemini-omni-flash-1-1`: https://runapi.ai/models/gemini-omni/flash-1-1.md
 - `gemini-omni-flash-preview`: https://runapi.ai/models/gemini-omni/flash-preview.md
 - `gemini-omni-text-to-video`: https://runapi.ai/models/gemini-omni/text-to-video.md

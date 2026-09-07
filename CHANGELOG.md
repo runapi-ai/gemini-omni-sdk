@@ -1,5 +1,19 @@
 # Changelog
 
+## [js/v0.3.4](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/js%2Fv0.3.4), [ruby/v0.3.6](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/ruby%2Fv0.3.6), [go/v0.3.4](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/go%2Fv0.3.4), [python/v0.3.2](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/python%2Fv0.3.2), [java/v0.2.3](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/java%2Fv0.2.3) - 2026-09-07
+
+### Added
+- Add the gemini-omni-flash-1-1 model with 360p through 4K video generation.
+- Add first-frame and last-frame controls with model-specific request validation.
+- Add an optional full-body reference image when creating a character and preserve both ordered character images.
+
+### Changed
+- Document that dual-image characters consume two video reference units.
+
+### Fixed
+- Follow accepted character Tasks through Task Result before returning the created character.
+
+
 ## [ruby/v0.3.5](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/ruby%2Fv0.3.5) - 2026-09-04
 
 ### Changed

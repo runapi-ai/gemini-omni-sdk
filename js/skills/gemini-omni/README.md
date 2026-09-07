@@ -28,8 +28,10 @@ The canonical agent file is `skills/gemini-omni/SKILL.md`.
 ## Variants
 
 - Audio: create reusable voice resources with `runapi gemini-omni create-audio`.
-- Character: create reusable character resources with `runapi gemini-omni create-character`.
-- Video: use `gemini-omni-flash-preview` for prompt-only 720p generation, or `gemini-omni-text-to-video` for the existing multimodal workflow.
+- Character: create reusable characters from a required portrait and optional full-body reference; returned images preserve that order, and dual-image characters use two video reference units.
+- Video: use `gemini-omni-flash-1-1` for prompt, multimodal reference, and first/last-frame generation; `gemini-omni-flash-preview` for prompt-only 720p generation; or `gemini-omni-text-to-video` for the existing multimodal workflow.
+
+For `gemini-omni-flash-1-1`, `first_frame_image_url` cannot be combined with reference images, audio IDs, video clips, or character IDs. `last_frame_image_url` requires `first_frame_image_url`.
 
 ## Install
 
@@ -64,8 +66,8 @@ runapi wait <task-id> --service gemini-omni --action text-to-video
 - Product docs: https://runapi.ai/docs/api/gemini-omni/text-to-video
 - SDK docs: https://runapi.ai/docs/resources/sdks
 - SDK repository: https://github.com/runapi-ai/gemini-omni-sdk
+- Flash 1.1 pricing and rate limits: https://runapi.ai/models/gemini-omni/flash-1-1
 - Flash Preview pricing and rate limits: https://runapi.ai/models/gemini-omni/flash-preview
-- Provider comparison: https://runapi.ai/providers/google
 - Browse all RunAPI models and skills: https://runapi.ai/models
 
 ## Agent rules

@@ -21,20 +21,32 @@ voice = client.create_audio.run(audio_id="kore", name="Narrator")
 # Reusable character (returns immediately)
 character = client.create_character.run(
     descriptions="A friendly robot guide",
-    reference_image_url="https://cdn.runapi.ai/public/samples/reference-1.jpg",
+    reference_image_url="https://cdn.runapi.ai/public/samples/portrait.jpg",
+    body_reference_image_url="https://cdn.runapi.ai/public/samples/image.jpg",
 )
 
 # Text-to-video (create + poll until complete)
 result = client.text_to_video.run(
-    model="gemini-omni-flash-preview",
-    prompt="A paper airplane glides through a sunlit studio.",
+    model="gemini-omni-flash-1-1",
+    prompt="A paper airplane travels from dawn into dusk.",
+    duration_seconds=6,
+    first_frame_image_url="https://cdn.runapi.ai/public/samples/first-frame.jpg",
+    last_frame_image_url="https://cdn.runapi.ai/public/samples/last-frame.jpg",
     aspect_ratio="16:9",
-    output_resolution="720p",
+    output_resolution="360p",
 )
 print(result.videos[0].url)
 ```
 
-`create_audio` and `create_character` are synchronous: `run` submits and returns the result directly. `text_to_video` is asynchronous: use `create` to submit and return quickly, `get` to fetch the latest task state, and `run` to create and poll until completion.
+`character.images` returns the portrait first and the optional full-body image second. A character created with both references consumes two of the seven reference units in a multimodal video request.
+
+For `gemini-omni-flash-1-1`, `first_frame_image_url` cannot be combined with reference images, audio IDs, video clips, or character IDs. `last_frame_image_url` requires `first_frame_image_url`.
+
+`create_audio` returns its result directly. `create_character.run` returns the
+terminal character result and follows an accepted Task when needed.
+`text_to_video` is asynchronous: use `create` to submit and return quickly,
+`get` to fetch the latest task state, and `run` to create and poll until
+completion.
 
 RunAPI-generated file URLs are temporary. Download and store generated images, videos, audio, or other files in your own durable storage within 7 days; do not treat returned URLs as long-term assets.
 
@@ -47,8 +59,8 @@ Pass parameters as keyword arguments and catch the `runapi.gemini_omni` error cl
 - Model page: https://runapi.ai/models/gemini-omni
 - SDK docs: https://runapi.ai/docs/resources/sdks
 - Product docs: https://runapi.ai/docs/api/gemini-omni/text-to-video
+- Flash 1.1 pricing and rate limits: https://runapi.ai/models/gemini-omni/flash-1-1
 - Flash Preview pricing and rate limits: https://runapi.ai/models/gemini-omni/flash-preview
-- Provider comparison: https://runapi.ai/providers/google
 - Full catalog: https://runapi.ai/models
 
 ## License

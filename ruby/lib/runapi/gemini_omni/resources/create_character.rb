@@ -3,9 +3,9 @@
 module RunApi
   module GeminiOmni
     module Resources
-      # Builds a reusable character from a reference image and description.
+      # Builds a reusable character from a portrait, optional full-body reference, and description.
       # Attach audio IDs to give the character a specific voice.
-      # Synchronous -- only +run+ is available (no create/get polling).
+      # +run+ returns the terminal character result, following an accepted Task when needed.
       class CreateCharacter
         include RunApi::Core::ResourceHelpers
 
@@ -22,7 +22,7 @@ module RunApi
         def run(options: nil, **params)
           params = compact_params(params)
           validate_params!(params)
-          request(:post, ENDPOINT, body: params, options: options)
+          run_hybrid(ENDPOINT, body: params, options: options, response_class: RESPONSE_CLASS)
         end
 
         private

@@ -27,7 +27,11 @@ import ai.runapi.geminiomni.types.VideoClip;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.ByteArrayOutputStream;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 class GeminiOmniClientTest {
@@ -82,6 +86,61 @@ class GeminiOmniClientTest {
 
     JsonNode body = bodyJson(transport.request);
     assertEquals("gemini-omni-text-to-video", body.get("model").asText());
+  }
+
+  @Test
+  void createFlash11SendsFrameFieldsAnd360p() throws Exception {
+    CapturingTransport transport = new CapturingTransport("{\"id\":\"task_flash_1_1\",\"status\":\"processing\"}");
+    GeminiOmniClient client = GeminiOmniClient.builder().apiKey("sk-test").transport(transport).build();
+
+    client.textToVideo().create(
+        TextToVideoParams.builder()
+            .model(TextToVideoModel.GEMINI_OMNI_FLASH_1_1)
+            .prompt("A paper airplane crosses from dawn into dusk")
+            .durationSeconds(6)
+            .firstFrameImageUrl("https://cdn.runapi.ai/public/samples/first-frame.jpg")
+            .lastFrameImageUrl("https://cdn.runapi.ai/public/samples/last-frame.jpg")
+            .aspectRatio("16:9")
+            .outputResolution("360p")
+            .build()
+    );
+
+    JsonNode body = bodyJson(transport.request);
+    assertEquals("gemini-omni-flash-1-1", body.get("model").asText());
+    assertEquals("https://cdn.runapi.ai/public/samples/first-frame.jpg", body.get("first_frame_image_url").asText());
+    assertEquals("https://cdn.runapi.ai/public/samples/last-frame.jpg", body.get("last_frame_image_url").asText());
+    assertEquals("360p", body.get("output_resolution").asText());
+  }
+
+  @Test
+  void flash11FrameRulesAreValidatedBeforeRequest() {
+    GeminiOmniClient client = GeminiOmniClient.builder()
+        .apiKey("sk-test")
+        .transport(new CapturingTransport("{\"id\":\"not_sent\"}"))
+        .build();
+
+    ValidationException exclusivityError = assertThrows(
+        ValidationException.class,
+        () -> client.textToVideo().create(
+            TextToVideoParams.builder()
+                .model(TextToVideoModel.GEMINI_OMNI_FLASH_1_1)
+                .prompt("A paper airplane crosses from dawn into dusk")
+                .durationSeconds(6)
+                .firstFrameImageUrl("https://cdn.runapi.ai/public/samples/first-frame.jpg")
+                .referenceImageUrls(Collections.singletonList("https://cdn.runapi.ai/public/samples/reference-1.jpg"))
+                .build()));
+    assertEquals("reference_image_urls is not allowed when first_frame_image_url is present and model is gemini-omni-flash-1-1", exclusivityError.getMessage());
+
+    ValidationException dependencyError = assertThrows(
+        ValidationException.class,
+        () -> client.textToVideo().create(
+            TextToVideoParams.builder()
+                .model(TextToVideoModel.GEMINI_OMNI_FLASH_1_1)
+                .prompt("A paper airplane crosses from dawn into dusk")
+                .durationSeconds(6)
+                .lastFrameImageUrl("https://cdn.runapi.ai/public/samples/last-frame.jpg")
+                .build()));
+    assertEquals("first_frame_image_url is required when last_frame_image_url is present and model is gemini-omni-flash-1-1", dependencyError.getMessage());
   }
 
   @Test
@@ -162,18 +221,20 @@ class GeminiOmniClientTest {
     }
 
     @Test
-    void coversCreatecharacterResourceMethods() {
+    void coversCreatecharacterResourceMethods() throws Exception {
       CapturingTransport transport = new CapturingTransport("{\"id\":\"sync_create_character\",\"character\":{\"value\":\"sample\"},\"billing\":{\"refund\":{\"refunded_at\":\"2026-07-23T12:00:00.000000Z\"}}}");
       GeminiOmniClient client = GeminiOmniClient.builder().apiKey("sk-test").transport(transport).build();
 
       CreateCharacterResponse response = client.createCharacter().run(
               CreateCharacterParams.builder()
                   .descriptions("sample")
-                  .referenceImageUrl("https://cdn.runapi.ai/public/samples/image.jpg")
+                  .referenceImageUrl("https://cdn.runapi.ai/public/samples/portrait.jpg")
+                  .bodyReferenceImageUrl("https://cdn.runapi.ai/public/samples/image.jpg")
                   .build()
       );
       assertNotNull(response);
       assertEquals("2026-07-23T12:00:00.000000Z", response.getBilling().getRefund().getRefundedAt());
+      assertEquals("https://cdn.runapi.ai/public/samples/image.jpg", bodyJson(transport.request).get("body_reference_image_url").asText());
 
       CapturingTransport transportWithOptions = new CapturingTransport("{\"id\":\"sync_create_character_options\",\"character\":{\"value\":\"sample\"},\"billing\":{\"refund\":{\"refunded_at\":\"2026-07-23T12:00:00.000000Z\"}}}");
       GeminiOmniClient clientWithOptions = GeminiOmniClient.builder().apiKey("sk-test").transport(transportWithOptions).build();
@@ -183,6 +244,28 @@ class GeminiOmniClientTest {
                   .referenceImageUrl("https://cdn.runapi.ai/public/samples/image.jpg")
                   .build(),
           RequestOptions.none()));
+    }
+
+    @Test
+    void createCharacterFollowsAcceptedTaskToItsTerminalResponse() {
+      HybridSequenceTransport transport = new HybridSequenceTransport(
+          response(202, "{\"id\":\"task_pending\",\"status\":\"pending\"}", headers(
+              "Location", "/api/v1/tasks/task_pending/result",
+              "Retry-After", "0")),
+          response(200, "{\"id\":\"task_pending\",\"status\":\"completed\",\"response\":{\"status\":200,\"content_type\":\"application/json\",\"headers\":{},\"body\":{\"id\":\"char_1\",\"character\":{\"id\":\"char_1\",\"name\":\"Guide\"}}}}", Collections.<String, String>emptyMap()));
+      GeminiOmniClient client = GeminiOmniClient.builder().apiKey("sk-test").transport(transport).build();
+
+      CreateCharacterResponse response = client.createCharacter().run(
+          CreateCharacterParams.builder()
+              .descriptions("A friendly narrator wearing a blue jacket")
+              .referenceImageUrl("https://cdn.runapi.ai/public/samples/portrait.jpg")
+              .build(),
+          RequestOptions.builder().pollingInterval(Duration.ofMillis(1)).pollingMaxWait(Duration.ofSeconds(1)).build());
+
+      assertEquals("char_1", response.getId());
+      assertEquals("char_1", response.getCharacter().get("id"));
+      assertEquals(2, transport.requests.size());
+      assertEquals("/api/v1/tasks/task_pending/result", transport.requests.get(1).getPath());
     }
 
     @Test
@@ -248,6 +331,22 @@ class GeminiOmniClientTest {
     return Json.mapper().readTree(out.toByteArray());
   }
 
+  private static HttpResponse response(int status, String body, Map<String, String> headers) {
+    Map<String, List<String>> values = new LinkedHashMap<String, List<String>>();
+    for (Map.Entry<String, String> header : headers.entrySet()) {
+      values.put(header.getKey(), Collections.singletonList(header.getValue()));
+    }
+    return new HttpResponse(status, body, values);
+  }
+
+  private static Map<String, String> headers(String... values) {
+    Map<String, String> headers = new LinkedHashMap<String, String>();
+    for (int index = 0; index < values.length; index += 2) {
+      headers.put(values[index], values[index + 1]);
+    }
+    return headers;
+  }
+
   private static final class CapturingTransport implements HttpTransport {
     private final String body;
     private HttpRequest request;
@@ -276,6 +375,23 @@ class GeminiOmniClientTest {
       String response = responses[Math.min(calls, responses.length - 1)];
       calls++;
       return new HttpResponse(200, response, Collections.<String, java.util.List<String>>emptyMap());
+    }
+
+    public void close() {}
+  }
+
+  private static final class HybridSequenceTransport implements HttpTransport {
+    private final HttpResponse[] responses;
+    private final List<HttpRequest> requests = new ArrayList<HttpRequest>();
+    private int calls;
+
+    private HybridSequenceTransport(HttpResponse... responses) {
+      this.responses = responses;
+    }
+
+    public HttpResponse send(HttpRequest request) {
+      requests.add(request);
+      return responses[Math.min(calls++, responses.length - 1)];
     }
 
     public void close() {}

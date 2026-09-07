@@ -21,16 +21,24 @@ voice = client.create_audio.run(
 
 character = client.create_character.run(
   descriptions: "A silver-haired cyberpunk guide",
-  reference_image_url: "https://cdn.runapi.ai/public/samples/reference-1.jpg"
+  reference_image_url: "https://cdn.runapi.ai/public/samples/portrait.jpg",
+  body_reference_image_url: "https://cdn.runapi.ai/public/samples/image.jpg"
 )
 
 video = client.text_to_video.run(
-  model: "gemini-omni-flash-preview",
-  prompt: "A paper airplane glides through a sunlit studio.",
+  model: "gemini-omni-flash-1-1",
+  prompt: "A paper airplane travels from dawn into dusk.",
+  duration_seconds: 6,
+  first_frame_image_url: "https://cdn.runapi.ai/public/samples/first-frame.jpg",
+  last_frame_image_url: "https://cdn.runapi.ai/public/samples/last-frame.jpg",
   aspect_ratio: "16:9",
-  output_resolution: "720p"
+  output_resolution: "360p"
 )
 ```
+
+`character.images` returns the portrait first and the optional full-body image second. A character created with both references consumes two of the seven reference units in a multimodal video request.
+
+For `gemini-omni-flash-1-1`, `first_frame_image_url` cannot be combined with reference images, audio IDs, video clips, or character IDs. `last_frame_image_url` requires `first_frame_image_url`.
 
 RunAPI-generated file URLs are temporary. Download and store generated images, videos, audio, or other files in your own durable storage within 7 days; do not treat returned URLs as long-term assets.
 
@@ -39,8 +47,8 @@ RunAPI-generated file URLs are temporary. Download and store generated images, v
 - Model page: https://runapi.ai/models/gemini-omni
 - SDK docs: https://runapi.ai/docs/resources/sdks
 - Product docs: https://runapi.ai/docs/api/gemini-omni/text-to-video
+- Flash 1.1 pricing and rate limits: https://runapi.ai/models/gemini-omni/flash-1-1
 - Flash Preview pricing and rate limits: https://runapi.ai/models/gemini-omni/flash-preview
-- Provider comparison: https://runapi.ai/providers/google
 - Full catalog: https://runapi.ai/models
 
 ## License

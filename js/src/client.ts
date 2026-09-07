@@ -28,7 +28,7 @@ import { TextToVideo } from './resources/text-to-video';
 export class GeminiOmniClient extends BaseClient {
   /** Registers a reusable voice preset from a built-in voice identity (synchronous). */
   public readonly createAudio: CreateAudio;
-  /** Builds a reusable character from a reference image and description (synchronous). */
+  /** Builds a reusable character and follows an accepted Task to completion when needed. */
   public readonly createCharacter: CreateCharacter;
   /** Generates video from a prompt with optional characters, voices, images, and clips (async with polling). */
   public readonly textToVideo: TextToVideo;

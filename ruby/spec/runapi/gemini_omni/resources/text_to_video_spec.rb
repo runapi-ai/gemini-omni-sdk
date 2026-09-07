@@ -51,6 +51,45 @@ RSpec.describe RunApi::GeminiOmni::Resources::TextToVideo do
     expect(result.id).to eq("task-flash-123")
   end
 
+  it "POSTs Flash 1.1 with first and last frames at 360p" do
+    params = {
+      model: "gemini-omni-flash-1-1",
+      prompt: "A paper airplane crosses from dawn into dusk",
+      duration_seconds: 6,
+      first_frame_image_url: "https://cdn.runapi.ai/public/samples/first-frame.jpg",
+      last_frame_image_url: "https://cdn.runapi.ai/public/samples/last-frame.jpg",
+      aspect_ratio: "16:9",
+      output_resolution: "360p"
+    }
+    expect(http).to receive(:request).with(:post, endpoint, body: params)
+      .and_return("id" => "task-flash-1-1-123", "status" => "processing")
+
+    result = resource.create(**params)
+
+    expect(result.id).to eq("task-flash-1-1-123")
+  end
+
+  it "enforces Flash 1.1 frame input rules" do
+    expect {
+      resource.create(
+        model: "gemini-omni-flash-1-1",
+        prompt: "A paper airplane crosses from dawn into dusk",
+        duration_seconds: 6,
+        first_frame_image_url: "https://cdn.runapi.ai/public/samples/first-frame.jpg",
+        reference_image_urls: ["https://cdn.runapi.ai/public/samples/reference-1.jpg"]
+      )
+    }.to raise_error(RunApi::Core::ValidationError, /reference_image_urls is not allowed when model is gemini-omni-flash-1-1 and first_frame_image_url is present/)
+
+    expect {
+      resource.create(
+        model: "gemini-omni-flash-1-1",
+        prompt: "A paper airplane crosses from dawn into dusk",
+        duration_seconds: 6,
+        last_frame_image_url: "https://cdn.runapi.ai/public/samples/last-frame.jpg"
+      )
+    }.to raise_error(RunApi::Core::ValidationError, /first_frame_image_url is required when model is gemini-omni-flash-1-1 and last_frame_image_url is present/)
+  end
+
   it "raises ValidationError when required fields are missing" do
     expect { resource.create(prompt: "Create a neon city tracking shot") }
       .to raise_error(RunApi::Core::ValidationError, /duration_seconds is required/)

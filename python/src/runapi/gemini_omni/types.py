@@ -33,6 +33,8 @@ class Image(BaseModel):
 
 
 class Character(BaseModel):
+    """Character whose images contain the portrait first and optional full-body image second."""
+
     id = required(str)
     name = optional(str)
     images = optional([lambda: Image])
