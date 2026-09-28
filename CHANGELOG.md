@@ -1,5 +1,15 @@
 # Changelog
 
+## [js/v0.3.5](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/js%2Fv0.3.5), [go/v0.3.5](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/go%2Fv0.3.5), [java/v0.2.4](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/java%2Fv0.2.4) - 2026-09-28
+
+### Added
+- Return usage.cost as a float USD amount on completed async Task query and webhook envelopes.
+
+### Removed
+- Remove the public Task billing object from Task envelopes.
+  Migration: Read usage.cost on completed Task envelopes. Create, processing, and failed envelopes omit usage.
+
+
 ## [js/v0.3.4](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/js%2Fv0.3.4), [ruby/v0.3.6](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/ruby%2Fv0.3.6), [go/v0.3.4](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/go%2Fv0.3.4), [python/v0.3.2](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/python%2Fv0.3.2), [java/v0.2.3](https://github.com/runapi-ai/gemini-omni-sdk/releases/tag/java%2Fv0.2.3) - 2026-09-07
 
 ### Added

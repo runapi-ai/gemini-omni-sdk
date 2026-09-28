@@ -25,15 +25,15 @@ func (s *stubHTTPClient) Request(_ context.Context, method, path string, opts *c
 		s.body = opts.Body
 	}
 	if path == "/api/v1/gemini_omni/create_character" {
-		return json.RawMessage(`{"id":"character-runapi-123","character":{"id":"character-runapi-123","name":"Jenny","images":[{"url":"https://file.runapi.ai/gemini/jenny.png"},{"url":"https://file.runapi.ai/gemini/jenny-body.png"}]},"billing":{"reservation":{"amount_cents":10}}}`), nil
+		return json.RawMessage(`{"id":"character-runapi-123","character":{"id":"character-runapi-123","name":"Jenny","images":[{"url":"https://file.runapi.ai/gemini/jenny.png"},{"url":"https://file.runapi.ai/gemini/jenny-body.png"}]}}`), nil
 	}
 	if path == "/api/v1/gemini_omni/text_to_video" {
 		return json.RawMessage(`{"id":"task-local-123","status":"processing"}`), nil
 	}
 	if path == "/api/v1/gemini_omni/text_to_video/task-local-123" {
-		return json.RawMessage(`{"id":"task-local-123","status":"completed","videos":[{"url":"https://tempfile.runapi.ai/gemini/output.mp4"}]}`), nil
+		return json.RawMessage(`{"id":"task-local-123","status":"completed", "usage": {"cost": 0.05},"videos":[{"url":"https://tempfile.runapi.ai/gemini/output.mp4"}]}`), nil
 	}
-	return json.RawMessage(`{"id":"audio-runapi-123","audio":{"id":"audio-runapi-123","name":"Acher Narrator"},"billing":{"reservation":{"amount_cents":10}}}`), nil
+	return json.RawMessage(`{"id":"audio-runapi-123","audio":{"id":"audio-runapi-123","name":"Acher Narrator"}}`), nil
 }
 
 func TestCreateAudioRunSendsCorrectRequest(t *testing.T) {
@@ -43,8 +43,7 @@ func TestCreateAudioRunSendsCorrectRequest(t *testing.T) {
 		AudioID:          VoiceAchernar,
 		Name:             "Acher Narrator",
 		VoiceDescription: "A calm, clear voice",
-		ExampleDialogue:  "Hello, I am achernar",
-	})
+		ExampleDialogue:  "Hello, I am achernar"})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -64,9 +63,6 @@ func TestCreateAudioRunSendsCorrectRequest(t *testing.T) {
 	if resp.ID != "audio-runapi-123" {
 		t.Fatalf("unexpected response id: %s", resp.ID)
 	}
-	if resp.Billing == nil || resp.Billing.Reservation == nil {
-		t.Fatalf("expected billing facts: %#v", resp.Billing)
-	}
 }
 
 func TestCreateCharacterRunSendsCorrectRequest(t *testing.T) {
@@ -77,8 +73,7 @@ func TestCreateCharacterRunSendsCorrectRequest(t *testing.T) {
 		ReferenceImageURL:     "https://file.runapi.ai/demo/character.png",
 		BodyReferenceImageURL: "https://file.runapi.ai/demo/character-body.png",
 		AudioIDs:              []string{"audio-runapi-123"},
-		CharacterName:         "Jenny",
-	})
+		CharacterName:         "Jenny"})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -113,9 +108,6 @@ func TestCreateCharacterRunSendsCorrectRequest(t *testing.T) {
 	if resp.Character == nil || len(resp.Character.Images) != 2 || resp.Character.Images[1].URL != "https://file.runapi.ai/gemini/jenny-body.png" {
 		t.Fatalf("unexpected character images: %#v", resp.Character)
 	}
-	if resp.Billing == nil || resp.Billing.Reservation == nil {
-		t.Fatalf("expected billing facts: %#v", resp.Billing)
-	}
 }
 
 func TestCreateCharacterRunFollowsAcceptedTaskLocation(t *testing.T) {
@@ -135,7 +127,7 @@ func TestCreateCharacterRunFollowsAcceptedTaskLocation(t *testing.T) {
 			if r.Method != http.MethodGet || r.URL.Path != "/api/v1/tasks/task_pending" {
 				t.Fatalf("unexpected task result request: %s %s", r.Method, r.URL.Path)
 			}
-			_, _ = w.Write([]byte(`{"id":"task_pending","status":"completed","response":{"status":200,"content_type":"application/json","headers":{},"body":{"id":"character-runapi-123","character":{"id":"character-runapi-123","name":"Jenny","images":[]}}}}`))
+			_, _ = w.Write([]byte(`{"id":"task_pending","status":"completed", "usage": {"cost": 0.05},"response":{"status":200,"content_type":"application/json","headers":{},"body":{"id":"character-runapi-123","character":{"id":"character-runapi-123","name":"Jenny","images":[]}}}}`))
 		default:
 			t.Fatalf("unexpected request %d", requests)
 		}
@@ -151,8 +143,7 @@ func TestCreateCharacterRunFollowsAcceptedTaskLocation(t *testing.T) {
 		CreateCharacterParams{
 			Descriptions:      "A silver-haired cyberpunk guide",
 			ReferenceImageURL: "https://file.runapi.ai/demo/character.png",
-			CharacterName:     "Jenny",
-		},
+			CharacterName:     "Jenny"},
 		option.WithHeader("Prefer", "wait=0"),
 		option.WithPollInterval(time.Millisecond),
 	)
@@ -176,8 +167,7 @@ func TestTextToVideoCreateAndGet(t *testing.T) {
 		ReferenceImageURLs: []string{"https://file.runapi.ai/demo/scene.png"},
 		AudioIDs:           []string{"audio-runapi-123"},
 		CharacterIDs:       []string{"character-runapi-123"},
-		Seed:               &seed,
-	})
+		Seed:               &seed})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -222,8 +212,7 @@ func TestTextToVideoRejectsInvalidVideoClip(t *testing.T) {
 	_, err := client.TextToVideo.Create(context.Background(), TextToVideoParams{
 		Prompt:          "Create a neon city tracking shot",
 		DurationSeconds: 8,
-		VideoList:       []VideoClip{{URL: "", Start: 0, Ends: 10}},
-	})
+		VideoList:       []VideoClip{{URL: "", Start: 0, Ends: 10}}})
 	if err == nil || err.Error() != "video_list[0].url is required" {
 		t.Fatalf("expected video clip validation error, got %v", err)
 	}
@@ -239,8 +228,7 @@ func TestTextToVideoCreateFlashPreviewSendsModelWithoutDuration(t *testing.T) {
 		Model:            ModelGeminiOmniFlashPreview,
 		Prompt:           "A paper airplane flying through a sunlit studio",
 		AspectRatio:      "9:16",
-		OutputResolution: "720p",
-	})
+		OutputResolution: "720p"})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -269,8 +257,7 @@ func TestTextToVideoCreateFlash11SendsFrameFieldsAnd360p(t *testing.T) {
 		FirstFrameImageURL: "https://cdn.runapi.ai/public/samples/first-frame.jpg",
 		LastFrameImageURL:  "https://cdn.runapi.ai/public/samples/last-frame.jpg",
 		AspectRatio:        "16:9",
-		OutputResolution:   "360p",
-	})
+		OutputResolution:   "360p"})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -305,21 +292,16 @@ func TestTextToVideoFlash11EnforcesFrameRules(t *testing.T) {
 				Prompt:             "A paper airplane crosses from dawn into dusk",
 				DurationSeconds:    6,
 				FirstFrameImageURL: "https://cdn.runapi.ai/public/samples/first-frame.jpg",
-				ReferenceImageURLs: []string{"https://cdn.runapi.ai/public/samples/reference-1.jpg"},
-			},
-			error: "reference_image_urls is not allowed when first_frame_image_url is present and model is gemini-omni-flash-1-1",
-		},
+				ReferenceImageURLs: []string{"https://cdn.runapi.ai/public/samples/reference-1.jpg"}},
+			error: "reference_image_urls is not allowed when first_frame_image_url is present and model is gemini-omni-flash-1-1"},
 		{
 			name: "last frame requires first frame",
 			params: TextToVideoParams{
 				Model:             ModelGeminiOmniFlash11,
 				Prompt:            "A paper airplane crosses from dawn into dusk",
 				DurationSeconds:   6,
-				LastFrameImageURL: "https://cdn.runapi.ai/public/samples/last-frame.jpg",
-			},
-			error: "first_frame_image_url is required when last_frame_image_url is present and model is gemini-omni-flash-1-1",
-		},
-	}
+				LastFrameImageURL: "https://cdn.runapi.ai/public/samples/last-frame.jpg"},
+			error: "first_frame_image_url is required when last_frame_image_url is present and model is gemini-omni-flash-1-1"}}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {

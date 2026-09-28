@@ -58,7 +58,6 @@ type Audio struct {
 
 // CreateAudioResponse is the result of a synchronous create-audio call.
 type CreateAudioResponse struct {
-	core.TaskBillingFacts
 	ID    string `json:"id"`
 	Audio *Audio `json:"audio,omitempty"`
 	Error string `json:"error,omitempty"`
@@ -91,7 +90,6 @@ type Character struct {
 
 // CreateCharacterResponse is the terminal result of a create-character call.
 type CreateCharacterResponse struct {
-	core.TaskBillingFacts
 	ID        string     `json:"id"`
 	Character *Character `json:"character,omitempty"`
 	Error     string     `json:"error,omitempty"`
@@ -138,7 +136,7 @@ type TextToVideoParams struct {
 
 // TaskResponse carries the task ID, lifecycle status, and error for Gemini Omni async operations.
 type TaskResponse struct {
-	core.TaskBillingFacts
+	Usage *core.TaskUsage `json:"usage,omitempty"`
 	ID     string `json:"id"`
 	Status string `json:"status"`
 	Error  string `json:"error,omitempty"`

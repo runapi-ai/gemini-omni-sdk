@@ -1,4 +1,4 @@
-import type { AsyncTaskStatus, TaskBillingResponse, TaskResponse } from '@runapi.ai/core';
+import type { AsyncTaskStatus, TaskResponse } from '@runapi.ai/core';
 import type { contract, modelValues } from './contract_gen';
 
 /**
@@ -62,7 +62,7 @@ export interface GeminiOmniAudio {
 }
 
 /** Result of a synchronous create-audio call. */
-export interface CreateAudioResponse extends TaskBillingResponse {
+export interface CreateAudioResponse {
   id: string;
   /** The created voice preset; present on success. */
   audio?: GeminiOmniAudio;
@@ -104,7 +104,7 @@ export interface GeminiOmniCharacter {
 }
 
 /** Terminal result of a create-character call. */
-export interface CreateCharacterResponse extends TaskBillingResponse {
+export interface CreateCharacterResponse {
   id: string;
   /** The created character; present on success. */
   character?: GeminiOmniCharacter;
@@ -177,7 +177,7 @@ export interface TextToVideoParams {
 }
 
 /** Acknowledgement returned by `create()` before the task starts processing. */
-export interface TaskCreateResponse extends TaskBillingResponse {
+export interface TaskCreateResponse {
   id: string;
   status?: AsyncTaskStatus;
 }

@@ -18,7 +18,7 @@ RSpec.describe RunApi::GeminiOmni::Resources::CreateCharacter do
     expect(http).to receive(:request) do |method, path, body:, options:|
       expect([method, path, body]).to eq([:post, endpoint, params])
       expect(options.headers.fetch("Idempotency-Key")).to match(/\A[0-9a-f-]{36}\z/)
-    end.and_return("id" => "character-runapi-123", "character" => {"id" => "character-runapi-123", "name" => "Jenny", "images" => [{"url" => "https://file.runapi.ai/gemini/jenny.png"}, {"url" => "https://file.runapi.ai/gemini/jenny-body.png"}]}, "billing" => {"reservation" => {"amount_cents" => 10}, "settlement" => {"charged_amount_cents" => 10, "amount_micro_cents" => 10_000_000}, "refund" => nil})
+    end.and_return("id" => "character-runapi-123", "character" => {"id" => "character-runapi-123", "name" => "Jenny", "images" => [{"url" => "https://file.runapi.ai/gemini/jenny.png"}, {"url" => "https://file.runapi.ai/gemini/jenny-body.png"}]})
 
     result = resource.run(**params)
 
@@ -26,18 +26,16 @@ RSpec.describe RunApi::GeminiOmni::Resources::CreateCharacter do
     expect(result.character.name).to eq("Jenny")
     expect(result.character.images.first.url).to eq("https://file.runapi.ai/gemini/jenny.png")
     expect(result.character.images.last.url).to eq("https://file.runapi.ai/gemini/jenny-body.png")
-    expect(result.billing).to be_a(RunApi::Core::TaskBillingFacts)
-    expect(result.billing.reservation.amount_cents).to eq(10)
   end
 
   it "follows an accepted task to its terminal character response" do
     client = RunApi::Core::HttpClient.new(
-      RunApi::Core::ClientOptions.new(api_key: "test-key", base_url: "https://api.runapi.ai")
+      RunApi::Core::ClientOptions.new(api_key: "test-key", base_url: "https://runapi.ai")
     )
     resource = described_class.new(client)
-    location = "https://api.runapi.ai/api/v1/tasks/task-1/result"
+    location = "https://runapi.ai/api/v1/tasks/task-1/result"
 
-    stub_request(:post, "https://api.runapi.ai#{endpoint}")
+    stub_request(:post, "https://runapi.ai#{endpoint}")
       .to_return(
         status: 202,
         body: '{"id":"task-1","status":"processing"}',
@@ -46,7 +44,7 @@ RSpec.describe RunApi::GeminiOmni::Resources::CreateCharacter do
     stub_request(:get, location)
       .to_return(
         status: 200,
-        body: '{"id":"task-1","status":"completed","response":{"status":200,"content_type":"application/json","headers":{},"body":{"id":"character-1","character":{"id":"character-1","name":"Jenny","images":[]}}}}',
+        body: '{"id":"task-1","status":"completed","response":{"status":200,"content_type":"application/json","headers":{},"body":{"id":"character-1","character":{"id":"character-1","name":"Jenny","images":[]}}},"usage":{"cost":0.05}}',
         headers: {"Content-Type" => "application/json"}
       )
 

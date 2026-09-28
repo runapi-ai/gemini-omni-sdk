@@ -103,8 +103,7 @@ def test_create_character_returns_typed_and_validates():
         {
             "descriptions": "A robot",
             "reference_image_url": "https://x/r.png",
-            "body_reference_image_url": "https://x/b.png",
-        },
+            "body_reference_image_url": "https://x/b.png"},
     )
     assert isinstance(result, CreateCharacterResponse)
     assert result.character.id == "c1"
@@ -122,7 +121,7 @@ def test_create_character_follows_accepted_task_result():
         ApiResponse(
             {
                 "id": "task_1",
-                "status": "completed",
+                "status": "completed", "usage": {"cost": 0.05},
                 "response": {
                     "status": 200,
                     "content_type": "application/json",
@@ -132,11 +131,7 @@ def test_create_character_follows_accepted_task_result():
                         "character": {
                             "id": "character_1",
                             "name": "Robot",
-                            "images": [],
-                        },
-                    },
-                },
-            }
+                            "images": []}}}}
         ),
     )
     client = GeminiOmniClient(api_key="k", http_client=fake)
@@ -150,8 +145,7 @@ def test_create_character_follows_accepted_task_result():
     assert result.character.id == "character_1"
     assert [call[:2] for call in fake.calls] == [
         ("post", "/api/v1/gemini_omni/create_character"),
-        ("get", location),
-    ]
+        ("get", location)]
 
 
 def test_create_character_requires_fields():
@@ -180,8 +174,7 @@ def test_text_to_video_create_and_get_shapes():
     client.text_to_video.get("t1")
     assert fake.calls == [
         ("post", "/api/v1/gemini_omni/text_to_video", {"prompt": "a fox", "duration_seconds": 8}),
-        ("get", "/api/v1/gemini_omni/text_to_video/t1", None),
-    ]
+        ("get", "/api/v1/gemini_omni/text_to_video/t1", None)]
 
 
 def test_text_to_video_flash_preview_sends_model_without_duration():
@@ -201,8 +194,7 @@ def test_text_to_video_flash_preview_sends_model_without_duration():
                 "model": "gemini-omni-flash-preview",
                 "prompt": "A paper airplane flying through a sunlit studio",
                 "aspect_ratio": "9:16",
-                "output_resolution": "720p",
-            },
+                "output_resolution": "720p"},
         )
     ]
 
@@ -230,8 +222,7 @@ def test_text_to_video_flash_1_1_sends_frame_fields_and_360p():
                 "first_frame_image_url": "https://cdn.runapi.ai/public/samples/first-frame.jpg",
                 "last_frame_image_url": "https://cdn.runapi.ai/public/samples/last-frame.jpg",
                 "aspect_ratio": "16:9",
-                "output_resolution": "360p",
-            },
+                "output_resolution": "360p"},
         )
     ]
 
@@ -289,7 +280,7 @@ def test_text_to_video_reference_units_cap():
 def test_text_to_video_run_narrows_completed():
     fake = FakeHttp(
         {"id": "t1", "status": "pending"},
-        {"id": "t1", "status": "completed", "videos": [{"url": "https://x/v.mp4"}]},
+        {"id": "t1", "status": "completed", "usage": {"cost": 0.05}, "videos": [{"url": "https://x/v.mp4"}]},
     )
     client = GeminiOmniClient(api_key="k", http_client=fake)
     result = client.text_to_video.run(prompt="a fox", duration_seconds=8)

@@ -145,7 +145,7 @@ class GeminiOmniClientTest {
 
   @Test
   void getDecodesTaskResponseAndExtraFields() {
-    CapturingTransport transport = new CapturingTransport("{\"id\":\"task_456\",\"status\":\"completed\",\"videos\":[{\"url\":\"https://file.runapi.ai/generated\"}],\"custom\":\"kept\"}");
+    CapturingTransport transport = new CapturingTransport("{\"id\":\"task_456\",\"status\":\"completed\",\"videos\":[{\"url\":\"https://file.runapi.ai/generated\"}],\"custom\":\"kept\",\"usage\":{\"cost\":0.05}}");
     GeminiOmniClient client = GeminiOmniClient.builder().apiKey("sk-test").transport(transport).build();
 
     TextToVideoResponse response = client.textToVideo().get("task_456");
@@ -161,7 +161,7 @@ class GeminiOmniClientTest {
   void runPollsUntilCompletedAndKeepsExtraFields() {
     SequenceTransport transport = new SequenceTransport(
         "{\"id\":\"task_789\",\"status\":\"processing\"}",
-        "{\"id\":\"task_789\",\"status\":\"completed\",\"videos\":[{\"url\":\"https://file.runapi.ai/generated\"}],\"custom\":\"kept\"}");
+        "{\"id\":\"task_789\",\"status\":\"completed\",\"videos\":[{\"url\":\"https://file.runapi.ai/generated\"}],\"custom\":\"kept\",\"usage\":{\"cost\":0.05}}");
     GeminiOmniClient client = GeminiOmniClient.builder().apiKey("sk-test").transport(transport).build();
 
     CompletedTextToVideoResponse response = client.textToVideo().run(
@@ -182,7 +182,7 @@ class GeminiOmniClientTest {
   void runRejectsCompletedResponseMissingResultField() {
     SequenceTransport transport = new SequenceTransport(
         "{\"id\":\"task_missing\",\"status\":\"processing\"}",
-        "{\"id\":\"task_missing\",\"status\":\"completed\"}");
+        "{\"id\":\"task_missing\",\"status\":\"completed\",\"usage\":{\"cost\":0.05}}");
     GeminiOmniClient client = GeminiOmniClient.builder().apiKey("sk-test").transport(transport).build();
 
     assertThrows(
@@ -198,7 +198,7 @@ class GeminiOmniClientTest {
 
     @Test
     void coversCreateaudioResourceMethods() {
-      CapturingTransport transport = new CapturingTransport("{\"id\":\"sync_create_audio\",\"audio\":{\"value\":\"sample\"},\"billing\":{\"reservation\":{\"amount_cents\":12}}}");
+      CapturingTransport transport = new CapturingTransport("{\"id\":\"sync_create_audio\",\"audio\":{\"value\":\"sample\"}}");
       GeminiOmniClient client = GeminiOmniClient.builder().apiKey("sk-test").transport(transport).build();
 
       CreateAudioResponse response = client.createAudio().run(
@@ -208,9 +208,8 @@ class GeminiOmniClientTest {
                   .build()
       );
       assertNotNull(response);
-      assertEquals(Long.valueOf(12), response.getBilling().getReservation().getAmountCents());
 
-      CapturingTransport transportWithOptions = new CapturingTransport("{\"id\":\"sync_create_audio_options\",\"audio\":{\"value\":\"sample\"},\"billing\":{\"reservation\":{\"amount_cents\":12}}}");
+      CapturingTransport transportWithOptions = new CapturingTransport("{\"id\":\"sync_create_audio_options\",\"audio\":{\"value\":\"sample\"}}");
       GeminiOmniClient clientWithOptions = GeminiOmniClient.builder().apiKey("sk-test").transport(transportWithOptions).build();
       assertNotNull(clientWithOptions.createAudio().run(
               CreateAudioParams.builder()
@@ -222,7 +221,7 @@ class GeminiOmniClientTest {
 
     @Test
     void coversCreatecharacterResourceMethods() throws Exception {
-      CapturingTransport transport = new CapturingTransport("{\"id\":\"sync_create_character\",\"character\":{\"value\":\"sample\"},\"billing\":{\"refund\":{\"refunded_at\":\"2026-07-23T12:00:00.000000Z\"}}}");
+      CapturingTransport transport = new CapturingTransport("{\"id\":\"sync_create_character\",\"character\":{\"value\":\"sample\"}}");
       GeminiOmniClient client = GeminiOmniClient.builder().apiKey("sk-test").transport(transport).build();
 
       CreateCharacterResponse response = client.createCharacter().run(
@@ -233,10 +232,10 @@ class GeminiOmniClientTest {
                   .build()
       );
       assertNotNull(response);
-      assertEquals("2026-07-23T12:00:00.000000Z", response.getBilling().getRefund().getRefundedAt());
+
       assertEquals("https://cdn.runapi.ai/public/samples/image.jpg", bodyJson(transport.request).get("body_reference_image_url").asText());
 
-      CapturingTransport transportWithOptions = new CapturingTransport("{\"id\":\"sync_create_character_options\",\"character\":{\"value\":\"sample\"},\"billing\":{\"refund\":{\"refunded_at\":\"2026-07-23T12:00:00.000000Z\"}}}");
+      CapturingTransport transportWithOptions = new CapturingTransport("{\"id\":\"sync_create_character_options\",\"character\":{\"value\":\"sample\"}}");
       GeminiOmniClient clientWithOptions = GeminiOmniClient.builder().apiKey("sk-test").transport(transportWithOptions).build();
       assertNotNull(clientWithOptions.createCharacter().run(
               CreateCharacterParams.builder()
@@ -252,7 +251,7 @@ class GeminiOmniClientTest {
           response(202, "{\"id\":\"task_pending\",\"status\":\"pending\"}", headers(
               "Location", "/api/v1/tasks/task_pending/result",
               "Retry-After", "0")),
-          response(200, "{\"id\":\"task_pending\",\"status\":\"completed\",\"response\":{\"status\":200,\"content_type\":\"application/json\",\"headers\":{},\"body\":{\"id\":\"char_1\",\"character\":{\"id\":\"char_1\",\"name\":\"Guide\"}}}}", Collections.<String, String>emptyMap()));
+          response(200, "{\"id\":\"task_pending\",\"status\":\"completed\",\"response\":{\"status\":200,\"content_type\":\"application/json\",\"headers\":{},\"body\":{\"id\":\"char_1\",\"character\":{\"id\":\"char_1\",\"name\":\"Guide\"}}},\"usage\":{\"cost\":0.05}}", Collections.<String, String>emptyMap()));
       GeminiOmniClient client = GeminiOmniClient.builder().apiKey("sk-test").transport(transport).build();
 
       CreateCharacterResponse response = client.createCharacter().run(
@@ -290,17 +289,17 @@ class GeminiOmniClientTest {
                   .build(),
           RequestOptions.none()));
 
-      CapturingTransport getTransport = new CapturingTransport("{\"id\":\"task_text_to_video\",\"status\":\"completed\",\"videos\":[{\"url\":\"https://file.runapi.ai/generated\"}]}");
+      CapturingTransport getTransport = new CapturingTransport("{\"id\":\"task_text_to_video\",\"status\":\"completed\",\"videos\":[{\"url\":\"https://file.runapi.ai/generated\"}],\"usage\":{\"cost\":0.05}}");
       GeminiOmniClient getClient = GeminiOmniClient.builder().apiKey("sk-test").transport(getTransport).build();
       assertNotNull(getClient.textToVideo().get("task_text_to_video"));
 
-      CapturingTransport getWithOptionsTransport = new CapturingTransport("{\"id\":\"task_text_to_video_options\",\"status\":\"completed\",\"videos\":[{\"url\":\"https://file.runapi.ai/generated\"}]}");
+      CapturingTransport getWithOptionsTransport = new CapturingTransport("{\"id\":\"task_text_to_video_options\",\"status\":\"completed\",\"videos\":[{\"url\":\"https://file.runapi.ai/generated\"}],\"usage\":{\"cost\":0.05}}");
       GeminiOmniClient getWithOptionsClient = GeminiOmniClient.builder().apiKey("sk-test").transport(getWithOptionsTransport).build();
       assertNotNull(getWithOptionsClient.textToVideo().get("task_text_to_video_options", RequestOptions.none()));
 
       SequenceTransport runTransport = new SequenceTransport(
           "{\"id\":\"task_text_to_video_run\",\"status\":\"processing\"}",
-          "{\"id\":\"task_text_to_video_run\",\"status\":\"completed\",\"videos\":[{\"url\":\"https://file.runapi.ai/generated\"}]}");
+          "{\"id\":\"task_text_to_video_run\",\"status\":\"completed\",\"videos\":[{\"url\":\"https://file.runapi.ai/generated\"}],\"usage\":{\"cost\":0.05}}");
       GeminiOmniClient runClient = GeminiOmniClient.builder().apiKey("sk-test").transport(runTransport).build();
       CompletedTextToVideoResponse runResponse = runClient.textToVideo().run(
               TextToVideoParams.builder()
@@ -313,7 +312,7 @@ class GeminiOmniClientTest {
 
       SequenceTransport runWithOptionsTransport = new SequenceTransport(
           "{\"id\":\"task_text_to_video_run_options\",\"status\":\"processing\"}",
-          "{\"id\":\"task_text_to_video_run_options\",\"status\":\"completed\",\"videos\":[{\"url\":\"https://file.runapi.ai/generated\"}]}");
+          "{\"id\":\"task_text_to_video_run_options\",\"status\":\"completed\",\"videos\":[{\"url\":\"https://file.runapi.ai/generated\"}],\"usage\":{\"cost\":0.05}}");
       GeminiOmniClient runWithOptionsClient = GeminiOmniClient.builder().apiKey("sk-test").transport(runWithOptionsTransport).build();
       assertNotNull(runWithOptionsClient.textToVideo().run(
               TextToVideoParams.builder()
