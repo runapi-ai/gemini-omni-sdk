@@ -206,21 +206,6 @@ func TestTextToVideoCreateAndGet(t *testing.T) {
 	}
 }
 
-func TestTextToVideoRejectsInvalidVideoClip(t *testing.T) {
-	stub := &stubHTTPClient{}
-	client := NewClientWithHTTP(stub)
-	_, err := client.TextToVideo.Create(context.Background(), TextToVideoParams{
-		Prompt:          "Create a neon city tracking shot",
-		DurationSeconds: 8,
-		VideoList:       []VideoClip{{URL: "", Start: 0, Ends: 10}}})
-	if err == nil || err.Error() != "video_list[0].url is required" {
-		t.Fatalf("expected video clip validation error, got %v", err)
-	}
-	if stub.method != "" {
-		t.Fatalf("request should not be sent, got %s %s", stub.method, stub.path)
-	}
-}
-
 func TestTextToVideoCreateFlashPreviewSendsModelWithoutDuration(t *testing.T) {
 	stub := &stubHTTPClient{}
 	client := NewClientWithHTTP(stub)
@@ -276,44 +261,5 @@ func TestTextToVideoCreateFlash11SendsFrameFieldsAnd360p(t *testing.T) {
 	}
 	if created.ID != "task-local-123" {
 		t.Fatalf("unexpected task id: %s", created.ID)
-	}
-}
-
-func TestTextToVideoFlash11EnforcesFrameRules(t *testing.T) {
-	tests := []struct {
-		name   string
-		params TextToVideoParams
-		error  string
-	}{
-		{
-			name: "first frame forbids reference images",
-			params: TextToVideoParams{
-				Model:              ModelGeminiOmniFlash11,
-				Prompt:             "A paper airplane crosses from dawn into dusk",
-				DurationSeconds:    6,
-				FirstFrameImageURL: "https://cdn.runapi.ai/public/samples/first-frame.jpg",
-				ReferenceImageURLs: []string{"https://cdn.runapi.ai/public/samples/reference-1.jpg"}},
-			error: "reference_image_urls is not allowed when first_frame_image_url is present and model is gemini-omni-flash-1-1"},
-		{
-			name: "last frame requires first frame",
-			params: TextToVideoParams{
-				Model:             ModelGeminiOmniFlash11,
-				Prompt:            "A paper airplane crosses from dawn into dusk",
-				DurationSeconds:   6,
-				LastFrameImageURL: "https://cdn.runapi.ai/public/samples/last-frame.jpg"},
-			error: "first_frame_image_url is required when last_frame_image_url is present and model is gemini-omni-flash-1-1"}}
-
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			stub := &stubHTTPClient{}
-			client := NewClientWithHTTP(stub)
-			_, err := client.TextToVideo.Create(context.Background(), test.params)
-			if err == nil || err.Error() != test.error {
-				t.Fatalf("expected %q, got %v", test.error, err)
-			}
-			if stub.method != "" {
-				t.Fatalf("request should not be sent, got %s %s", stub.method, stub.path)
-			}
-		})
 	}
 }

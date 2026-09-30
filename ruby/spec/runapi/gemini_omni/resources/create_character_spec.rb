@@ -58,17 +58,4 @@ RSpec.describe RunApi::GeminiOmni::Resources::CreateCharacter do
     expect(result.character.id).to eq("character-1")
     expect(a_request(:get, location)).to have_been_made.once
   end
-
-  it "raises ValidationError when required fields are missing" do
-    expect { resource.run(reference_image_url: "https://file.runapi.ai/demo/character.png") }
-      .to raise_error(RunApi::Core::ValidationError, /descriptions is required/)
-  end
-
-  it "raises ValidationError when reference image is missing" do
-    expect {
-      resource.run(
-        descriptions: "A silver-haired cyberpunk guide"
-      )
-    }.to raise_error(RunApi::Core::ValidationError, /reference_image_url is required/)
-  end
 end

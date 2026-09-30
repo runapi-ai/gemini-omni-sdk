@@ -14,8 +14,8 @@ public final class CreateCharacterParams {
   private final String model;
 
   private CreateCharacterParams(Builder builder) {
-    this.descriptions = GeminiomniParamUtils.requireNonBlank(builder.descriptions, "descriptions");
-    this.referenceImageUrl = GeminiomniParamUtils.requireNonBlank(builder.referenceImageUrl, "referenceImageUrl");
+    this.descriptions = builder.descriptions;
+    this.referenceImageUrl = builder.referenceImageUrl;
     this.bodyReferenceImageUrl = builder.bodyReferenceImageUrl;
     this.audioIds = GeminiomniParamUtils.strings(builder.audioIds);
     this.characterName = builder.characterName;
@@ -59,19 +59,19 @@ public final class CreateCharacterParams {
 
     /** Sets the descriptions. */
     public Builder descriptions(String value) {
-      this.descriptions = GeminiomniParamUtils.requireNonBlank(value, "descriptions");
+      this.descriptions = value;
       return this;
     }
 
     /** Sets the required portrait reference image URL. */
     public Builder referenceImageUrl(String value) {
-      this.referenceImageUrl = GeminiomniParamUtils.requireNonBlank(value, "referenceImageUrl");
+      this.referenceImageUrl = value;
       return this;
     }
 
     /** Sets the optional full-body reference image URL; a portrait reference is still required. */
     public Builder bodyReferenceImageUrl(String value) {
-      this.bodyReferenceImageUrl = GeminiomniParamUtils.requireNonBlank(value, "bodyReferenceImageUrl");
+      this.bodyReferenceImageUrl = value;
       return this;
     }
 
@@ -83,7 +83,7 @@ public final class CreateCharacterParams {
 
     /** Sets the character name. */
     public Builder characterName(String value) {
-      this.characterName = GeminiomniParamUtils.requireNonBlank(value, "characterName");
+      this.characterName = value;
       return this;
     }
 
@@ -95,7 +95,7 @@ public final class CreateCharacterParams {
 
     /** Sets the model slug using a string value. */
     public Builder model(String value) {
-      this.model = GeminiomniParamUtils.requireNonBlankTrim(value, "model");
+      this.model = value;
       return this;
     }
 

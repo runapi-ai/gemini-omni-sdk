@@ -224,47 +224,6 @@ describe('Gemini Omni resources', () => {
     });
   });
 
-  it('enforces Flash 1.1 frame input rules', async () => {
-    const textToVideo = new TextToVideo(mockHttp);
-
-    await expect(
-      textToVideo.create({
-        model: 'gemini-omni-flash-1-1',
-        prompt: 'A paper airplane crosses from dawn into dusk',
-        duration_seconds: 6,
-        first_frame_image_url: 'https://cdn.runapi.ai/public/samples/first-frame.jpg',
-        reference_image_urls: ['https://cdn.runapi.ai/public/samples/reference-1.jpg'],
-      }),
-    ).rejects.toThrow(
-      'reference_image_urls is not allowed when model is gemini-omni-flash-1-1 and first_frame_image_url is present',
-    );
-
-    await expect(
-      textToVideo.create({
-        model: 'gemini-omni-flash-1-1',
-        prompt: 'A paper airplane crosses from dawn into dusk',
-        duration_seconds: 6,
-        last_frame_image_url: 'https://cdn.runapi.ai/public/samples/last-frame.jpg',
-      }),
-    ).rejects.toThrow(
-      'first_frame_image_url is required when model is gemini-omni-flash-1-1 and last_frame_image_url is present',
-    );
-    expect(mockHttp.request).not.toHaveBeenCalled();
-  });
-
-  it('rejects invalid video clips before sending a request', async () => {
-    const textToVideo = new TextToVideo(mockHttp);
-
-    await expect(
-      textToVideo.create({
-        prompt: 'Create a neon city tracking shot',
-        duration_seconds: 8,
-        video_list: [{ url: '', start: 0, ends: 10 }],
-      }),
-    ).rejects.toThrow('video_list[0].url is required');
-    expect(mockHttp.request).not.toHaveBeenCalled();
-  });
-
   it('gets text-to-video task status', async () => {
     vi.mocked(mockHttp.request).mockResolvedValueOnce({
       id: 'task-local-123',

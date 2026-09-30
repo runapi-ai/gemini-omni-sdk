@@ -44,9 +44,6 @@ module RunApi
         optional :error, String
       end
 
-      # Valid seed range for reproducible generation.
-      SEED_RANGE = (0..2_147_483_647)
-
       # URL to a generated video file.
       class Video < RunApi::Core::BaseModel
         optional :url, String

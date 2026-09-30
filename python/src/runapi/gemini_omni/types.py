@@ -12,9 +12,6 @@ AUDIO_VOICES = [
     "vindemiatrix", "zephyr", "zubenelgenubi",
 ]
 
-SEED_MIN = 0
-SEED_MAX = 2_147_483_647
-
 
 class Audio(BaseModel):
     id = required(str)

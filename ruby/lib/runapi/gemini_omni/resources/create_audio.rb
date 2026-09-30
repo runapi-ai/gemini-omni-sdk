@@ -11,9 +11,6 @@ module RunApi
         ENDPOINT = "/api/v1/gemini_omni/create_audio"
         RESPONSE_CLASS = Types::CreateAudioResponse
         MODEL = "gemini-omni-audio"
-        NAME_MAX_LENGTH = 210
-        VOICE_DESCRIPTION_MAX_LENGTH = 20_000
-        EXAMPLE_DIALOGUE_MAX_LENGTH = 120
 
         def initialize(http)
           @http = http
@@ -21,24 +18,7 @@ module RunApi
 
         def run(options: nil, **params)
           params = compact_params(params)
-          validate_params!(params)
           request(:post, ENDPOINT, body: params, options: options)
-        end
-
-        private
-
-        def validate_params!(params)
-          validate_contract!(CONTRACT["create-audio"], params.merge(model: MODEL))
-          validate_length!(params, :name, NAME_MAX_LENGTH)
-          validate_length!(params, :voice_description, VOICE_DESCRIPTION_MAX_LENGTH)
-          validate_length!(params, :example_dialogue, EXAMPLE_DIALOGUE_MAX_LENGTH)
-        end
-
-        def validate_length!(params, key, max_length)
-          value = param(params, key)
-          return if value.nil? || value.to_s.length <= max_length
-
-          raise Core::ValidationError, "#{key} must be at most #{max_length} characters"
         end
       end
     end

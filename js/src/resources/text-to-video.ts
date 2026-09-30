@@ -1,7 +1,6 @@
-import type { HttpClient, RequestOptions, PollingOptions, ActionSchema } from '@runapi.ai/core';
-import { compactParams, validateParams, ValidationError } from '@runapi.ai/core';
+import type { HttpClient, RequestOptions, PollingOptions } from '@runapi.ai/core';
+import { compactParams } from '@runapi.ai/core';
 import { pollUntilComplete } from '@runapi.ai/core/internal';
-import { contract } from '../contract_gen';
 import type {
   CompletedTextToVideoResponse,
   TaskCreateResponse,
@@ -10,8 +9,6 @@ import type {
 } from '../types';
 
 const ENDPOINT = '/api/v1/gemini_omni/text_to_video';
-
-const DEFAULT_MODEL = 'gemini-omni-text-to-video';
 
 /**
  * Generates video from a prompt with optional characters, audio voices, reference images, and video clips.
@@ -43,11 +40,6 @@ export class TextToVideo {
    */
   async create(params: TextToVideoParams, options?: RequestOptions): Promise<TaskCreateResponse> {
     const body = compactParams(params);
-    validateParams(contract['text-to-video'] as ActionSchema, {
-      ...body,
-      model: body.model ?? DEFAULT_MODEL,
-    } as Record<string, unknown>);
-    validateVideoList(body.video_list);
     return this.http.request<TaskCreateResponse>('POST', ENDPOINT, {
       body,
       ...options,
@@ -65,29 +57,4 @@ export class TextToVideo {
       ...options,
     });
   }
-}
-
-function validateVideoList(value: unknown): void {
-  if (value == null) return;
-  if (!Array.isArray(value)) throw new ValidationError('video_list must be an array');
-
-  value.forEach((item, index) => {
-    if (typeof item !== 'object' || item === null || Array.isArray(item)) {
-      throw new ValidationError(`video_list[${index}] must be an object`);
-    }
-    const clip = item as Record<string, unknown>;
-    if (typeof clip.url !== 'string' || clip.url.length === 0) {
-      throw new ValidationError(`video_list[${index}].url is required`);
-    }
-    if (typeof clip.start !== 'number' || typeof clip.ends !== 'number') {
-      throw new ValidationError(`video_list[${index}] start and ends must be numbers`);
-    }
-    if (clip.start < 0) throw new ValidationError(`video_list[${index}].start must be 0 or greater`);
-    if (clip.ends <= clip.start) {
-      throw new ValidationError(`video_list[${index}].ends must be greater than start`);
-    }
-    if (clip.ends - clip.start > 10) {
-      throw new ValidationError(`video_list[${index}] trim range must be 10 seconds or less`);
-    }
-  });
 }

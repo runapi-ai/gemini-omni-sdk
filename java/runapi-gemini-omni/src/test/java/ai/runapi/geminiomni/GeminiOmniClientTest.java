@@ -113,37 +113,6 @@ class GeminiOmniClientTest {
   }
 
   @Test
-  void flash11FrameRulesAreValidatedBeforeRequest() {
-    GeminiOmniClient client = GeminiOmniClient.builder()
-        .apiKey("sk-test")
-        .transport(new CapturingTransport("{\"id\":\"not_sent\"}"))
-        .build();
-
-    ValidationException exclusivityError = assertThrows(
-        ValidationException.class,
-        () -> client.textToVideo().create(
-            TextToVideoParams.builder()
-                .model(TextToVideoModel.GEMINI_OMNI_FLASH_1_1)
-                .prompt("A paper airplane crosses from dawn into dusk")
-                .durationSeconds(6)
-                .firstFrameImageUrl("https://cdn.runapi.ai/public/samples/first-frame.jpg")
-                .referenceImageUrls(Collections.singletonList("https://cdn.runapi.ai/public/samples/reference-1.jpg"))
-                .build()));
-    assertEquals("reference_image_urls is not allowed when first_frame_image_url is present and model is gemini-omni-flash-1-1", exclusivityError.getMessage());
-
-    ValidationException dependencyError = assertThrows(
-        ValidationException.class,
-        () -> client.textToVideo().create(
-            TextToVideoParams.builder()
-                .model(TextToVideoModel.GEMINI_OMNI_FLASH_1_1)
-                .prompt("A paper airplane crosses from dawn into dusk")
-                .durationSeconds(6)
-                .lastFrameImageUrl("https://cdn.runapi.ai/public/samples/last-frame.jpg")
-                .build()));
-    assertEquals("first_frame_image_url is required when last_frame_image_url is present and model is gemini-omni-flash-1-1", dependencyError.getMessage());
-  }
-
-  @Test
   void getDecodesTaskResponseAndExtraFields() {
     CapturingTransport transport = new CapturingTransport("{\"id\":\"task_456\",\"status\":\"completed\",\"videos\":[{\"url\":\"https://file.runapi.ai/generated\"}],\"custom\":\"kept\",\"usage\":{\"cost\":0.05}}");
     GeminiOmniClient client = GeminiOmniClient.builder().apiKey("sk-test").transport(transport).build();

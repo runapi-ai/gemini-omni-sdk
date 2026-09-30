@@ -1,5 +1,5 @@
 import type { AsyncTaskStatus, TaskResponse } from '@runapi.ai/core';
-import type { contract, modelValues } from './contract_gen';
+import type { modelValues } from './contract_gen';
 
 /**
  * One of 30 preset voice identities for audio creation.
@@ -120,8 +120,7 @@ export type GeminiOmniTextToVideoModel =
 /** Output aspect ratio -- landscape (16:9) or portrait (9:16). */
 export type GeminiOmniTextToVideoAspectRatio = '16:9' | '9:16';
 /** Output resolution -- higher resolutions produce sharper video at higher cost. */
-export type GeminiOmniTextToVideoResolution =
-  (typeof contract)['text-to-video']['fields_by_model']['gemini-omni-flash-1-1']['output_resolution']['enum'][number];
+export type GeminiOmniTextToVideoResolution = '360p' | '720p' | '1080p' | '4k';
 
 /**
  * A trimmed segment of a source video for use in text-to-video generation.

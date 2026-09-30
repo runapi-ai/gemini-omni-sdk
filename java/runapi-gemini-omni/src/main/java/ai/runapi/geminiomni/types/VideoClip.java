@@ -11,9 +11,9 @@ public final class VideoClip {
   private final Double ends;
 
   private VideoClip(Builder builder) {
-    this.url = GeminiomniParamUtils.requireNonBlank(builder.url, "url");
-    this.start = java.util.Objects.requireNonNull(builder.start, "start");
-    this.ends = java.util.Objects.requireNonNull(builder.ends, "ends");
+    this.url = builder.url;
+    this.start = builder.start;
+    this.ends = builder.ends;
   }
 
   /** Creates a new VideoClip builder. */
@@ -54,7 +54,7 @@ public final class VideoClip {
 
     /** Sets the media URL. */
     public Builder url(String value) {
-      this.url = GeminiomniParamUtils.requireNonBlank(value, "url");
+      this.url = value;
       return this;
     }
 

@@ -23,12 +23,12 @@ public final class TextToVideoParams {
 
   private TextToVideoParams(Builder builder) {
     this.model = builder.model;
-    this.prompt = GeminiomniParamUtils.requireNonBlank(builder.prompt, "prompt");
+    this.prompt = builder.prompt;
     this.durationSeconds = builder.durationSeconds;
     this.callbackUrl = builder.callbackUrl;
     this.referenceImageUrls = GeminiomniParamUtils.strings(builder.referenceImageUrls);
     this.audioIds = GeminiomniParamUtils.strings(builder.audioIds);
-    this.videoList = GeminiomniParamUtils.list(builder.videoList, "videoList");
+    this.videoList = GeminiomniParamUtils.list(builder.videoList);
     this.characterIds = GeminiomniParamUtils.strings(builder.characterIds);
     this.firstFrameImageUrl = builder.firstFrameImageUrl;
     this.lastFrameImageUrl = builder.lastFrameImageUrl;
@@ -72,7 +72,7 @@ public final class TextToVideoParams {
     }
     List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
     for (VideoClip item : values) {
-      result.add(item.toMap());
+      result.add(item == null ? null : item.toMap());
     }
     return java.util.Collections.unmodifiableList(result);
   }
@@ -103,14 +103,14 @@ public final class TextToVideoParams {
 
     /** Sets the model slug using a string value. */
     public Builder model(String value) {
-      this.model = GeminiomniParamUtils.requireNonBlankTrim(value, "model");
+      this.model = value;
       return this;
     }
 
 
     /** Sets the text prompt. */
     public Builder prompt(String value) {
-      this.prompt = GeminiomniParamUtils.requireNonBlank(value, "prompt");
+      this.prompt = value;
       return this;
     }
 
@@ -122,7 +122,7 @@ public final class TextToVideoParams {
 
     /** Sets the webhook URL for task completion notifications. */
     public Builder callbackUrl(String value) {
-      this.callbackUrl = GeminiomniParamUtils.requireNonBlank(value, "callbackUrl");
+      this.callbackUrl = value;
       return this;
     }
 
@@ -152,25 +152,25 @@ public final class TextToVideoParams {
 
     /** Sets the first frame image URL. It cannot be combined with other reference inputs. */
     public Builder firstFrameImageUrl(String value) {
-      this.firstFrameImageUrl = GeminiomniParamUtils.requireNonBlank(value, "firstFrameImageUrl");
+      this.firstFrameImageUrl = value;
       return this;
     }
 
     /** Sets the last frame image URL. A first frame image URL is also required. */
     public Builder lastFrameImageUrl(String value) {
-      this.lastFrameImageUrl = GeminiomniParamUtils.requireNonBlank(value, "lastFrameImageUrl");
+      this.lastFrameImageUrl = value;
       return this;
     }
 
     /** Sets the output aspect ratio. */
     public Builder aspectRatio(String value) {
-      this.aspectRatio = GeminiomniParamUtils.requireNonBlank(value, "aspectRatio");
+      this.aspectRatio = value;
       return this;
     }
 
     /** Sets the output resolution. */
     public Builder outputResolution(String value) {
-      this.outputResolution = GeminiomniParamUtils.requireNonBlank(value, "outputResolution");
+      this.outputResolution = value;
       return this;
     }
 

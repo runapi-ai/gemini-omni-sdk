@@ -3,7 +3,6 @@ package geminiomni
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/runapi-ai/core-sdk/go/base"
 	"github.com/runapi-ai/core-sdk/go/core"
@@ -13,26 +12,6 @@ import (
 const createAudioPath = "/api/v1/gemini_omni/create_audio"
 const createCharacterPath = "/api/v1/gemini_omni/create_character"
 const textToVideoPath = "/api/v1/gemini_omni/text_to_video"
-
-// Fixed-model endpoints inject their model only into a validation copy. The
-// text-to-video endpoint preserves an explicitly selected model on the wire.
-const createAudioModel = "gemini-omni-audio"
-const createCharacterModel = "gemini-omni-character"
-const textToVideoModel = "gemini-omni-text-to-video"
-
-// validateAction validates a compacted request body against one contract
-// action, injecting the endpoint's fixed model (never posted) so contract
-// model-membership and per-field checks apply.
-func validateAction(action, model string, body map[string]any) error {
-	withModel := make(map[string]any, len(body)+1)
-	for key, value := range body {
-		withModel[key] = value
-	}
-	if selected, ok := withModel["model"]; !ok || selected == nil || selected == "" {
-		withModel["model"] = model
-	}
-	return core.ValidateParams(contractSchema[action], withModel)
-}
 
 // Client provides Gemini Omni multimodal generation: voice presets, character creation, and text-to-video.
 type Client struct {
@@ -73,9 +52,6 @@ type CreateAudio struct{ http core.HTTPClient }
 func (r *CreateAudio) Run(ctx context.Context, params CreateAudioParams, opts ...option.RequestOption) (*CreateAudioResponse, error) {
 	requestOptions, _ := option.ResolveRequestOptions(opts...)
 	body := core.CompactParams(params)
-	if err := validateAction("create-audio", createAudioModel, body); err != nil {
-		return nil, err
-	}
 	return core.PostJSON[CreateAudioResponse](ctx, r.http, createAudioPath, body, requestOptions)
 }
 
@@ -87,9 +63,6 @@ type CreateCharacter struct{ http core.HTTPClient }
 func (r *CreateCharacter) Run(ctx context.Context, params CreateCharacterParams, opts ...option.RequestOption) (*CreateCharacterResponse, error) {
 	requestOptions, pollingOptions := option.ResolveRequestOptions(opts...)
 	body := core.CompactParams(params)
-	if err := validateAction("create-character", createCharacterModel, body); err != nil {
-		return nil, err
-	}
 	return core.RunHybrid[CreateCharacterResponse](ctx, r.http, createCharacterPath, body, requestOptions, pollingOptions)
 }
 
@@ -101,33 +74,8 @@ type TextToVideo struct{ http core.HTTPClient }
 func (r *TextToVideo) Create(ctx context.Context, params TextToVideoParams, opts ...option.RequestOption) (*core.TaskCreateResponse, error) {
 	requestOptions, _ := option.ResolveRequestOptions(opts...)
 	body := core.CompactParams(params)
-	if err := validateAction("text-to-video", textToVideoModel, body); err != nil {
-		return nil, err
-	}
-	if err := validateVideoList(params.VideoList); err != nil {
-		return nil, err
-	}
-	return core.PostJSON[core.TaskCreateResponse](ctx, r.http, textToVideoPath, body, requestOptions)
-}
 
-func validateVideoList(items []VideoClip) error {
-	for index, item := range items {
-		message := ""
-		switch {
-		case item.URL == "":
-			message = fmt.Sprintf("video_list[%d].url is required", index)
-		case item.Start < 0:
-			message = fmt.Sprintf("video_list[%d].start must be 0 or greater", index)
-		case item.Ends <= item.Start:
-			message = fmt.Sprintf("video_list[%d].ends must be greater than start", index)
-		case item.Ends-item.Start > 10:
-			message = fmt.Sprintf("video_list[%d] trim range must be 10 seconds or less", index)
-		}
-		if message != "" {
-			return core.NewError(core.ErrValidation, message, 400, "", nil, nil)
-		}
-	}
-	return nil
+	return core.PostJSON[core.TaskCreateResponse](ctx, r.http, textToVideoPath, body, requestOptions)
 }
 
 // Get fetches the current status of a Gemini Omni text-to-video task by id.

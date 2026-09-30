@@ -13,10 +13,6 @@ module RunApi
         RESPONSE_CLASS = Types::TextToVideoResponse
         COMPLETED_RESPONSE_CLASS = Types::CompletedTextToVideoResponse
         DEFAULT_MODEL = "gemini-omni-text-to-video"
-        PROMPT_MAX_LENGTH = 20_000
-        REFERENCE_UNITS_MAX = 7
-        VIDEO_REFERENCE_UNITS = 2
-        MAX_TRIM_SECONDS = 10
 
         def initialize(http)
           @http = http
@@ -29,70 +25,11 @@ module RunApi
 
         def create(options: nil, **params)
           params = compact_params(params)
-          validate_params!(params)
           request(:post, ENDPOINT, body: params, options: options)
         end
 
         def get(id, options: nil)
           request(:get, "#{ENDPOINT}/#{id}", options: options)
-        end
-
-        private
-
-        def validate_params!(params)
-          selected_model = param(params, :model)
-          selected_model = DEFAULT_MODEL if selected_model.nil? || selected_model.to_s.empty?
-          validate_contract!(CONTRACT["text-to-video"], params.merge(model: selected_model))
-          validate_length!(params, :prompt, PROMPT_MAX_LENGTH)
-          validate_video_list!(param(params, :video_list)) if param(params, :video_list)
-          validate_reference_units!(params)
-          validate_seed!(params)
-        end
-
-        def validate_length!(params, key, max_length)
-          value = param(params, key)
-          return if value.nil? || value.to_s.length <= max_length
-
-          raise Core::ValidationError, "#{key} must be at most #{max_length} characters"
-        end
-
-        def validate_video_list!(items)
-          items.each_with_index do |item, index|
-            url = param(item, :url)
-            raise Core::ValidationError, "video_list[#{index}].url is required" if url.nil? || url.to_s.empty?
-
-            start_time = numeric_param(item, :start)
-            end_time = numeric_param(item, :ends)
-            raise Core::ValidationError, "video_list[#{index}] start and ends must be numbers" unless start_time && end_time
-            raise Core::ValidationError, "video_list[#{index}].start must be 0 or greater" if start_time.negative?
-            raise Core::ValidationError, "video_list[#{index}].ends must be greater than start" unless end_time > start_time
-            if (end_time - start_time) > MAX_TRIM_SECONDS
-              raise Core::ValidationError, "video_list[#{index}] trim range must be #{MAX_TRIM_SECONDS} seconds or less"
-            end
-          end
-        end
-
-        def validate_reference_units!(params)
-          units = Array(param(params, :reference_image_urls)).count +
-            (Array(param(params, :video_list)).count * VIDEO_REFERENCE_UNITS) +
-            Array(param(params, :character_ids)).count
-          return if units <= REFERENCE_UNITS_MAX
-
-          raise Core::ValidationError, "reference_image_urls + video_list*2 + character_ids must use #{REFERENCE_UNITS_MAX} reference units or fewer"
-        end
-
-        def validate_seed!(params)
-          value = param(params, :seed)
-          return if value.nil?
-
-          seed = Integer(value, exception: false)
-          return if seed && Types::SEED_RANGE.cover?(seed)
-
-          raise Core::ValidationError, "seed must be an integer between #{Types::SEED_RANGE.min} and #{Types::SEED_RANGE.max}"
-        end
-
-        def numeric_param(params, key)
-          Float(param(params, key), exception: false)
         end
       end
     end

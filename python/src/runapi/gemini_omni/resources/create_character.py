@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
-from runapi.core import Resource, ValidationError, RequestOptions
+from runapi.core import Resource, RequestOptions
 
-from ..contract_gen import CONTRACT
 from ..types import CreateCharacterResponse
 
 
@@ -19,9 +18,6 @@ class CreateCharacter(Resource):
 
     MODEL = "gemini-omni-character"
 
-    DESCRIPTIONS_MAX_LENGTH = 20_000
-    CHARACTER_NAME_MAX_LENGTH = 210
-
     def run(self, options: Optional[RequestOptions] = None, **params: Any) -> Any:
         """Create a reusable character and follow an accepted Task to completion.
 
@@ -33,24 +29,4 @@ class CreateCharacter(Resource):
             The result.
         """
         compacted = self._compact_params(params)
-        self._validate_params(compacted)
         return self._run_hybrid("post", self.ENDPOINT, body=compacted, options=options)
-
-    def _validate_params(self, params: Dict[str, Any]) -> None:
-        self._validate_contract(CONTRACT["create-character"], {**params, "model": self.MODEL})
-        if params.get("audio_ids") is not None:
-            self._validate_array(params, "audio_ids")
-        self._validate_length(params, "descriptions", self.DESCRIPTIONS_MAX_LENGTH)
-        self._validate_length(params, "character_name", self.CHARACTER_NAME_MAX_LENGTH)
-
-    @staticmethod
-    def _validate_array(params: Dict[str, Any], key: str) -> None:
-        if not isinstance(params.get(key), list):
-            raise ValidationError(f"{key} must be an array")
-
-    @staticmethod
-    def _validate_length(params: Dict[str, Any], key: str, max_length: int) -> None:
-        value = params.get(key)
-        if value is None or len(str(value)) <= max_length:
-            return
-        raise ValidationError(f"{key} must be at most {max_length} characters")

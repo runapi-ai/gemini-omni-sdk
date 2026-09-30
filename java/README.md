@@ -2,7 +2,7 @@
 
 [![Maven Central](https://img.shields.io/maven-central/v/ai.runapi/runapi-gemini-omni)](https://central.sonatype.com/artifact/ai.runapi/runapi-gemini-omni)
 
-The Gemini Omni Java SDK is the language-specific package for Gemini Omni on RunAPI. Use it when your Java application needs typed builders, strict request validation, task status lookup, local polling helpers, file uploads, account helpers, and consistent RunAPI errors for Gemini Omni workflows.
+The Gemini Omni Java SDK is the language-specific package for Gemini Omni on RunAPI. Use it when your Java application needs typed builders, server-side request validation, task status lookup, local polling helpers, file uploads, account helpers, and consistent RunAPI errors for Gemini Omni workflows.
 
 This README is the Java package guide inside the public `gemini-omni-sdk` repository. For the repository overview, start at `../README.md`; for model details, use https://runapi.ai/models/gemini-omni; for API reference, use https://runapi.ai/docs/api/gemini-omni/text-to-video; for SDK docs, use https://runapi.ai/docs/resources/sdks.
 
@@ -16,7 +16,7 @@ Gradle:
 
 ```kotlin
 dependencies {
-  implementation("ai.runapi:runapi-gemini-omni:0.2.4")
+  implementation("ai.runapi:runapi-gemini-omni:0.3.0")
 }
 ```
 
@@ -26,7 +26,7 @@ Maven:
 <dependency>
   <groupId>ai.runapi</groupId>
   <artifactId>runapi-gemini-omni</artifactId>
-  <version>0.2.4</version>
+  <version>0.3.0</version>
 </dependency>
 ```
 
@@ -34,7 +34,7 @@ Use the BOM when multiple RunAPI Java modules are installed:
 
 ```kotlin
 dependencies {
-  implementation(platform("ai.runapi:runapi-bom:0.7.0"))
+  implementation(platform("ai.runapi:runapi-bom:0.9.0"))
   implementation("ai.runapi:runapi-gemini-omni")
 }
 ```
@@ -47,7 +47,7 @@ Maven BOM:
     <dependency>
       <groupId>ai.runapi</groupId>
       <artifactId>runapi-bom</artifactId>
-      <version>0.7.0</version>
+      <version>0.9.0</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -180,12 +180,9 @@ All SDK errors extend `RunApiException`.
 ```java
 import ai.runapi.core.errors.RateLimitException;
 import ai.runapi.core.errors.RunApiException;
-import ai.runapi.core.errors.ValidationException;
 
 try {
   client.textToVideo().run(params);
-} catch (ValidationException error) {
-  System.err.println(error.getMessage());
 } catch (RateLimitException error) {
   System.err.println(error.getRetryAfter());
 } catch (RunApiException error) {

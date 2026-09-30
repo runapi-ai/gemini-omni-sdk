@@ -13,8 +13,8 @@ public final class CreateAudioParams {
   private final String model;
 
   private CreateAudioParams(Builder builder) {
-    this.audioId = GeminiomniParamUtils.requireNonBlank(builder.audioId, "audioId");
-    this.name = GeminiomniParamUtils.requireNonBlank(builder.name, "name");
+    this.audioId = builder.audioId;
+    this.name = builder.name;
     this.voiceDescription = builder.voiceDescription;
     this.exampleDialogue = builder.exampleDialogue;
     this.model = builder.model;
@@ -55,25 +55,25 @@ public final class CreateAudioParams {
 
     /** Sets the audio ID. */
     public Builder audioId(String value) {
-      this.audioId = GeminiomniParamUtils.requireNonBlank(value, "audioId");
+      this.audioId = value;
       return this;
     }
 
     /** Sets the item name. */
     public Builder name(String value) {
-      this.name = GeminiomniParamUtils.requireNonBlank(value, "name");
+      this.name = value;
       return this;
     }
 
     /** Sets the voice description. */
     public Builder voiceDescription(String value) {
-      this.voiceDescription = GeminiomniParamUtils.requireNonBlank(value, "voiceDescription");
+      this.voiceDescription = value;
       return this;
     }
 
     /** Sets the example dialogue. */
     public Builder exampleDialogue(String value) {
-      this.exampleDialogue = GeminiomniParamUtils.requireNonBlank(value, "exampleDialogue");
+      this.exampleDialogue = value;
       return this;
     }
 
@@ -85,7 +85,7 @@ public final class CreateAudioParams {
 
     /** Sets the model slug using a string value. */
     public Builder model(String value) {
-      this.model = GeminiomniParamUtils.requireNonBlankTrim(value, "model");
+      this.model = value;
       return this;
     }
 

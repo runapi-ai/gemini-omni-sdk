@@ -1,7 +1,7 @@
 import pytest
 
 from runapi.core import ApiResponse, config
-from runapi.core.errors import AuthenticationError, ValidationError
+from runapi.core.errors import AuthenticationError
 from runapi.gemini_omni import GeminiOmniClient
 from runapi.gemini_omni.resources.create_audio import CreateAudio
 from runapi.gemini_omni.resources.create_character import CreateCharacter
@@ -75,21 +75,7 @@ def test_create_audio_posts_once_and_returns_typed():
     assert result.audio.id == "kore"
 
 
-def test_create_audio_requires_audio_id_and_name():
-    client = GeminiOmniClient(api_key="k", http_client=FakeHttp())
-    with pytest.raises(ValidationError, match="audio_id is required"):
-        client.create_audio.run(name="Narrator")
-    with pytest.raises(ValidationError, match="name is required"):
-        client.create_audio.run(audio_id="kore")
-
-
-def test_create_audio_name_length():
-    client = GeminiOmniClient(api_key="k", http_client=FakeHttp())
-    with pytest.raises(ValidationError, match="name must be at most 210 characters"):
-        client.create_audio.run(audio_id="kore", name="x" * 211)
-
-
-def test_create_character_returns_typed_and_validates():
+def test_create_character_returns_typed():
     fake = FakeHttp({"id": "c1", "character": {"id": "c1", "name": "Robot", "images": [{"url": "https://x/r.png"}, {"url": "https://x/b.png"}]}})
     client = GeminiOmniClient(api_key="k", http_client=fake)
     result = client.create_character.run(
@@ -146,22 +132,6 @@ def test_create_character_follows_accepted_task_result():
     assert [call[:2] for call in fake.calls] == [
         ("post", "/api/v1/gemini_omni/create_character"),
         ("get", location)]
-
-
-def test_create_character_requires_fields():
-    client = GeminiOmniClient(api_key="k", http_client=FakeHttp())
-    with pytest.raises(ValidationError, match="descriptions is required"):
-        client.create_character.run(reference_image_url="https://x/r.png")
-    with pytest.raises(ValidationError, match="reference_image_url is required"):
-        client.create_character.run(descriptions="A robot")
-
-
-def test_create_character_audio_ids_must_be_array():
-    client = GeminiOmniClient(api_key="k", http_client=FakeHttp())
-    with pytest.raises(ValidationError, match="audio_ids must be an array"):
-        client.create_character.run(
-            descriptions="A robot", reference_image_url="https://x/r.png", audio_ids="not-a-list"
-        )
 
 
 # --- async text_to_video --------------------------------------------------
@@ -225,56 +195,6 @@ def test_text_to_video_flash_1_1_sends_frame_fields_and_360p():
                 "output_resolution": "360p"},
         )
     ]
-
-
-def test_text_to_video_flash_1_1_enforces_frame_rules():
-    client = GeminiOmniClient(api_key="k", http_client=FakeHttp())
-    with pytest.raises(
-        ValidationError,
-        match="reference_image_urls is not allowed when model is gemini-omni-flash-1-1 and first_frame_image_url is present",
-    ):
-        client.text_to_video.create(
-            model="gemini-omni-flash-1-1",
-            prompt="A paper airplane crosses from dawn into dusk",
-            duration_seconds=6,
-            first_frame_image_url="https://cdn.runapi.ai/public/samples/first-frame.jpg",
-            reference_image_urls=["https://cdn.runapi.ai/public/samples/reference-1.jpg"],
-        )
-    with pytest.raises(
-        ValidationError,
-        match="first_frame_image_url is required when model is gemini-omni-flash-1-1 and last_frame_image_url is present",
-    ):
-        client.text_to_video.create(
-            model="gemini-omni-flash-1-1",
-            prompt="A paper airplane crosses from dawn into dusk",
-            duration_seconds=6,
-            last_frame_image_url="https://cdn.runapi.ai/public/samples/last-frame.jpg",
-        )
-
-
-def test_text_to_video_requires_prompt_and_duration():
-    client = GeminiOmniClient(api_key="k", http_client=FakeHttp())
-    with pytest.raises(ValidationError, match="prompt is required"):
-        client.text_to_video.create(duration_seconds=8)
-    with pytest.raises(ValidationError, match="duration_seconds is required"):
-        client.text_to_video.create(prompt="a fox")
-
-
-def test_text_to_video_duration_enum():
-    client = GeminiOmniClient(api_key="k", http_client=FakeHttp())
-    with pytest.raises(ValidationError, match="duration_seconds must be one of: 4, 6, 8, 10"):
-        client.text_to_video.create(prompt="a fox", duration_seconds=7)
-
-
-def test_text_to_video_reference_units_cap():
-    client = GeminiOmniClient(api_key="k", http_client=FakeHttp())
-    with pytest.raises(ValidationError, match="reference units"):
-        client.text_to_video.create(
-            prompt="a fox",
-            duration_seconds=8,
-            reference_image_urls=["a", "b", "c", "d", "e"],  # 5, within array max (7)
-            character_ids=["x", "y", "z"],  # 3, within array max (3); 5 + 3 = 8 > 7 units
-        )
 
 
 def test_text_to_video_run_narrows_completed():

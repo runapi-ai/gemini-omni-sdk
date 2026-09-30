@@ -12,8 +12,6 @@ module RunApi
         ENDPOINT = "/api/v1/gemini_omni/create_character"
         RESPONSE_CLASS = Types::CreateCharacterResponse
         MODEL = "gemini-omni-character"
-        DESCRIPTIONS_MAX_LENGTH = 20_000
-        CHARACTER_NAME_MAX_LENGTH = 210
 
         def initialize(http)
           @http = http
@@ -21,30 +19,7 @@ module RunApi
 
         def run(options: nil, **params)
           params = compact_params(params)
-          validate_params!(params)
           run_hybrid(ENDPOINT, body: params, options: options, response_class: RESPONSE_CLASS)
-        end
-
-        private
-
-        def validate_params!(params)
-          validate_contract!(CONTRACT["create-character"], params.merge(model: MODEL))
-          validate_array!(params, :audio_ids) if param(params, :audio_ids)
-          validate_length!(params, :descriptions, DESCRIPTIONS_MAX_LENGTH)
-          validate_length!(params, :character_name, CHARACTER_NAME_MAX_LENGTH)
-        end
-
-        def validate_array!(params, key)
-          return if param(params, key).is_a?(Array)
-
-          raise Core::ValidationError, "#{key} must be an array"
-        end
-
-        def validate_length!(params, key, max_length)
-          value = param(params, key)
-          return if value.nil? || value.to_s.length <= max_length
-
-          raise Core::ValidationError, "#{key} must be at most #{max_length} characters"
         end
       end
     end
