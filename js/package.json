@@ -3,7 +3,7 @@
   "runapi": {
     "slug": "gemini-omni"
   },
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "RunAPI Gemini Omni SDK for audio, character, and video workflows in JavaScript, Python, Ruby, Go, Java, and PHP",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -31,14 +31,14 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@runapi.ai/core": "^0.5.0"
+    "@runapi.ai/core": "^0.5.2"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
-    "@vitest/coverage-v8": "^1.6.0",
+    "@vitest/coverage-v8": "^4.1.11",
     "tsup": "^8.0.0",
     "typescript": "^5.4.0",
-    "vitest": "^1.6.0"
+    "vitest": "^4.1.11"
   },
   "publishConfig": {
     "access": "public"
